@@ -11,35 +11,13 @@ import { useAuthStore } from '../stores/authStore';
 import { ContactSelector } from '../components/match/ContactSelector';
 import { MandateSelector } from '../components/match/MandateSelector';
 import { PipelineSaveModal } from '../components/match/PipelineSaveModal';
-
-const DS = {
-  headingFont: "'DejaVu Serif', 'Georgia', 'Times New Roman', Times, serif",
-  bodyFont: "'DM Sans', system-ui, sans-serif",
-  monoFont: "'IBM Plex Mono', ui-monospace, monospace",
-  accent: '#C108AB',
-  accentHover: '#A00790',
-  bg: '#FFFFFF',
-  bgAlt: '#F5F5F5',
-  card: '#FFFFFF',
-  cardBorder: '#E5E5E5',
-  text: '#000000',
-  textSecondary: '#333333',
-  muted: '#666666',
-  border: '#E5E5E5',
-  radius: '0',
-  radiusSm: '0',
-  shadow: '0 1px 3px rgba(0,0,0,0.08)',
-  shadowHover: '0 4px 12px rgba(0,0,0,0.1)',
-  success: '#22C55E',
-  warning: '#EAB308',
-  error: '#EF4444',
-};
+import { Section, Eyebrow, Button, Divider } from '@/components/ui/v3';
 
 function B2BBanner() {
   return (
     <div
       style={{
-        background: '#0A0A0A',
+        background: 'var(--v3-color-dark)',
         padding: '10px 32px',
         display: 'flex',
         alignItems: 'center',
@@ -47,12 +25,12 @@ function B2BBanner() {
         gap: 12,
         flexWrap: 'wrap',
         fontSize: 13,
-        fontFamily: DS.bodyFont,
+        fontFamily: 'var(--v3-font-body)',
         flexShrink: 0,
       }}
     >
-      <span style={{ color: '#FFFFFF' }}>
-        <span style={{ fontFamily: DS.monoFont, textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 8, color: '#C108AB' }}>B2B · Client Portal</span>
+      <span style={{ color: 'var(--v3-color-paper)' }}>
+        <span style={{ fontFamily: 'var(--v3-font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 8, color: 'var(--v3-color-teal)' }}>B2B · Client Portal</span>
         Match Analysis is built for search-firm &amp; talent clients. Individual leaders — visit the B2C experience.
       </span>
       <a
@@ -62,8 +40,8 @@ function B2BBanner() {
           alignItems: 'center',
           gap: 6,
           padding: '6px 14px',
-          border: `1px solid #C108AB`,
-          color: '#C108AB',
+          border: `1px solid var(--v3-color-teal)`,
+          color: 'var(--v3-color-teal)',
           textDecoration: 'none',
           fontWeight: 600,
           fontSize: 12,
@@ -113,8 +91,10 @@ export function MatchPage() {
   const [pipelineContactId, setPipelineContactId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (profile?.credits?.balance !== undefined) {
-      setUserCredits(profile.credits.balance);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const profileAny = profile as any;
+    if (profileAny?.credits?.balance !== undefined) {
+      setUserCredits(profileAny.credits.balance);
     }
   }, [profile]);
 
@@ -243,7 +223,7 @@ export function MatchPage() {
     const printWindow = window.open('', '_blank');
     if (!printWindow) { toast.warning('Please allow popups to download PDF'); return; }
     
-    const html = `<!DOCTYPE html><html><head><title>${result.candidate_name} — Match Report</title> <style> body { font-family: 'DM Sans', system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; color: #000; } h1 { font-family: 'DejaVu Serif', 'Georgia', 'Times New Roman', Times, serif; font-size: 24px; border-bottom: 2px solid #C108AB; padding-bottom: 8px; } .score { font-size: 48px; font-weight: 800; color: ${result.composite_score >= 75 ? '#22C55E' : result.composite_score >= 50 ? '#EAB308' : '#EF4444'}; } .section { margin: 20px 0; } .section h3 { color: #C108AB; margin-bottom: 8px; } .dims { display: flex; gap: 20px; margin: 16px 0; } .dim { flex: 1; text-align: center; padding: 12px; background: #F5F5F5;} .dim-val { font-size: 24px; font-weight: 700; } ul { padding-left: 20px; } li { margin: 4px 0; } .footer { margin-top: 40px; font-size: 11px; color: #999; border-top: 1px solid #eee; padding-top: 12px; } </style></head><body> <h1>${result.candidate_name}</h1> <div style="text-align:center; margin: 20px 0;"> <div class="score">${result.composite_score}</div> <div style="font-size:14px; color:#666;">Composite Score</div> </div> <div class="dims"> <div class="dim"><div class="dim-val">${Math.round(result.dimension_scores.experience * 100)}</div><div>Experience</div></div> <div class="dim"><div class="dim-val">${Math.round(result.dimension_scores.skills * 100)}</div><div>Skills</div></div> <div class="dim"><div class="dim-val">${Math.round(result.dimension_scores.fit * 100)}</div><div>Fit</div></div> </div> <div class="section"><h3>Match Reasons</h3><ul>${(result.match_reasons || []).map(r =>`<li>${r}</li>`).join('')}</ul></div> ${result.risk_factors?.length ?`<div class="section"><h3>Risk Factors</h3><ul>${result.risk_factors.map(r => `<li>${r}</li>`).join('')}</ul></div>`: ''} ${result.approach_strategy ?`<div class="section"><h3>Approach Strategy</h3><p>${result.approach_strategy}</p></div>`: ''} <div class="footer">Generated by LYC Intelligence — ${new Date().toLocaleDateString()} — Confidential</div> </body></html>`;
+    const html = `<!DOCTYPE html><html><head><title>${result.candidate_name} — Match Report</title> <style> body { font-family: var(--v3-font-body), system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; color: #000; } h1 { font-family: var(--v3-font-display), 'Georgia', 'Times New Roman', Times, serif; font-size: 24px; border-bottom: 2px solid var(--v3-color-teal); padding-bottom: 8px; } .score { font-size: 48px; font-weight: 800; color: ${result.composite_score >= 75 ? '#22C55E' : result.composite_score >= 50 ? '#EAB308' : '#EF4444'}; } .section { margin: 20px 0; } .section h3 { color: var(--v3-color-teal); margin-bottom: 8px; } .dims { display: flex; gap: 20px; margin: 16px 0; } .dim { flex: 1; text-align: center; padding: 12px; background: #F5F5F5;} .dim-val { font-size: 24px; font-weight: 700; } ul { padding-left: 20px; } li { margin: 4px 0; } .footer { margin-top: 40px; font-size: 11px; color: #999; border-top: 1px solid #eee; padding-top: 12px; } </style></head><body> <h1>${result.candidate_name}</h1> <div style="text-align:center; margin: 20px 0;"> <div class="score">${result.composite_score}</div> <div style="font-size:14px; color:#666;">Composite Score</div> </div> <div class="dims"> <div class="dim"><div class="dim-val">${Math.round(result.dimension_scores.experience * 100)}</div><div>Experience</div></div> <div class="dim"><div class="dim-val">${Math.round(result.dimension_scores.skills * 100)}</div><div>Skills</div></div> <div class="dim"><div class="dim-val">${Math.round(result.dimension_scores.fit * 100)}</div><div>Fit</div></div> </div> <div class="section"><h3>Match Reasons</h3><ul>${(result.match_reasons || []).map(r =>`<li>${r}</li>`).join('')}</ul></div> ${result.risk_factors?.length ?`<div class="section"><h3>Risk Factors</h3><ul>${result.risk_factors.map(r => `<li>${r}</li>`).join('')}</ul></div>`: ''} ${result.approach_strategy ?`<div class="section"><h3>Approach Strategy</h3><p>${result.approach_strategy}</p></div>`: ''} <div class="footer">Generated by LYC Intelligence — ${new Date().toLocaleDateString()} — Confidential</div> </body></html>`;
     
     printWindow.document.write(html);
     printWindow.document.close();
@@ -293,9 +273,9 @@ export function MatchPage() {
       onClick={onToggle}
       style={{
         padding: '8px 14px',
-        background: fromDb ? `${DS.accent}10` : DS.card,
-        border: `1px solid ${fromDb ? DS.accent : DS.cardBorder}`,
-        color: fromDb ? DS.accent : DS.textSecondary,
+        background: fromDb ? 'var(--v3-color-teal-soft)' : 'var(--v3-color-white)',
+        border: `1px solid ${fromDb ? 'var(--v3-color-teal)' : 'var(--v3-color-divider)'}`,
+        color: fromDb ? 'var(--v3-color-teal)' : 'var(--v3-color-ink-secondary)',
         fontSize: '12px',
         fontWeight: fromDb ? 600 : 400,
         cursor: 'pointer',
@@ -314,50 +294,62 @@ export function MatchPage() {
   // ─── GATE STEP ───
   if (step === 'gate') {
     return (
-      <div style={{ minHeight: '100vh', background: DS.bg, display: 'flex', flexDirection: 'column', padding: 0 }}>
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', padding: 0 }}>
         <B2BBanner />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', minHeight: 0 }}>
+        <Section bg="dark" paddingY="xl" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <SEO page="match" />
-        <div style={{ maxWidth: '480px', width: '100%' }}>
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <BarChart3 style={{ color: DS.accent, width: 32, height: 32 }} />
-              <span style={{ fontFamily: DS.headingFont, fontSize: '22px', fontWeight: 700, color: DS.text }}>Score Match</span>
+          <div style={{ maxWidth: '520px', width: '100%', margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+              <Eyebrow accent="teal" style={{ justifyContent: 'center', display: 'flex' }}>Match Analysis</Eyebrow>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '20px', marginTop: '16px' }}>
+                <BarChart3 style={{ color: 'var(--v3-color-teal)', width: 32, height: 32 }} />
+                <span style={{ fontFamily: 'var(--v3-font-display)', fontSize: '26px', fontWeight: 700, color: 'var(--v3-color-paper)' }}>Score Match</span>
+              </div>
+              <h1 style={{ fontFamily: 'var(--v3-font-display)', fontSize: '40px', fontWeight: 700, color: 'var(--v3-color-paper)', margin: '0 0 16px', lineHeight: 1.1 }}>
+                AI-Powered Executive Matching
+              </h1>
+              <Divider variant="light" width="content" scheme="dark" style={{ margin: '20px auto' }} />
+              <p style={{ fontSize: '16px', color: 'var(--v3-color-paper-secondary)', lineHeight: 1.6, marginTop: '20px' }}>
+                Score candidates against job descriptions across 3 dimensions. 
+                Get instant insights on experience, skills, and organisational fit.
+              </p>
             </div>
-            <h1 style={{ fontFamily: DS.headingFont, fontSize: '36px', fontWeight: 700, color: DS.text, margin: '0 0 12px' }}>
-              AI-Powered Executive Matching
-            </h1>
-            <p style={{ fontSize: '16px', color: DS.muted, lineHeight: 1.6 }}>
-              Score candidates against job descriptions across 3 dimensions. 
-              Get instant insights on experience, skills, and organizational fit.
-            </p>
-          </div>
 
-          <div style={{ background: DS.card, border: `1px solid ${DS.cardBorder}`,  padding: '32px' }}>
-            <p style={{ fontSize: '13px', color: DS.muted, marginBottom: '20px', textAlign: 'center' }}>
-              Enter your details to access the Match Engine
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <input placeholder="Full name" value={lead.name} onChange={e => setLead({ ...lead, name: e.target.value })}
-                style={{ padding: '12px 16px', background: DS.bg, border: `1px solid ${DS.cardBorder}`,  color: DS.text, fontSize: '14px', outline: 'none' }} />
-              <input placeholder="Work email" type="email" value={lead.email} onChange={e => setLead({ ...lead, email: e.target.value })}
-                style={{ padding: '12px 16px', background: DS.bg, border: `1px solid ${DS.cardBorder}`,  color: DS.text, fontSize: '14px', outline: 'none' }} />
-              <input placeholder="Company" value={lead.company} onChange={e => setLead({ ...lead, company: e.target.value })}
-                style={{ padding: '12px 16px', background: DS.bg, border: `1px solid ${DS.cardBorder}`,  color: DS.text, fontSize: '14px', outline: 'none' }} />
-              <input placeholder="Job title" value={lead.title} onChange={e => setLead({ ...lead, title: e.target.value })}
-                style={{ padding: '12px 16px', background: DS.bg, border: `1px solid ${DS.cardBorder}`,  color: DS.text, fontSize: '14px', outline: 'none' }} />
-              <button onClick={handleGate} disabled={!lead.name || !lead.email}
-                style={{ padding: '14px', background: DS.accent, color: '#FFFFFF', border: 'none',  fontSize: '15px', fontWeight: 600, cursor: (lead.name && lead.email) ? 'pointer' : 'not-allowed', opacity: (lead.name && lead.email) ? 1 : 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', minHeight: '44px' }}>
-                Access Match Engine <ArrowRight style={{ width: 16, height: 16 }} />
-              </button>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '16px', justifyContent: 'center' }}>
-              <Shield style={{ width: 12, height: 12, color: DS.muted }} />
-              <span style={{ fontSize: '11px', color: DS.muted }}>Your data is confidential. We never share your JDs or candidate info.</span>
+            <div style={{ background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', padding: '32px' }}>
+              <p style={{ fontSize: '13px', color: 'var(--v3-color-ink-muted)', marginBottom: '20px', textAlign: 'center', fontFamily: 'var(--v3-font-body)' }}>
+                Enter your details to access the Match Engine
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <input placeholder="Full name" value={lead.name} onChange={e => setLead({ ...lead, name: e.target.value })}
+                  style={{ padding: '12px 16px', background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', color: 'var(--v3-color-ink)', fontSize: '14px', outline: 'none', fontFamily: 'var(--v3-font-body)' }} />
+                <input placeholder="Work email" type="email" value={lead.email} onChange={e => setLead({ ...lead, email: e.target.value })}
+                  style={{ padding: '12px 16px', background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', color: 'var(--v3-color-ink)', fontSize: '14px', outline: 'none', fontFamily: 'var(--v3-font-body)' }} />
+                <input placeholder="Company" value={lead.company} onChange={e => setLead({ ...lead, company: e.target.value })}
+                  style={{ padding: '12px 16px', background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', color: 'var(--v3-color-ink)', fontSize: '14px', outline: 'none', fontFamily: 'var(--v3-font-body)' }} />
+                <input placeholder="Job title" value={lead.title} onChange={e => setLead({ ...lead, title: e.target.value })}
+                  style={{ padding: '12px 16px', background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', color: 'var(--v3-color-ink)', fontSize: '14px', outline: 'none', fontFamily: 'var(--v3-font-body)' }} />
+                <Button
+                  variant="primary"
+                  accent="teal"
+                  onClick={handleGate}
+                  disabled={!lead.name || !lead.email}
+                  style={{
+                    width: '100%',
+                    justifyContent: 'center',
+                    opacity: (lead.name && lead.email) ? 1 : 0.5,
+                    pointerEvents: (lead.name && lead.email) ? 'auto' : 'none',
+                  }}
+                >
+                  Access Match Engine →
+                </Button>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '16px', justifyContent: 'center' }}>
+                <Shield style={{ width: 12, height: 12, color: 'var(--v3-color-ink-muted)' }} />
+                <span style={{ fontSize: '11px', color: 'var(--v3-color-ink-muted)', fontFamily: 'var(--v3-font-body)' }}>Your data is confidential. We never share your JDs or candidate info.</span>
+              </div>
             </div>
           </div>
-        </div>
-        </div>
+        </Section>
       </div>
     );
   }
@@ -365,20 +357,20 @@ export function MatchPage() {
   // ─── ENGINE STEP ───
   if (step === 'engine') {
     return (
-      <div style={{ minHeight: '100vh', background: DS.bg, padding: 0 }}>
+      <div style={{ minHeight: '100vh', background: 'var(--v3-color-cream)', padding: 0 }}>
         <B2BBanner />
-        <div style={{ padding: '24px', maxWidth: '960px', margin: '0 auto' }}>
+        <div className="match-engine-content" style={{ padding: '24px', maxWidth: '960px', margin: '0 auto' }}>
           {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '12px' }}>
+          <div className="match-engine-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <BarChart3 style={{ color: DS.accent, width: 28, height: 28 }} />
+              <BarChart3 style={{ color: 'var(--v3-color-teal)', width: 28, height: 28 }} />
               <div>
-                <span style={{ fontFamily: DS.headingFont, fontSize: '20px', fontWeight: 700, color: DS.text }}>Score Match Engine</span>
-                <p style={{ fontSize: '12px', color: DS.muted, margin: '4px 0 0' }}>Welcome, {lead.name}</p>
+                <span style={{ fontFamily: 'var(--v3-font-display)', fontSize: '20px', fontWeight: 700, color: 'var(--v3-color-ink)' }}>Score Match Engine</span>
+                <p style={{ fontSize: '12px', color: 'var(--v3-color-ink-muted)', margin: '4px 0 0', fontFamily: 'var(--v3-font-body)' }}>Welcome, {lead.name}</p>
               </div>
             </div>
             {isFirstBatch && (
-              <div style={{ padding: '8px 16px', background: `${DS.success}15`, border: `1px solid ${DS.success}30`,  fontSize: '13px', color: DS.success, fontWeight: 600 }}>
+              <div style={{ padding: '8px 16px', background: 'var(--v3-color-teal-soft)', border: '1px solid var(--v3-color-teal)', fontSize: '13px', color: 'var(--v3-color-teal)', fontWeight: 600, fontFamily: 'var(--v3-font-body)' }}>
                 First 3 matches complimentary!
               </div>
             )}
@@ -386,8 +378,8 @@ export function MatchPage() {
 
           {/* JD Section */}
           <div style={{ marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: DS.text }}>Job Description</span>
+            <div className="match-engine-jd-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--v3-color-ink)', fontFamily: 'var(--v3-font-body)' }}>Job Description</span>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <ModeToggle
                   fromDb={jdFromDb}
@@ -396,7 +388,7 @@ export function MatchPage() {
                 />
                 {!jdFromDb && (
                   <button onClick={() => handleFileUpload('jd')}
-                    style={{ padding: '8px 14px', background: DS.card, border: `1px solid ${DS.cardBorder}`,  color: DS.textSecondary, fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', minHeight: '36px' }}>
+                    style={{ padding: '8px 14px', background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', color: 'var(--v3-color-ink-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', minHeight: '36px', fontFamily: 'var(--v3-font-body)' }}>
                     <Upload style={{ width: 14, height: 14 }} /> Upload
                   </button>
                 )}
@@ -406,7 +398,7 @@ export function MatchPage() {
               <JDInput value={jd} onChange={setJd} />
             </div>
             {selectedMandateId && (
-              <div style={{ marginTop: '8px', fontSize: '12px', color: DS.accent, fontWeight: 500 }}>
+              <div style={{ marginTop: '8px', fontSize: '12px', color: 'var(--v3-color-teal)', fontWeight: 500, fontFamily: 'var(--v3-font-body)' }}>
                 ✓ Using JD from selected mandate
               </div>
             )}
@@ -414,8 +406,8 @@ export function MatchPage() {
 
           {/* Candidates Section */}
           <div style={{ marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: DS.text }}>Candidates</span>
+            <div className="match-engine-candidates-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--v3-color-ink)', fontFamily: 'var(--v3-font-body)' }}>Candidates</span>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <ModeToggle
                   fromDb={candidatesFromDb}
@@ -427,7 +419,7 @@ export function MatchPage() {
                 />
                 {!candidatesFromDb && (
                   <button onClick={addCandidate}
-                    style={{ padding: '8px 14px', background: DS.card, border: `1px solid ${DS.cardBorder}`,  color: DS.textSecondary, fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', minHeight: '36px' }}>
+                    style={{ padding: '8px 14px', background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', color: 'var(--v3-color-ink-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', minHeight: '36px', fontFamily: 'var(--v3-font-body)' }}>
                     <Plus style={{ width: 14, height: 14 }} /> Add
                   </button>
                 )}
@@ -435,19 +427,19 @@ export function MatchPage() {
             </div>
             
             {candidatesFromDb ? (
-              <div style={{ background: DS.card, border: `1px solid ${DS.cardBorder}`,  padding: '20px' }}>
-                <p style={{ fontSize: '13px', color: DS.muted, marginBottom: '12px' }}>
+              <div style={{ background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', padding: '20px' }}>
+                <p style={{ fontSize: '13px', color: 'var(--v3-color-ink-muted)', marginBottom: '12px', fontFamily: 'var(--v3-font-body)' }}>
                   {candidates.filter(c => c.contact_id).length} candidates selected from database
                 </p>
                 <button onClick={() => setShowContactSelector(true)}
-                  style={{ padding: '10px 20px', background: `${DS.accent}10`, border: `1px solid ${DS.accent}`,  color: DS.accent, fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  style={{ padding: '10px 20px', background: 'var(--v3-color-teal-soft)', border: '1px solid var(--v3-color-teal)', color: 'var(--v3-color-teal)', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--v3-font-body)' }}>
                   <Database style={{ width: 16, height: 16 }} />
                   Select from Database
                 </button>
                 {candidates.filter(c => c.contact_id).length > 0 && (
                   <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                     {candidates.filter(c => c.contact_id).map((c, i) => (
-                      <span key={i} style={{ padding: '4px 10px', background: `${DS.accent}10`,  fontSize: '12px', color: DS.accent }}>
+                      <span key={i} style={{ padding: '4px 10px', background: 'var(--v3-color-teal-soft)', fontSize: '12px', color: 'var(--v3-color-teal)', fontFamily: 'var(--v3-font-body)' }}>
                         {c.name}
                       </span>
                     ))}
@@ -466,34 +458,34 @@ export function MatchPage() {
           </div>
 
           {/* Run scoring bar */}
-          <div style={{ background: DS.card, border: `1px solid ${DS.cardBorder}`,  padding: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '12px', flexWrap: 'wrap' }}>
+          <div style={{ background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', padding: '20px' }}>
+            <div className="match-engine-scoring-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '12px', flexWrap: 'wrap' }}>
               <div>
-                <p style={{ fontSize: '14px', color: DS.text, margin: '0 0 4px' }}>
+                <p style={{ fontSize: '14px', color: 'var(--v3-color-ink)', margin: '0 0 4px', fontFamily: 'var(--v3-font-body)' }}>
                   {validCandidates.length > 0 ? (
                     <>Ready to score <strong>{validCandidates.length}</strong> candidate{validCandidates.length !== 1 ? 's' : ''}</>
                   ) : 'Add candidates to start scoring'}
                 </p>
                 {validCandidates.length > 0 && (
-                  <p style={{ fontSize: '12px', color: DS.muted, margin: 0 }}>
+                  <p style={{ fontSize: '12px', color: 'var(--v3-color-ink-muted)', margin: 0, fontFamily: 'var(--v3-font-body)' }}>
                     {isFirstBatch ? (
-                      <span style={{ color: DS.success }}>Complimentary (first 3 matches)</span>
+                      <span style={{ color: 'var(--v3-color-success)' }}>Complimentary (first 3 matches)</span>
                     ) : (
                       <>Cost: <strong>{creditCost.credits} mi</strong>
-                        {userCredits < creditCost.credits && <span style={{ color: DS.warning, marginLeft: '8px' }}>(You have {userCredits})</span>}
+                        {userCredits < creditCost.credits && <span style={{ color: 'var(--v3-color-warning)', marginLeft: '8px' }}>(You have {userCredits})</span>}
                       </>
                     )}
                   </p>
                 )}
               </div>
               <button onClick={handleRunScoring} disabled={scoring || validCandidates.length === 0 || !jd}
-                style={{ padding: '12px 24px', background: DS.accent, color: '#FFFFFF', border: 'none',  fontSize: '14px', fontWeight: 600, cursor: (scoring || validCandidates.length === 0 || !jd) ? 'not-allowed' : 'pointer', opacity: (scoring || validCandidates.length === 0 || !jd) ? 0.5 : 1, display: 'flex', alignItems: 'center', gap: '8px', minHeight: '44px' }}>
+                style={{ padding: '12px 24px', background: 'var(--v3-color-teal)', color: 'var(--v3-color-cream)', border: 'none', fontSize: '14px', fontWeight: 600, cursor: (scoring || validCandidates.length === 0 || !jd) ? 'not-allowed' : 'pointer', opacity: (scoring || validCandidates.length === 0 || !jd) ? 0.5 : 1, display: 'flex', alignItems: 'center', gap: '8px', minHeight: '44px', fontFamily: 'var(--v3-font-body)' }}>
                 {scoring ? (<><Loader2 style={{ width: 16, height: 16, animation: 'spin 1s linear infinite' }} /> Scoring... {progress}%</>) : 'Run Match'}
               </button>
             </div>
             {scoring && (
-              <div style={{ height: '6px', background: DS.bg,  overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${progress}%`, background: DS.accent,  transition: 'width 0.3s' }} />
+              <div style={{ height: '6px', background: 'var(--v3-color-cream)', overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${progress}%`, background: 'var(--v3-color-teal)', transition: 'width 0.3s' }} />
               </div>
             )}
           </div>
@@ -502,10 +494,10 @@ export function MatchPage() {
         {/* Credit modal */}
         {showCreditModal && (
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', zIndex: 1000 }}>
-            <div style={{ background: DS.card, border: `1px solid ${DS.cardBorder}`,  padding: '32px', maxWidth: '400px', textAlign: 'center' }}>
-              <h3 style={{ fontFamily: DS.headingFont, fontSize: '20px', color: DS.text, marginBottom: '12px' }}>Insufficient Miles</h3>
-              <p style={{ fontSize: '14px', color: DS.muted, marginBottom: '20px' }}>You need {creditCost.credits} miles but only have {userCredits}.</p>
-              <button onClick={() => setShowCreditModal(false)} style={{ padding: '10px 20px', background: DS.accent, border: 'none',  color: '#FFFFFF', cursor: 'pointer', fontWeight: 600, minHeight: '44px' }}>
+            <div style={{ background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', padding: '32px', maxWidth: '400px', textAlign: 'center' }}>
+              <h3 style={{ fontFamily: 'var(--v3-font-display)', fontSize: '20px', color: 'var(--v3-color-ink)', marginBottom: '12px' }}>Insufficient Miles</h3>
+              <p style={{ fontSize: '14px', color: 'var(--v3-color-ink-muted)', marginBottom: '20px', fontFamily: 'var(--v3-font-body)' }}>You need {creditCost.credits} miles but only have {userCredits}.</p>
+              <button onClick={() => setShowCreditModal(false)} style={{ padding: '10px 20px', background: 'var(--v3-color-teal)', border: 'none', color: 'var(--v3-color-cream)', cursor: 'pointer', fontWeight: 600, minHeight: '44px', fontFamily: 'var(--v3-font-body)' }}>
                 Understood
               </button>
             </div>
@@ -513,29 +505,58 @@ export function MatchPage() {
         )}
 
         {/* Selectors */}
-        <ContactSelector open={showContactSelector} onClose={() => setShowContactSelector(false)} onSelect={handleContactsSelect} userId={profile?.id} />
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <ContactSelector {...({ open: showContactSelector, onClose: () => setShowContactSelector(false), onSelect: handleContactsSelect, userId: profile?.id } as any)} />
         <MandateSelector open={showMandateSelector} onClose={() => setShowMandateSelector(false)} onSelect={handleMandateSelect} />
 
-        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+        <style>{`
+          @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+          @media (max-width: 900px) {
+            .match-engine-header,
+            .match-engine-jd-bar,
+            .match-engine-candidates-bar,
+            .match-engine-scoring-bar {
+              flex-direction: column !important;
+              align-items: flex-start !important;
+              width: 100% !important;
+            }
+            .match-engine-header > div,
+            .match-engine-jd-bar > div,
+            .match-engine-candidates-bar > div,
+            .match-engine-scoring-bar > div,
+            .match-engine-header > span,
+            .match-engine-jd-bar > span,
+            .match-engine-candidates-bar > span {
+              width: 100% !important;
+            }
+            .match-engine-header button,
+            .match-engine-jd-bar button,
+            .match-engine-candidates-bar button,
+            .match-engine-scoring-bar button {
+              width: 100% !important;
+              justify-content: center !important;
+            }
+          }
+        `}</style>
       </div>
     );
   }
 
   // ─── RESULTS STEP ───
   return (
-    <div style={{ minHeight: '100vh', background: DS.bg, padding: 0 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--v3-color-cream)', padding: 0 }}>
       <B2BBanner />
       <div style={{ padding: '24px', maxWidth: '960px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '12px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <BarChart3 style={{ color: DS.accent, width: 24, height: 24 }} />
-              <span style={{ fontFamily: DS.headingFont, fontSize: '20px', fontWeight: 700, color: DS.text }}>Match Results</span>
+              <BarChart3 style={{ color: 'var(--v3-color-teal)', width: 24, height: 24 }} />
+              <span style={{ fontFamily: 'var(--v3-font-display)', fontSize: '20px', fontWeight: 700, color: 'var(--v3-color-ink)' }}>Match Results</span>
             </div>
-            <p style={{ fontSize: '13px', color: DS.muted, margin: 0 }}>{results.length} candidate{results.length !== 1 ? 's' : ''} scored</p>
+            <p style={{ fontSize: '13px', color: 'var(--v3-color-ink-muted)', margin: 0, fontFamily: 'var(--v3-font-body)' }}>{results.length} candidate{results.length !== 1 ? 's' : ''} scored</p>
           </div>
           <button onClick={() => { setStep('engine'); setResults([]); }}
-            style={{ padding: '10px 20px', background: DS.card, border: `1px solid ${DS.cardBorder}`,  color: DS.textSecondary, fontSize: '13px', cursor: 'pointer', minHeight: '44px' }}>
+            style={{ padding: '10px 20px', background: 'var(--v3-color-white)', border: '1px solid var(--v3-color-divider)', color: 'var(--v3-color-ink-secondary)', fontSize: '13px', cursor: 'pointer', minHeight: '44px', fontFamily: 'var(--v3-font-body)' }}>
             Score More
           </button>
         </div>

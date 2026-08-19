@@ -1,19 +1,19 @@
 /**
- * B2CLanding — V2 VISUAL REWORK (V1 foundation)
+ * B2CLanding — V3 FULL RESKIN (V1 data + functionality preserved)
  *
- * Light-mode line-art system. 8 sections top→bottom:
- *   1. Nav          — How it works / Lenses / Membership · CTA "Begin with your positioning"
+ * Editorial 8 sections top→bottom:
+ *   1. Header       — How it works / Lenses / Membership · CTA "Begin with your positioning"
  *   2. Hero         — cream bg, "The leadership playbook you were given was written for a different world."
- *   3. Recognition   — teal-900 dark, credibility marks
- *   4. How it works — 3 numbered steps (01/02/03), rule lines between
- *   5. Lenses       — 11 lens grid, flagship dark callout (CPI), featured entry (PRISM)
+ *   3. Recognition   — dark, credibility marks
+ *   4. How it works — 3 numbered MethodologySteps (01/02/03), thin dividers between
+ *   5. Lenses       — 11 lenses, flagship dark callout (CPI), featured entry (PRISM)
  *   6. Membership   — 3 tiers: Explorer / Professional $99 (recommended) / Executive $199
- *   7. Final CTA    — teal-900 dark, inverted button
+ *   7. Final CTA    — dark, inverted
  *   8. Footer       — minimal, brand + "Your context stays yours."
  *
  * Naming rules (enforced):
  *  - "Membership" not "Pricing" everywhere (nav link + eyebrow aligned)
- *  - "Lenses" not "Assessments" / "Diagnostics"
+ *  - "Lenses" not "Diagnostics" (featured mid-conversation, not gated intake)
  *  - "NEXUS" always by name — never "the AI" / "the coach"
  *  - No "Platform" anywhere (hard ban). No "Architecture" / "architect".
  *  - Miles are NOT a marketing feature — shown as factual mono labels, never lead.
@@ -24,12 +24,18 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { initScrollReveal } from '@/lib/utils';
-import { V1 } from '@/styles/v1-tokens';
-// FIX 7 — no icon library. Typographic symbols only.
+import {
+  Section,
+  Eyebrow,
+  Button,
+  Divider,
+  MethodologyStep,
+  PricingTextTable,
+} from '@/components/ui/v3';
 
 /* ── Canon lens data (11 total — from canon/index.json + miles.ts) ──
  * Descriptors are the canon "descriptor" field. Mile costs are canon-locked.
- * Pillar roles: flagship = dark callout / featured; related = standard card.
+ * Pillar roles: flagship = dark callout / featured; related = standard cell.
  */
 interface Lens {
   code: string;
@@ -94,168 +100,271 @@ const TIERS = [
   },
 ];
 
+const PRICING_ROWS = [
+  { label: 'Access', values: ['Basic', 'Full', 'Priority'] },
+  { label: 'NEXUS messages/day', values: ['20 / day', 'Unlimited', 'Priority'] },
+  { label: 'Lens catalog', values: ['PRISM + LEAP only', 'All 11 lenses', 'All 11 lenses'] },
+  { label: 'Branded PDF reports', values: ['—', '✓', '✓'] },
+  { label: 'Miles / month', values: ['—', '5 miles', '10 miles'] },
+  { label: 'Executive workshops', values: ['—', '—', 'Quarterly'] },
+];
+
 export function B2CLanding() {
   useEffect(() => {
     const observer = initScrollReveal();
     return () => observer.disconnect();
   }, []);
 
-  return (
-    <div className="v1-scope" style={{ minHeight: '100vh', background: V1.bg }}>
-      {/* ════════════════ 1. NAV ════════════════ */}
-      <nav className="v1-nav" aria-label="Primary">
-        <div className="v1-nav-inner">
-          <Link to="/" className="v1-wordmark" aria-label="NEXUS home">
-            NEXUS<span className="v1-dot">.</span>
-          </Link>
-          <div className="v1-nav-links v1-hidden-mobile">
-            <a href="#how-it-works">How it works</a>
-            <a href="#lenses">Lenses</a>
-            <a href="#membership">Membership</a>
-          </div>
-          <div className="v1-nav-cta">
-            <Link to="/nexus/chat" className="v1-btn v1-btn-primary">
-              Begin with your positioning <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-      </nav>
+  const otherLenses = LENSES.filter(l => l.code !== 'CPI');
 
-      {/* spacer for fixed nav */}
-      <div style={{ height: V1.navHeight }} />
+  return (
+    <>
+      {/* ════════════════ 1. HEADER ════════════════ */}
+      <Section bg="white" paddingY="sm" scope={true} style={{ paddingBlock: '24px' }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px',
+          paddingBottom: '24px',
+          borderBottom: '1px solid var(--v3-color-divider)',
+        }}>
+          <Link to="/" style={{
+            textDecoration: 'none',
+            fontFamily: 'var(--v3-font-mono)',
+            fontSize: 'var(--v3-text-label)',
+            letterSpacing: 'var(--v3-tracking-label)',
+            color: 'var(--v3-color-ink)',
+            display: 'inline-block',
+          }} aria-label="NEXUS home">
+            NEXUS.
+          </Link>
+          <div style={{
+            display: 'flex',
+            gap: '24px',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+          }} className="b2c-nav-links">
+            <Button variant="ghost" accent="teal" href="#how-it-works">How it works</Button>
+            <Button variant="ghost" accent="teal" href="#lenses">Lenses</Button>
+            <Button variant="ghost" accent="teal" href="#membership">Membership</Button>
+          </div>
+          <Button variant="primary" accent="teal" href="/nexus/chat">Begin with your positioning</Button>
+        </div>
+      </Section>
 
       {/* ════════════════ 2. HERO ════════════════ */}
-      <header className="v1-marketing v1-section" style={{ paddingTop: 80, paddingBottom: 72 }}>
-        <div style={{ maxWidth: 880, margin: '0 auto', textAlign: 'center' }}>
-          <div className="v1-eyebrow" style={{ textAlign: 'center' }}>For Senior Leaders</div>
-          <h1 className="v1-display reveal" style={{ fontSize: V1.textDisplay, margin: '0 0 24px' }}>
+      <Section bg="cream" paddingY="xl">
+        <div style={{ maxWidth: '880px', margin: '0 auto', textAlign: 'center' }}>
+          <Eyebrow accent="teal">For Senior Leaders</Eyebrow>
+          <h1 className="reveal" style={{
+            fontFamily: 'var(--v3-font-display)',
+            fontWeight: 300,
+            fontSize: 'var(--v3-text-display-xl)',
+            lineHeight: 'var(--v3-leading-display-xl)',
+            letterSpacing: 'var(--v3-tracking-tight)',
+            color: 'var(--v3-color-ink)',
+            margin: '16px auto 24px',
+            maxWidth: '18ch',
+          }}>
             The leadership playbook you were given was written for a different world.
           </h1>
           <p className="reveal" style={{
-            fontFamily: V1.bodyFont, fontSize: V1.textBodyLg, lineHeight: V1.leadingBody,
-            color: V1.textSecondary, maxWidth: 600, margin: '0 auto 40px',
+            fontFamily: 'var(--v3-font-body)',
+            fontWeight: 400,
+            fontSize: 'var(--v3-text-body-lg)',
+            lineHeight: 'var(--v3-leading-body-lg)',
+            color: 'var(--v3-color-ink-secondary)',
+            maxWidth: '60ch',
+            margin: '0 auto 40px',
           }}>
             NEXUS asks the questions most executives skip. Lenses reveal where you actually stand.
             One private thread, eleven lenses, a trajectory you can shape.
           </p>
-          <div className="reveal" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/nexus/chat" className="v1-btn v1-btn-primary">
-              Begin with your positioning <span aria-hidden="true">→</span>
-            </Link>
-            <a href="#lenses" className="v1-btn v1-btn-secondary">Explore the lenses</a>
+          <div className="reveal" style={{
+            display: 'flex',
+            gap: '32px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+          }}>
+            <Button variant="primary" accent="teal" href="/nexus/chat">Begin with your positioning</Button>
+            <Button variant="secondary" accent="teal" href="#lenses">Explore the lenses</Button>
           </div>
         </div>
 
-        {/* Line-art illustration — thin-stroke compass/network */}
-        <div className="reveal" style={{ maxWidth: 720, margin: '56px auto 0', opacity: 1 }} aria-hidden="true">
-          <svg viewBox="0 0 720 220" fill="none" xmlns="http://www.w3.org/2000/svg"
-            style={{ width: '100%', height: 'auto' }}>
-            <g stroke={V1.teal600} strokeWidth="1.2" strokeLinecap="square">
-              {/* horizon rule */}
-              <line x1="0" y1="110" x2="720" y2="110" stroke={V1.ink200} strokeWidth="1" />
-              {/* compass rings */}
-              <circle cx="360" cy="110" r="78" stroke={V1.teal600} />
-              <circle cx="360" cy="110" r="48" stroke={V1.ink300} />
-              <circle cx="360" cy="110" r="3" fill={V1.teal600} stroke="none" />
-              {/* needle */}
-              <line x1="360" y1="40" x2="360" y2="180" stroke={V1.teal700} strokeWidth="1.4" />
-              {/* cardinal ticks */}
-              <line x1="360" y1="26" x2="360" y2="36" />
-              <line x1="360" y1="184" x2="360" y2="194" />
-              <line x1="276" y1="110" x2="286" y2="110" />
-              <line x1="434" y1="110" x2="444" y2="110" />
-              {/* network nodes (line-art) */}
-              <line x1="120" y1="110" x2="200" y2="60" stroke={V1.ink300} />
-              <line x1="200" y1="60" x2="240" y2="110" stroke={V1.ink300} />
-              <line x1="120" y1="110" x2="240" y2="110" stroke={V1.ink200} />
-              <circle cx="120" cy="110" r="3" fill={V1.teal600} stroke="none" />
-              <circle cx="200" cy="60" r="3" fill={V1.ink400} stroke="none" />
-
-              <line x1="600" y1="110" x2="520" y2="60" stroke={V1.ink300} />
-              <line x1="520" y1="60" x2="480" y2="110" stroke={V1.ink300} />
-              <line x1="600" y1="110" x2="480" y2="110" stroke={V1.ink200} />
-              <circle cx="600" cy="110" r="3" fill={V1.teal600} stroke="none" />
-              <circle cx="520" cy="60" r="3" fill={V1.ink400} stroke="none" />
-            </g>
-          </svg>
+        <div style={{ marginTop: '64px' }}>
+          <Divider variant="strong" width="content" />
         </div>
-      </header>
 
-      {/* ════════════════ 3. RECOGNITION / TRUST (teal-900 dark) ════════════════ */}
-      <section className="v1-section-dark" style={{ padding: '72px 0' }}>
-        <div className="v1-marketing">
-          <div className="v1-eyebrow v1-eyebrow-on-dark" style={{ textAlign: 'center' }}>Recognition</div>
-          <h2 className="v1-display reveal" style={{ fontSize: V1.textH2, textAlign: 'center', maxWidth: 640, margin: '0 auto 48px' }}>
+        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+          <span style={{
+            fontFamily: 'var(--v3-font-mono)',
+            fontSize: 'var(--v3-text-label)',
+            lineHeight: 'var(--v3-leading-label)',
+            letterSpacing: 'var(--v3-tracking-label)',
+            textTransform: 'uppercase',
+            color: 'var(--v3-color-ink-muted)',
+          }}>
+            11 LENSES · 4 PILLARS · ONE THREAD
+          </span>
+        </div>
+      </Section>
+
+      {/* ════════════════ 3. RECOGNITION / TRUST (dark) ════════════════ */}
+      <Section bg="dark" paddingY="md">
+        <div style={{ textAlign: 'center' }}>
+          <Eyebrow accent="teal">Recognition</Eyebrow>
+          <h2 className="reveal" style={{
+            fontFamily: 'var(--v3-font-display)',
+            fontWeight: 300,
+            fontSize: 'var(--v3-text-display-md)',
+            lineHeight: 'var(--v3-leading-display-md)',
+            letterSpacing: 'var(--v3-tracking-tight)',
+            color: 'var(--v3-color-paper)',
+            maxWidth: '20ch',
+            margin: '16px auto 48px',
+          }}>
             Trusted by leaders across global executive markets.
           </h2>
-          <div className="reveal" style={{
-            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0,
-            borderTop: `1px solid ${V1.teal800}`, borderBottom: `1px solid ${V1.teal800}`,
-          }}>
-            {['Fortune 500', 'Cross-border', 'C-suite', 'Sovereign funds'].map((mark, i, arr) => (
-              <div key={mark} style={{
-                padding: '28px 16px', textAlign: 'center',
-                borderRight: i < arr.length - 1 ? `1px solid ${V1.teal800}` : 'none',
-                fontFamily: V1.monoFont, fontSize: V1.textBodySm, letterSpacing: V1.trackingMono,
-                color: V1.onDarkMuted, textTransform: 'uppercase',
-              }}>{mark}</div>
-            ))}
-          </div>
         </div>
-      </section>
+
+        <div className="reveal b2c-trust-grid" style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: 0,
+          borderTop: '1px solid var(--v3-color-divider-dark)',
+          borderBottom: '1px solid var(--v3-color-divider-dark)',
+        }}>
+          {['Fortune 500', 'Cross-border', 'C-suite', 'Sovereign funds'].map((mark, i, arr) => (
+            <div key={mark} style={{
+              padding: '32px 16px',
+              textAlign: 'center',
+              borderRight: i < arr.length - 1 ? '1px solid var(--v3-color-divider-dark)' : 'none',
+              fontFamily: 'var(--v3-font-mono)',
+              fontSize: 'var(--v3-text-body-sm)',
+              letterSpacing: 'var(--v3-tracking-label)',
+              color: 'var(--v3-color-paper-muted)',
+              textTransform: 'uppercase',
+            }}>{mark}</div>
+          ))}
+        </div>
+      </Section>
 
       {/* ════════════════ 4. HOW IT WORKS (3 numbered steps, rule lines between) ════════════════ */}
-      <section id="how-it-works" className="v1-marketing v1-section">
-        <div style={{ maxWidth: 760, margin: '0 auto' }}>
-          <div className="v1-eyebrow">How it works</div>
-          <h2 className="v1-display reveal" style={{ fontSize: V1.textH1, margin: '0 0 16px' }}>
+      <Section bg="cream" paddingY="lg" id="how-it-works">
+        <div style={{ maxWidth: '760px', margin: '0 auto' }}>
+          <Eyebrow accent="teal">How it works</Eyebrow>
+          <h2 className="reveal" style={{
+            fontFamily: 'var(--v3-font-display)',
+            fontWeight: 300,
+            fontSize: 'var(--v3-text-display-lg)',
+            lineHeight: 'var(--v3-leading-display-lg)',
+            letterSpacing: 'var(--v3-tracking-tight)',
+            color: 'var(--v3-color-ink)',
+            margin: '16px 0 16px',
+          }}>
             Three movements. One continuous thread.
           </h2>
           <p className="reveal" style={{
-            fontFamily: V1.bodyFont, fontSize: V1.textBodyLg, lineHeight: V1.leadingBody,
-            color: V1.textSecondary, maxWidth: 560, margin: '0 0 48px',
+            fontFamily: 'var(--v3-font-body)',
+            fontWeight: 400,
+            fontSize: 'var(--v3-text-body-lg)',
+            lineHeight: 'var(--v3-leading-body-lg)',
+            color: 'var(--v3-color-ink-secondary)',
+            maxWidth: '560px',
+            margin: '0 0 32px',
           }}>
             No intake form first. No locked gates. Start wherever you want, and NEXUS meets you there.
           </p>
 
-          <div className="v1-grid-steps">
-            {[
-              { n: '01', title: 'Start the conversation', desc: 'Open NEXUS chat and say what is on your mind — a decision, a friction, a question you have been avoiding. The thread begins immediately.' },
-              { n: '02', title: 'Add a lens when it sharpens things', desc: 'NEXUS proposes a lens when it would make the conversation clearer. You opt in deliberately — each lens is a focused diagnostic, not a form to fill out.' },
-              { n: '03', title: 'Carry the thread forward', desc: 'Insights, milestones, and the next lens all live in one private place. Your context compounds across every conversation.' },
-            ].map((s) => (
-              <div className="v1-step reveal" key={s.n} style={{ display: 'flex', gap: 32, alignItems: 'baseline' }}>
-                <div className="v1-mono v1-mono-teal" style={{ flexShrink: 0, fontSize: 13 }}>{s.n}</div>
-                <div>
-                  <h3 className="v1-display" style={{ fontSize: V1.textH3, margin: '0 0 8px' }}>{s.title}</h3>
-                  <p style={{ fontFamily: V1.bodyFont, fontSize: V1.textBody, lineHeight: V1.leadingBody, color: V1.textSecondary, margin: 0 }}>{s.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Divider variant="light" width="full" />
+          <MethodologyStep
+            number="01"
+            accent="teal"
+            title="Start the conversation"
+            description="Open NEXUS chat and say what is on your mind — a decision, a friction, a question you have been avoiding. The thread begins immediately."
+          />
+          <Divider variant="light" width="full" />
+          <MethodologyStep
+            number="02"
+            accent="teal"
+            title="Add a lens when it sharpens things"
+            description="NEXUS proposes a lens when it would make the conversation clearer. You opt in deliberately — each lens is a focused diagnostic, not a form to fill out."
+          />
+          <Divider variant="light" width="full" />
+          <MethodologyStep
+            number="03"
+            accent="teal"
+            title="Carry the thread forward"
+            description="Insights, milestones, and the next lens all live in one private place. Your context compounds across every conversation."
+          />
+          <Divider variant="light" width="full" />
         </div>
-      </section>
+      </Section>
 
-      {/* ════════════════ 5. LENSES (11 lens grid + flagship dark callout) ════════════════ */}
-      <section id="lenses" className="v1-section" style={{ background: V1.surfaceAlt, borderTop: `1px solid ${V1.border}`, borderBottom: `1px solid ${V1.border}` }}>
-        <div className="v1-marketing">
-          <div className="v1-eyebrow">Lenses</div>
-          <h2 className="v1-display reveal" style={{ fontSize: V1.textH1, margin: '0 0 16px' }}>
+      {/* ════════════════ 5. LENSES (11 lenses + flagship dark callout) ════════════════ */}
+      <Section
+        bg="white"
+        paddingY="lg"
+        id="lenses"
+        style={{
+          borderTop: '1px solid var(--v3-color-divider)',
+          borderBottom: '1px solid var(--v3-color-divider)',
+        }}
+      >
+        <div>
+          <Eyebrow accent="teal">Lenses</Eyebrow>
+          <h2 className="reveal" style={{
+            fontFamily: 'var(--v3-font-display)',
+            fontWeight: 300,
+            fontSize: 'var(--v3-text-display-lg)',
+            lineHeight: 'var(--v3-leading-display-lg)',
+            letterSpacing: 'var(--v3-tracking-tight)',
+            color: 'var(--v3-color-ink)',
+            margin: '16px 0 16px',
+          }}>
             Eleven lenses across four pillars.
           </h2>
           <p className="reveal" style={{
-            fontFamily: V1.bodyFont, fontSize: V1.textBodyLg, lineHeight: V1.leadingBody,
-            color: V1.textSecondary, maxWidth: 600, margin: '0 0 48px',
+            fontFamily: 'var(--v3-font-body)',
+            fontWeight: 400,
+            fontSize: 'var(--v3-text-body-lg)',
+            lineHeight: 'var(--v3-leading-body-lg)',
+            color: 'var(--v3-color-ink-secondary)',
+            maxWidth: '600px',
+            margin: '0 0 48px',
           }}>
             Each lens is a focused diagnostic NEXUS may propose mid-conversation. PRISM is where most leaders begin.
             CPI is the flagship — reserved for the deepest organizational work.
           </p>
 
           {/* Pillar legend */}
-          <div className="reveal" style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 32 }}>
+          <div className="reveal" style={{
+            display: 'inline-flex',
+            gap: '24px',
+            flexWrap: 'wrap',
+            marginBottom: '32px',
+          }}>
             {PILLARS.map(p => (
-              <div key={p.id} className="v1-mono" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span className="v1-status-dot v1-status-dot-teal" /> {p.id} · {p.name}
+              <div key={p.id} style={{
+                display: 'flex',
+                gap: '8px',
+                alignItems: 'center',
+                fontFamily: 'var(--v3-font-mono)',
+                fontSize: 'var(--v3-text-label)',
+                lineHeight: 'var(--v3-leading-label)',
+                letterSpacing: 'var(--v3-tracking-label)',
+                color: 'var(--v3-color-ink-secondary)',
+              }}>
+                <span style={{
+                  width: '4px',
+                  height: '4px',
+                  display: 'inline-block',
+                  background: 'var(--v3-color-teal)',
+                }} />
+                {p.id} · {p.name}
               </div>
             ))}
           </div>
@@ -265,46 +374,178 @@ export function B2CLanding() {
             const cpi = LENSES.find(l => l.code === 'CPI')!;
             const pillarName = PILLARS.find(p => p.id === cpi.pillar)!.name;
             return (
-              <Link to="/nexus/chat" className="reveal" style={{ textDecoration: 'none', display: 'block', marginBottom: 24 }}>
-                <div className="v1-card v1-card-system v1-card-hover" style={{ display: 'flex', gap: 24, alignItems: 'center', flexWrap: 'wrap' }}>
+              <Link to="/nexus/chat" className="reveal" style={{
+                textDecoration: 'none',
+                display: 'block',
+                marginBottom: '32px',
+                color: 'inherit',
+              }}>
+                <div style={{
+                  background: 'var(--v3-color-dark)',
+                  borderTop: '1px solid var(--v3-color-divider-dark-strong)',
+                  borderBottom: '1px solid var(--v3-color-divider-dark-strong)',
+                  padding: '32px 40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '32px',
+                  flexWrap: 'wrap',
+                  boxShadow: 'none',
+                  borderRadius: 0,
+                }}>
                   <div style={{ flex: '0 0 auto' }}>
-                    <div className="v1-mono v1-mono-on-dark" style={{ marginBottom: 8 }}>Flagship · {pillarName}</div>
-                    <h3 className="v1-display" style={{ fontSize: V1.textH2, margin: 0 }}>{cpi.code}</h3>
+                    <div style={{
+                      fontFamily: 'var(--v3-font-mono)',
+                      fontSize: 'var(--v3-text-label)',
+                      lineHeight: 'var(--v3-leading-label)',
+                      letterSpacing: 'var(--v3-tracking-label)',
+                      textTransform: 'uppercase',
+                      color: 'var(--v3-color-paper-muted)',
+                      marginBottom: '8px',
+                    }}>FLAGSHIP · {pillarName}</div>
+                    <h3 style={{
+                      fontFamily: 'var(--v3-font-display)',
+                      fontWeight: 300,
+                      fontSize: 'var(--v3-text-display-md)',
+                      lineHeight: 'var(--v3-leading-display-md)',
+                      letterSpacing: 'var(--v3-tracking-tight)',
+                      color: 'var(--v3-color-paper)',
+                      margin: 0,
+                    }}>{cpi.code}</h3>
                   </div>
-                  <div style={{ flex: '1 1 320px', minWidth: 220 }}>
-                    <p style={{ fontFamily: V1.bodyFont, fontSize: V1.textBody, lineHeight: V1.leadingBody, color: V1.onDarkMuted, margin: 0 }}>
+                  <div style={{
+                    flex: '1 1 320px',
+                    minWidth: '220px',
+                  }}>
+                    <p style={{
+                      fontFamily: 'var(--v3-font-body)',
+                      fontWeight: 400,
+                      fontSize: 'var(--v3-text-body)',
+                      lineHeight: 'var(--v3-leading-body)',
+                      color: 'var(--v3-color-paper-secondary)',
+                      margin: 0,
+                    }}>
                       {cpi.descriptor} — the deepest lens in the catalog. Six dimensions, six archetypes, built for organizational pipeline work. NEXUS brings it in only when the stakes warrant it.
                     </p>
                   </div>
-                  <div className="v1-mono v1-mono-on-dark" style={{ flex: '0 0 auto', textAlign: 'right' }}>
-                    {cpi.miles} miles
+                  <div style={{
+                    flex: '0 0 auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                    alignItems: 'flex-end',
+                  }}>
+                    <div style={{
+                      fontFamily: 'var(--v3-font-mono)',
+                      fontSize: 'var(--v3-text-label)',
+                      lineHeight: 'var(--v3-leading-label)',
+                      letterSpacing: 'var(--v3-tracking-label)',
+                      textTransform: 'uppercase',
+                      color: 'var(--v3-color-paper)',
+                    }}>
+                      {cpi.miles} miles
+                    </div>
+                    <Button variant="ghost" accent="teal" href="/nexus/chat" style={{ color: 'var(--v3-color-paper)' }}>
+                      Take CPI diagnostic
+                    </Button>
                   </div>
                 </div>
               </Link>
             );
           })()}
 
-          {/* 10 remaining lens cards (PRISM featured = add-on fuchsia left border) */}
-          <div className="v1-grid-lenses">
-            {LENSES.filter(l => l.code !== 'CPI').map(lens => {
-              const pillarName = PILLARS.find(p => p.id === lens.pillar)!.name;
+          {/* 10 remaining lenses — 3-col text-only grid with dividers */}
+          <div className="reveal b2c-lenses-grid" style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+            gap: 0,
+            borderTop: '1px solid var(--v3-color-divider)',
+            borderLeft: '1px solid var(--v3-color-divider)',
+          }}>
+            {otherLenses.map((lens, idx) => {
               const featured = lens.featured;
               return (
-                <Link key={lens.code} to="/nexus/chat" className="reveal"
-                  style={{ textDecoration: 'none' }}>
-                  <div className={`v1-card v1-card-hover ${featured ? 'v1-card-addon' : ''}`}
-                    style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                      <span className="v1-mono" style={{ color: V1.textMuted }}>{lens.pillar}</span>
-                      {featured && <span className="v1-tag v1-tag-fuchsia">Featured entry</span>}
-                    </div>
-                    <h3 className="v1-display" style={{ fontSize: V1.textH3, margin: 0 }}>{lens.code}</h3>
-                    <p style={{ fontFamily: V1.bodyFont, fontSize: V1.textBodySm, lineHeight: V1.leadingBody, color: V1.textSecondary, margin: 0, flex: 1 }}>
+                <Link key={lens.code} to="/nexus/chat" style={{
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  display: 'block',
+                  padding: '32px',
+                  borderRight: '1px solid var(--v3-color-divider)',
+                  borderBottom: '1px solid var(--v3-color-divider)',
+                  position: 'relative',
+                  background: featured ? 'var(--v3-color-paper)' : 'transparent',
+                  boxShadow: 'none',
+                  borderRadius: 0,
+                }}>
+                  {featured && (
+                    <div style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: '1px',
+                      background: 'var(--v3-color-teal)',
+                    }} />
+                  )}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    justifyContent: 'space-between',
+                    marginBottom: '8px',
+                    paddingLeft: featured ? '8px' : 0,
+                  }}>
+                    <span style={{
+                      fontFamily: 'var(--v3-font-mono)',
+                      fontSize: 'var(--v3-text-label)',
+                      lineHeight: 'var(--v3-leading-label)',
+                      letterSpacing: 'var(--v3-tracking-label)',
+                      color: 'var(--v3-color-ink-muted)',
+                    }}>{lens.pillar}</span>
+                    {featured && (
+                      <span style={{
+                        fontFamily: 'var(--v3-font-mono)',
+                        fontSize: 'var(--v3-text-label)',
+                        lineHeight: 'var(--v3-leading-label)',
+                        letterSpacing: 'var(--v3-tracking-label)',
+                        textTransform: 'uppercase',
+                        color: 'var(--v3-color-teal)',
+                      }}>ENTRY</span>
+                    )}
+                  </div>
+                  <div style={{ paddingLeft: featured ? '8px' : 0 }}>
+                    <h3 style={{
+                      fontFamily: 'var(--v3-font-display)',
+                      fontWeight: 400,
+                      fontSize: 'var(--v3-text-heading-md)',
+                      lineHeight: 'var(--v3-leading-heading-md)',
+                      letterSpacing: 'var(--v3-tracking-tight)',
+                      color: 'var(--v3-color-ink)',
+                      margin: '0 0 8px',
+                    }}>{lens.code}</h3>
+                    <p style={{
+                      fontFamily: 'var(--v3-font-body)',
+                      fontWeight: 400,
+                      fontSize: 'var(--v3-text-body-sm)',
+                      lineHeight: 'var(--v3-leading-body-sm)',
+                      color: 'var(--v3-color-ink-secondary)',
+                      margin: '0 0 16px',
+                      minHeight: '48px',
+                    }}>
                       {lens.descriptor}
                     </p>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
-                      <span className="v1-mono">{lens.miles} {lens.miles === 1 ? 'mile' : 'miles'}</span>
-                      <span className="v1-mono" style={{ color: V1.teal700 }}>{pillarName.split(' ')[0]}</span>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}>
+                      <span style={{
+                        fontFamily: 'var(--v3-font-mono)',
+                        fontSize: 'var(--v3-text-label)',
+                        lineHeight: 'var(--v3-leading-label)',
+                        letterSpacing: 'var(--v3-tracking-label)',
+                        color: 'var(--v3-color-ink)',
+                      }}>
+                        {lens.miles} {lens.miles === 1 ? 'mile' : 'miles'}
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -312,103 +553,365 @@ export function B2CLanding() {
             })}
           </div>
 
-          <div style={{ marginTop: 40 }}>
-            <Link to="/nexus/chat" className="v1-btn v1-btn-link">
-              Explore all lenses <span className="v1-arrow" aria-hidden="true">→</span>
-            </Link>
+          <div style={{ marginTop: '40px' }}>
+            <Button variant="ghost" accent="teal" href="/nexus/chat">Explore all lenses</Button>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* ════════════════ 6. MEMBERSHIP (3 tiers — eyebrow "Membership", not "Pricing") ════════════════ */}
-      <section id="membership" className="v1-marketing v1-section">
-        <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-          <div className="v1-eyebrow">Membership</div>
-          <h2 className="v1-display reveal" style={{ fontSize: V1.textH1, margin: '0 0 16px' }}>
+      <Section bg="cream" paddingY="lg" id="membership">
+        <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
+          <Eyebrow accent="teal">Membership</Eyebrow>
+          <h2 className="reveal" style={{
+            fontFamily: 'var(--v3-font-display)',
+            fontWeight: 300,
+            fontSize: 'var(--v3-text-display-lg)',
+            lineHeight: 'var(--v3-leading-display-lg)',
+            letterSpacing: 'var(--v3-tracking-tight)',
+            color: 'var(--v3-color-ink)',
+            margin: '16px 0 16px',
+          }}>
             One subscription. The whole catalog.
           </h2>
           <p className="reveal" style={{
-            fontFamily: V1.bodyFont, fontSize: V1.textBodyLg, lineHeight: V1.leadingBody,
-            color: V1.textSecondary, maxWidth: 560, margin: '0 0 48px',
+            fontFamily: 'var(--v3-font-body)',
+            fontWeight: 400,
+            fontSize: 'var(--v3-text-body-lg)',
+            lineHeight: 'var(--v3-leading-body-lg)',
+            color: 'var(--v3-color-ink-secondary)',
+            maxWidth: '560px',
+            margin: '0 0 48px',
           }}>
             Three tiers on this page. Human coaching is a separate add-on layer when you want a person in the room.
           </p>
 
-          <div className="v1-grid-pricing">
-            {TIERS.map(tier => (
-              <div key={tier.name} className={`v1-card v1-card-hover reveal ${tier.recommended ? 'v1-card-addon' : ''}`}
-                style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 16, position: 'relative' }}>
-                {tier.recommended && (
-                  <div className="v1-tag v1-tag-fuchsia" style={{ position: 'absolute', top: 0, left: 0 }}>Recommended</div>
-                )}
-                <div style={{ marginTop: tier.recommended ? 24 : 0 }}>
-                  <h3 className="v1-display" style={{ fontSize: V1.textH2, margin: 0 }}>{tier.name}</h3>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                  <span className="v1-display" style={{ fontSize: 36 }}>{tier.price === 0 ? 'Complimentary' : `$${tier.price}`}</span>
-                  {tier.price !== 0 && <span className="v1-mono" style={{ color: V1.textMuted }}>/mo</span>}
-                </div>
-                <p style={{ fontFamily: V1.bodyFont, fontSize: V1.textBodySm, lineHeight: V1.leadingBody, color: V1.textSecondary, margin: 0 }}>
-                  {tier.blurb}
-                </p>
-                <hr className="v1-rule v1-rule-subtle" />
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {tier.features.map(f => (
-                    <li key={f} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: V1.bodyFont, fontSize: V1.textBodySm, color: V1.textSecondary }}>
-                      <span className="v1-status-dot v1-status-dot-teal" style={{ marginTop: 6 }} /> {f}
-                    </li>
-                  ))}
-                </ul>
-                <div style={{ marginTop: 'auto', paddingTop: 8 }}>
-                  <Link to="/nexus/chat" className={`v1-btn ${tier.recommended ? 'v1-btn-primary' : 'v1-btn-secondary'}`} style={{ width: '100%' }}>
-                    {tier.price === 0 ? 'Start free' : `Choose ${tier.name}`} <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
+          <div className="reveal" style={{ marginBottom: '48px' }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'minmax(0, 2fr) repeat(3, minmax(0, 1fr))',
+              gap: '0',
+              borderTop: '1px solid var(--v3-color-divider-strong)',
+              borderBottom: '1px solid var(--v3-color-divider-strong)',
+            }}>
+              {/* Tier header row */}
+              <div style={{
+                padding: '24px',
+                borderRight: '1px solid var(--v3-color-divider)',
+                borderBottom: '1px solid var(--v3-color-divider)',
+              }}>
+                <span style={{
+                  fontFamily: 'var(--v3-font-mono)',
+                  fontSize: 'var(--v3-text-label)',
+                  lineHeight: 'var(--v3-leading-label)',
+                  letterSpacing: 'var(--v3-tracking-label)',
+                  textTransform: 'uppercase',
+                  color: 'var(--v3-color-ink-muted)',
+                  fontWeight: 500,
+                }}>TIER</span>
               </div>
-            ))}
+              {TIERS.map((tier, i) => (
+                <div key={tier.name} style={{
+                  padding: '24px',
+                  borderRight: i < TIERS.length - 1 ? '1px solid var(--v3-color-divider)' : 'none',
+                  borderBottom: '1px solid var(--v3-color-divider)',
+                  position: 'relative',
+                }}>
+                  <div style={{
+                    fontFamily: 'var(--v3-font-mono)',
+                    fontSize: 'var(--v3-text-label)',
+                    lineHeight: 'var(--v3-leading-label)',
+                    letterSpacing: 'var(--v3-tracking-label)',
+                    textTransform: 'uppercase',
+                    fontWeight: 500,
+                    color: i === 1 ? 'var(--v3-color-teal)' : 'var(--v3-color-ink)',
+                    marginBottom: '16px',
+                  }}>
+                    {tier.name}
+                    {tier.recommended && (
+                      <div style={{
+                        display: 'block',
+                        color: 'var(--v3-color-teal)',
+                        marginTop: '4px',
+                      }}>
+                        RECOMMENDED
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <span style={{
+                      fontFamily: 'var(--v3-font-display)',
+                      fontSize: '36px',
+                      fontWeight: 300,
+                      lineHeight: 1.1,
+                      letterSpacing: 'var(--v3-tracking-tight)',
+                      color: 'var(--v3-color-ink)',
+                    }}>
+                      {tier.price === 0 ? 'Complimentary' : `$${tier.price}`}
+                    </span>
+                    {tier.price !== 0 && (
+                      <span style={{
+                        fontFamily: 'var(--v3-font-mono)',
+                        fontSize: 'var(--v3-text-body-sm)',
+                        color: 'var(--v3-color-ink-muted)',
+                        marginLeft: '4px',
+                      }}>/mo</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {/* Blurb row */}
+              <div style={{
+                padding: '24px',
+                borderRight: '1px solid var(--v3-color-divider)',
+                borderBottom: '1px solid var(--v3-color-divider)',
+                fontFamily: 'var(--v3-font-mono)',
+                fontSize: 'var(--v3-text-label)',
+                lineHeight: 'var(--v3-leading-label)',
+                letterSpacing: 'var(--v3-tracking-label)',
+                textTransform: 'uppercase',
+                color: 'var(--v3-color-ink-muted)',
+                fontWeight: 500,
+              }}>OVERVIEW</div>
+              {TIERS.map((tier, i) => (
+                <div key={'blurb-' + tier.name} style={{
+                  padding: '24px',
+                  borderRight: i < TIERS.length - 1 ? '1px solid var(--v3-color-divider)' : 'none',
+                  borderBottom: '1px solid var(--v3-color-divider)',
+                }}>
+                  <p style={{
+                    fontFamily: 'var(--v3-font-body)',
+                    fontWeight: 400,
+                    fontSize: 'var(--v3-text-body-sm)',
+                    lineHeight: 'var(--v3-leading-body-sm)',
+                    color: 'var(--v3-color-ink-secondary)',
+                    margin: 0,
+                  }}>
+                    {tier.blurb}
+                  </p>
+                </div>
+              ))}
+
+              {/* Features rows via PricingTextTable pattern */}
+              <div style={{ display: 'contents' }}>
+                {PRICING_ROWS.map((row) => (
+                  <React.Fragment key={row.label}>
+                    <div style={{
+                      padding: '24px',
+                      borderRight: '1px solid var(--v3-color-divider)',
+                      borderBottom: '1px solid var(--v3-color-divider)',
+                      fontFamily: 'var(--v3-font-body)',
+                      fontSize: 'var(--v3-text-body-sm)',
+                      lineHeight: 'var(--v3-leading-body-sm)',
+                      fontWeight: 400,
+                      color: 'var(--v3-color-ink-secondary)',
+                    }}>
+                      {row.label}
+                    </div>
+                    {row.values.map((v, i) => (
+                      <div key={i} style={{
+                        padding: '24px',
+                        borderRight: i < row.values.length - 1 ? '1px solid var(--v3-color-divider)' : 'none',
+                        borderBottom: '1px solid var(--v3-color-divider)',
+                        fontFamily: 'var(--v3-font-body)',
+                        fontSize: 'var(--v3-text-body-sm)',
+                        lineHeight: 1.5,
+                        fontWeight: 400,
+                        color: 'var(--v3-color-ink)',
+                      }}>
+                        {v === '—' || v === '✓' ? (
+                          <span style={{
+                            fontFamily: 'var(--v3-font-mono)',
+                            color: v === '✓' ? 'var(--v3-color-teal)' : 'var(--v3-color-ink-muted)',
+                          }}>{v}</span>
+                        ) : v}
+                      </div>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* CTA row */}
+              <div style={{
+                padding: '24px',
+                borderRight: '1px solid var(--v3-color-divider)',
+              }}>
+                <span style={{
+                  fontFamily: 'var(--v3-font-mono)',
+                  fontSize: 'var(--v3-text-label)',
+                  lineHeight: 'var(--v3-leading-label)',
+                  letterSpacing: 'var(--v3-tracking-label)',
+                  textTransform: 'uppercase',
+                  color: 'var(--v3-color-ink-muted)',
+                  fontWeight: 500,
+                }}>ACTION</span>
+              </div>
+              {TIERS.map((tier, i) => (
+                <div key={'cta-' + tier.name} style={{
+                  padding: '24px',
+                  borderRight: i < TIERS.length - 1 ? '1px solid var(--v3-color-divider)' : 'none',
+                }}>
+                  <Button
+                    variant={tier.recommended ? 'primary' : 'secondary'}
+                    accent="teal"
+                    href="/nexus/chat"
+                    inline
+                  >
+                    {tier.price === 0 ? 'Start complimentary' : `Choose ${tier.name}`}
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
-          <p className="v1-mono" style={{ textAlign: 'center', marginTop: 32 }}>
+
+          <p style={{
+            fontFamily: 'var(--v3-font-mono)',
+            fontSize: 'var(--v3-text-label)',
+            lineHeight: 'var(--v3-leading-label)',
+            letterSpacing: 'var(--v3-tracking-label)',
+            color: 'var(--v3-color-ink-muted)',
+            textAlign: 'center',
+            margin: 0,
+          }}>
             Human coaching · Bronze / Silver / Gold — added separately, never bundled
           </p>
         </div>
-      </section>
+      </Section>
 
-      {/* ════════════════ 7. FINAL CTA (teal-900 dark, inverted button) ════════════════ */}
-      <section className="v1-section-dark" style={{ padding: '96px 0', textAlign: 'center' }}>
-        <div className="v1-marketing">
-          <div style={{ maxWidth: 640, margin: '0 auto' }}>
-            {/* Editorial ornament — CSS circle + cross (typographic, no icon library) */}
-            <div aria-hidden="true" style={{ width: 28, height: 28, margin: '0 auto 16px', position: 'relative' }}>
-              <div style={{ position: 'absolute', inset: 0, border: `1px solid ${V1.onDark}`, borderRadius: '50%' }} />
-              <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 1, background: V1.onDark }} />
-              <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, background: V1.onDark }} />
-            </div>
-            <h2 className="v1-display" style={{ fontSize: V1.textH1, margin: '0 0 16px' }}>
-              Open the thread. See where it leads.
-            </h2>
-            <p style={{ fontFamily: V1.bodyFont, fontSize: V1.textBodyLg, lineHeight: V1.leadingBody, color: V1.onDarkMuted, margin: '0 0 32px' }}>
-              Start wherever you want. No form to fill out first.
-            </p>
-            <Link to="/nexus/chat" className="v1-btn v1-btn-primary v1-on-dark" style={{ padding: '14px 28px' }}>
-              Begin with your positioning <span aria-hidden="true">→</span>
-            </Link>
+      {/* ════════════════ 7. FINAL CTA (dark, inverted) ════════════════ */}
+      <Section bg="dark" paddingY="xl">
+        <div style={{ maxWidth: '640px', margin: '0 auto', textAlign: 'center' }}>
+          {/* Editorial ornament — CSS circle + cross (no icon library) */}
+          <div aria-hidden="true" style={{
+            width: '28px',
+            height: '28px',
+            margin: '0 auto 16px',
+            position: 'relative',
+          }}>
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              border: '1px solid var(--v3-color-paper)',
+              borderRadius: 0,
+            }} />
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: 0,
+              right: 0,
+              height: '1px',
+              background: 'var(--v3-color-paper)',
+            }} />
+            <div style={{
+              position: 'absolute',
+              left: '50%',
+              top: 0,
+              bottom: 0,
+              width: '1px',
+              background: 'var(--v3-color-paper)',
+            }} />
           </div>
+          <Eyebrow accent="teal">Begin</Eyebrow>
+          <h2 style={{
+            fontFamily: 'var(--v3-font-display)',
+            fontWeight: 300,
+            fontSize: 'var(--v3-text-display-lg)',
+            lineHeight: 'var(--v3-leading-display-lg)',
+            letterSpacing: 'var(--v3-tracking-tight)',
+            color: 'var(--v3-color-paper)',
+            margin: '16px 0 16px',
+          }}>
+            Open the thread. See where it leads.
+          </h2>
+          <p style={{
+            fontFamily: 'var(--v3-font-body)',
+            fontWeight: 400,
+            fontSize: 'var(--v3-text-body-lg)',
+            lineHeight: 'var(--v3-leading-body-lg)',
+            color: 'var(--v3-color-paper-secondary)',
+            margin: '0 0 32px',
+          }}>
+            Start wherever you want. No form to fill out first.
+          </p>
+          <Button variant="primary" accent="teal" href="/nexus/chat">Begin with your positioning</Button>
         </div>
-      </section>
+      </Section>
 
       {/* ════════════════ 8. FOOTER (minimal) ════════════════ */}
-      <footer style={{ background: V1.surface, borderTop: `1px solid ${V1.border}`, padding: '40px 0' }}>
-        <div className="v1-marketing" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <Link to="/" className="v1-wordmark">NEXUS<span className="v1-dot">.</span></Link>
-          <div style={{ display: 'flex', gap: 24, alignItems: 'center' }} className="v1-hidden-mobile">
-            <Link to="/nexus/chat" className="v1-btn v1-btn-link">Chat</Link>
-            <a href="#lenses" className="v1-btn v1-btn-link">Lenses</a>
-            <a href="#membership" className="v1-btn v1-btn-link">Membership</a>
+      <Section
+        bg="white"
+        paddingY="md"
+        style={{
+          borderTop: '1px solid var(--v3-color-divider)',
+        }}
+      >
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}>
+          <Link to="/" style={{
+            textDecoration: 'none',
+            fontFamily: 'var(--v3-font-mono)',
+            fontSize: 'var(--v3-text-label)',
+            letterSpacing: 'var(--v3-tracking-label)',
+            color: 'var(--v3-color-ink)',
+            display: 'inline-block',
+          }}>
+            NEXUS.
+          </Link>
+          <div style={{
+            display: 'flex',
+            gap: '24px',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+          }}>
+            <Button variant="ghost" accent="teal" href="/nexus/chat">Chat</Button>
+            <Button variant="ghost" accent="teal" href="#lenses">Lenses</Button>
+            <Button variant="ghost" accent="teal" href="#membership">Membership</Button>
           </div>
-          <span className="v1-mono" style={{ color: V1.textMuted }}>Your context stays yours.</span>
+          <span style={{
+            fontFamily: 'var(--v3-font-mono)',
+            fontSize: 'var(--v3-text-label)',
+            lineHeight: 'var(--v3-leading-label)',
+            letterSpacing: 'var(--v3-tracking-label)',
+            color: 'var(--v3-color-ink-muted)',
+          }}>
+            Your context stays yours.
+          </span>
         </div>
-      </footer>
-    </div>
+      </Section>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .b2c-nav-links {
+            order: 3;
+            width: 100%;
+            justify-content: flex-start;
+            gap: 16px;
+          }
+          .b2c-trust-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          .b2c-trust-grid > div:nth-child(-n+2) {
+            border-bottom: 1px solid var(--v3-color-divider-dark);
+          }
+          .b2c-trust-grid > div:nth-child(2n) {
+            border-right: none !important;
+          }
+          .b2c-lenses-grid {
+            grid-template-columns: 1fr !important;
+            border-left: none !important;
+          }
+          .b2c-lenses-grid > a {
+            border-left: 1px solid var(--v3-color-divider);
+          }
+        }
+      `}</style>
+    </>
   );
 }
 
