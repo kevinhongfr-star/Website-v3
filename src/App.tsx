@@ -75,6 +75,9 @@ const LoginPage = lazy(() => import('@/pages/LoginPage').then(m => ({ default: m
 const ResetPasswordPage = lazy(() => import('@/pages/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })));
 const SignupPage = lazy(() => import('@/pages/SignupPage').then(m => ({ default: m.SignupPage })));
 
+// ── V3 Phase V1 preview route — tokens + primitives showcase, public only
+const V3PreviewPage = lazy(() => import('@/pages/V3PreviewPage').then(m => ({ default: m.default })));
+
 // ── Public product landing pages (Canonical — consolidated IA) ──
 const AssessmentPage = lazy(() => import('@/pages/AssessmentPage').then(m => ({ default: m.AssessmentPage })));
 const B2BLanding = lazy(() => import('@/pages/B2BLanding').then(m => ({ default: m.B2BLanding })));
@@ -305,6 +308,9 @@ export default function App() {
               ═══════════════════════════════════════════════════════════ */}
           <Route path="/" element={<MarketingLayout />}>
             <Route index element={<Landing />} />
+
+            {/* Phase V1 internal preview: editorial design system showcase */}
+            <Route path="v3-preview" element={<V3PreviewPage />} />
 
             {/* Auth entry points (public, sit under marketing chrome) */}
             <Route path="login" element={<LoginPage />} />

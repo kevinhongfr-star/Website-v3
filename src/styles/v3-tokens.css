@@ -1,0 +1,196 @@
+/*
+ * LYC v3.0 Red Brief — Editorial Minimalism Design Tokens
+ * Scope: marketing surface only. Portal surfaces keep legacy tokens.
+ * Token names are purposefully unique (not overlapping with legacy
+ * v1/v2 tokens in index.css) so importing this file has zero impact
+ * on portal surfaces. New v3 primitives exclusively reference these.
+ */
+
+/* ── Font loading: Crimson Pro + Inter + IBM Plex Mono ──────────────────
+ * Self-hosted Crimson Pro 400 + IBM Plex Mono 400/500 already ship in
+ * /public/fonts/ and are declared in index.css (DM Sans body kept for
+ * portal + legacy surfaces). Here we supplement missing weights via
+ * Google Fonts: Crimson Pro 300 / 600 / 700 (+ italic for 300/600/700)
+ * and Inter 300 (index.css already loads Inter 400–700).
+ */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ── Scoped root ────────────────────────────────────────────────────────
+ * Tokens live on `.v3-root` (applied by <Section> and the v3 preview
+ * page) AND also on `:root` so utilities can reference them without
+ * wrapping. Portal code never uses these variable names, so there's
+ * no cascade risk.
+ */
+:root, .v3-root {
+  /* ── 1. COLORS ─────────────────────────────────────────────────── */
+
+  /* Two-accent brand */
+  --v3-color-fuchsia: #C108AB;
+  --v3-color-fuchsia-soft: rgba(193, 8, 171, 0.12);
+  --v3-color-teal: #00897B;
+  --v3-color-teal-soft: rgba(0, 137, 123, 0.12);
+
+  /* Background modes */
+  --v3-color-cream: #FAFAFA;     /* default page bg */
+  --v3-color-dark:  #0A0A0A;     /* dark section / page bg */
+  --v3-color-white: #FFFFFF;     /* pure white for containers */
+
+  /* Text — light mode */
+  --v3-color-ink:         #1A1A1A;
+  --v3-color-ink-secondary: #666666;
+  --v3-color-ink-muted:   #999999;
+
+  /* Text — dark mode (cream-based, never pure white) */
+  --v3-color-paper:           #FAFAFA;
+  --v3-color-paper-secondary: rgba(250, 250, 250, 0.65);
+  --v3-color-paper-muted:     rgba(250, 250, 250, 0.4);
+
+  /* Dividers */
+  --v3-color-divider:            rgba(0, 0, 0, 0.08);
+  --v3-color-divider-strong:     rgba(0, 0, 0, 0.15);
+  --v3-color-divider-dark:       rgba(255, 255, 255, 0.12);
+  --v3-color-divider-dark-strong: rgba(255, 255, 255, 0.2);
+
+  /* Semantic (functional, not brand) */
+  --v3-color-success: #10B981;
+  --v3-color-warning: #F59E0B;
+  --v3-color-error:   #EF4444;
+
+  /* ── 2. TYPOGRAPHY ─────────────────────────────────────────────── */
+
+  /* Font stacks — trio per brief */
+  --v3-font-display: 'Crimson Pro', 'Iowan Old Style', 'Apple Garamond', Baskerville, 'Times New Roman', serif;
+  --v3-font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --v3-font-mono:    'IBM Plex Mono', 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  /* Weights */
+  --v3-weight-light:    300;
+  --v3-weight-regular:  400;
+  --v3-weight-medium:   500;
+  --v3-weight-semibold: 600;
+  --v3-weight-bold:     700;
+
+  /* Type scale (sizes) — all named tokens for editorial feel */
+  --v3-text-display-xl: 72px;
+  --v3-text-display-lg: 56px;
+  --v3-text-display-md: 40px;
+  --v3-text-heading-lg: 28px;
+  --v3-text-heading-md: 20px;
+  --v3-text-body-lg:    18px;
+  --v3-text-body:       16px;
+  --v3-text-body-sm:    14px;
+  --v3-text-label:      12px;
+
+  /* Line heights — paired per scale */
+  --v3-leading-display-xl: 1.1;
+  --v3-leading-display-lg: 1.15;
+  --v3-leading-display-md: 1.2;
+  --v3-leading-heading-lg: 1.3;
+  --v3-leading-heading-md: 1.4;
+  --v3-leading-body-lg:    1.6;
+  --v3-leading-body:       1.6;
+  --v3-leading-body-sm:    1.5;
+  --v3-leading-label:      1.4;
+
+  /* Letter spacing */
+  --v3-tracking-tight:  -0.02em;
+  --v3-tracking-normal:  0em;
+  --v3-tracking-label:   0.08em;   /* uppercase mono labels */
+
+  /* ── 3. SPACING & LAYOUT ───────────────────────────────────────── */
+
+  --v3-space-1:  4px;
+  --v3-space-2:  8px;
+  --v3-space-3:  12px;
+  --v3-space-4:  16px;
+  --v3-space-5:  24px;
+  --v3-space-6:  32px;
+  --v3-space-7:  48px;
+  --v3-space-8:  64px;
+  --v3-space-9:  96px;
+  --v3-space-10: 128px;
+  --v3-space-11: 160px;
+
+  --v3-content-max-w:   1200px;
+  --v3-gutter-desktop:  40px;
+  --v3-gutter-mobile:   20px;
+
+  /* ── 4. RADIUS / SHADOW / GRADIENT — zero everywhere ───────────── */
+
+  --v3-radius-none:   0;
+  --v3-shadow-none:   none;
+  --v3-gradient-none: none;
+
+  /* ── 5. MOTION (slow, editorial) ───────────────────────────────── */
+
+  --v3-dur-fast:  120ms;
+  --v3-dur:       200ms;
+  --v3-dur-slow:  320ms;
+  --v3-ease:      cubic-bezier(0.4, 0, 0.2, 1);
+  --v3-ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── V3-root context — base typography + zero radius/shadows ───────────
+ * Applied by <Section>. The existing global `* { border-radius: 0 !important }`
+ * in index.css already sets zero radius universally; here we mirror it
+ * inside v3-root as a defense-in-depth layer, and set shadows to none.
+ */
+.v3-root,
+.v3-root *,
+.v3-root *::before,
+.v3-root *::after {
+  border-radius: var(--v3-radius-none) !important;
+  box-shadow: var(--v3-shadow-none) !important;
+  /* Gradients can't be universally killed via a single property without
+     also wiping `background-color`. Individual primitives set `background
+     -image: none` where a gradient is possible via inherited utility. */
+}
+
+/* V3-root base font body is Inter 400, line-height 1.6, ink on cream */
+.v3-root {
+  font-family: var(--v3-font-body);
+  font-weight: var(--v3-weight-regular);
+  line-height: var(--v3-leading-body);
+  background: var(--v3-color-cream);
+  color: var(--v3-color-ink);
+}
+
+/* Selection: fuchsia bg, cream text */
+.v3-root ::selection {
+  background: var(--v3-color-fuchsia);
+  color: var(--v3-color-cream);
+}
+
+/* Dark-mode variant of v3-root */
+.v3-root[data-bg-mode="dark"] {
+  background: var(--v3-color-dark);
+  color: var(--v3-color-paper);
+}
+
+/* ── Color-mode utilities inside v3-root ─────────────────────────────── */
+.v3-root .v3-text-ink         { color: var(--v3-color-ink); }
+.v3-root .v3-text-ink-sec     { color: var(--v3-color-ink-secondary); }
+.v3-root .v3-text-ink-muted   { color: var(--v3-color-ink-muted); }
+.v3-root .v3-text-paper       { color: var(--v3-color-paper); }
+.v3-root .v3-text-paper-sec   { color: var(--v3-color-paper-secondary); }
+.v3-root .v3-text-paper-muted { color: var(--v3-color-paper-muted); }
+.v3-root .v3-text-fuchsia     { color: var(--v3-color-fuchsia); }
+.v3-root .v3-text-teal        { color: var(--v3-color-teal); }
+
+.v3-root .v3-bg-cream { background: var(--v3-color-cream); }
+.v3-root .v3-bg-dark  { background: var(--v3-color-dark); color: var(--v3-color-paper); }
+.v3-root .v3-bg-white { background: var(--v3-color-white); }
+.v3-root .v3-bg-fuchsia-soft { background: var(--v3-color-fuchsia-soft); }
+.v3-root .v3-bg-teal-soft    { background: var(--v3-color-teal-soft); }
+
+/* ── Container / editorial column ────────────────────────────────────── */
+.v3-container {
+  width: 100%;
+  max-width: var(--v3-content-max-w);
+  margin-inline: auto;
+  padding-inline: var(--v3-gutter-desktop);
+}
+
+@media (max-width: 767px) {
+  .v3-container { padding-inline: var(--v3-gutter-mobile); }
+}
