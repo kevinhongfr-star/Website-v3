@@ -1,0 +1,167 @@
+// ═══════════════════════════════════════════════════════════
+// SPARK Results Page — dynamic ResultsPanel driven by Akira ScoreResult.
+// X2-3: Reads answers from sessionStorage (written by SparkTakePage),
+// scores client-side, and renders via the generic ResultsPanel.
+// Brand: AMBER accent, system serif headings, zero border radius.
+// ═══════════════════════════════════════════════════════════
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowRight, RotateCcw } from 'lucide-react';
+import { ResultsPanel } from '@/components/assessment/ResultsPanel';
+import { scoreAssessment } from '@/services/assessmentEngine';
+import type { ScoreResult } from '@/lib/akira/engine';
+import { AMBER, DS, GRAY_600, GRAY_300, INK } from '@/tokens';
+
+const SESSION_KEY = 'assessment_answers_SPARK_latest';
+
+// ── Loading state ──────────────────────────────────────────────────
+function LoadingScreen() {
+  return (
+    <div style={{
+      background: DS.bgAlt, minHeight: '100vh', display: 'flex',
+      alignItems: 'center', justifyContent: 'center',
+      fontFamily: DS.bodyFont,
+    }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          width: 32, height: 32, border: `2px solid ${GRAY_300}`,
+          borderTopColor: AMBER,
+          animation: 'spin 350ms linear infinite',
+          margin: '0 auto 24px',
+        }} />
+        <p style={{ color: GRAY_600, fontSize: 14 }}>Scoring your SPARK results…</p>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    </div>
+  );
+}
+
+// ── Empty state — no answers found (direct visit / cleared storage) ──
+function EmptyState() {
+  return (
+    <div style={{
+      background: DS.bgAlt, minHeight: '100vh', color: INK,
+      fontFamily: DS.bodyFont, display: 'flex',
+      alignItems: 'center', justifyContent: 'center', padding: '48px 32px',
+    }}>
+      <div style={{ maxWidth: 480, textAlign: 'center' }}>
+        <div style={{
+          fontFamily: DS.monoFont, textTransform: 'uppercase',
+          letterSpacing: '0.08em', color: AMBER, fontSize: 10, marginBottom: 16,
+        }}>
+          SPARK · No results yet
+        </div>
+        <h1 style={{
+          fontFamily: DS.headingFont, fontSize: 28, fontWeight: 700,
+          color: INK, lineHeight: 1.25, marginBottom: 16,
+        }}>
+          Take the assessment to see your results
+        </h1>
+        <p style={{ fontSize: 15, color: GRAY_600, lineHeight: 1.6, marginBottom: 32 }}>
+          Your SPARK results will appear here once you complete the assessment. It takes about nine minutes.
+        </p>
+        <Link
+          to="/assessment/spark/take"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '14px 28px', background: AMBER, color: '#FFFFFF',
+            textDecoration: 'none', fontWeight: 600, fontSize: 15,
+          }}
+        >
+          Begin SPARK assessment <ArrowRight style={{ width: 18, height: 18 }} />
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export function SparkResultsPage() {
+  const { id } = useParams<{ id: string }>();
+  const [state, setState] = useState<{
+    loading: boolean;
+    result: ScoreResult | null;
+    hasAnswers: boolean;
+  }>({ loading: true, result: null, hasAnswers: false });
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      // Read answers stashed by SparkTakePage. Prefer a resultId-scoped key,
+      // then fall back to the "latest" session key.
+      const scopedKey = `assessment_answers_SPARK_${id}`;
+      const raw = sessionStorage.getItem(scopedKey) || sessionStorage.getItem(SESSION_KEY);
+      if (!raw) {
+        if (!cancelled) setState({ loading: false, result: null, hasAnswers: false });
+        return;
+      }
+      try {
+        const answers = JSON.parse(raw) as Record<string, number>;
+        const out = await scoreAssessment('SPARK', answers, { persist: false });
+        if (!cancelled) {
+          if (out.ok) {
+            setState({ loading: false, result: out.result, hasAnswers: true });
+          } else {
+            setState({ loading: false, result: null, hasAnswers: false });
+          }
+        }
+      } catch {
+        if (!cancelled) setState({ loading: false, result: null, hasAnswers: false });
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [id]);
+
+  const handleDownloadPDF = () => {
+    // PDF export is X2-5 / Y1 territory. No-op stub keeps ResultsPanel contract.
+  };
+
+  if (state.loading) return <LoadingScreen />;
+  if (!state.hasAnswers || !state.result) return <EmptyState />;
+
+  return (
+    <div style={{
+      background: DS.bgAlt, minHeight: '100vh', color: INK,
+      fontFamily: DS.bodyFont, padding: '48px 32px 80px',
+    }}>
+      <div style={{ maxWidth: 800, margin: '0 auto', width: '100%' }}>
+        <ResultsPanel
+          assessmentCode="SPARK"
+          scoreResult={state.result}
+          accentColor={AMBER}
+          onDownloadPDF={handleDownloadPDF}
+          isGeneratingPDF={false}
+        />
+        {/* Retake + landing links */}
+        <div style={{
+          display: 'flex', justifyContent: 'center', gap: 24,
+          marginTop: 32, flexWrap: 'wrap',
+        }}>
+          <Link
+            to="/assessment/spark/take"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '12px 24px', background: 'transparent',
+              border: `1px solid ${GRAY_300}`, color: INK,
+              textDecoration: 'none', fontWeight: 500, fontSize: 14,
+            }}
+          >
+            <RotateCcw style={{ width: 16, height: 16 }} /> Retake assessment
+          </Link>
+          <Link
+            to="/assessment/spark"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '12px 24px', color: GRAY_600,
+              textDecoration: 'none', fontWeight: 500, fontSize: 14,
+            }}
+          >
+            Back to SPARK overview <ArrowRight style={{ width: 16, height: 16 }} />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default SparkResultsPage;

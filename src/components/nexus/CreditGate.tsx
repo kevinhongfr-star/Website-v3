@@ -1,0 +1,157 @@
+import React, { useState, useEffect } from 'react';
+import { Crown, Zap, Sparkles, ArrowRight, X } from 'lucide-react';
+import { getCreditBalance, spendCredits, checkAndGrantDailyCredits } from '@/services/creditService';
+import { useAuthStore } from '@/stores/authStore';
+
+interface CreditGateProps {
+  messageCount: number;
+  onApproved: (reason: 'intro_tier' | 'credit_deducted') => void;
+  onUpgrade: () => void;
+  onCancel: () => void;
+}
+
+interface CreditCheckResult {
+  allowed: boolean;
+  reason: 'intro_tier' | 'credit_deducted' | 'insufficient_credits';
+  balance?: number;
+}
+
+export function CreditGate({ messageCount, onApproved, onUpgrade, onCancel }: CreditGateProps) {
+  const { user, profile } = useAuthStore();
+  const [loading, setLoading] = useState(true);
+  const [result, setResult] = useState<CreditCheckResult | null>(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const INTRO_TIER_LIMIT = 5;
+
+  useEffect(() => {
+    const checkCredits = async () => {
+      setLoading(true);
+      
+      try {
+        if (messageCount <= INTRO_TIER_LIMIT) {
+          setResult({ allowed: true, reason: 'intro_tier' });
+          onApproved('intro_tier');
+          return;
+        }
+
+        if (!user?.id) {
+          setResult({ allowed: false, reason: 'insufficient_credits', balance: 0 });
+          setShowModal(true);
+          return;
+        }
+
+        await checkAndGrantDailyCredits(user.id);
+        const creditInfo = await getCreditBalance(user.id);
+        
+        if (!creditInfo || creditInfo.balance < 1) {
+          setResult({ allowed: false, reason: 'insufficient_credits', balance: creditInfo?.balance || 0 });
+          setShowModal(true);
+          return;
+        }
+
+        const spendResult = await spendCredits(user.id, 1, 'chat_message');
+        if (spendResult.success) {
+          setResult({ allowed: true, reason: 'credit_deducted', balance: spendResult.newBalance });
+          onApproved('credit_deducted');
+        } else {
+          setResult({ allowed: false, reason: 'insufficient_credits', balance: creditInfo.balance });
+          setShowModal(true);
+        }
+      } catch (error) {
+        console.error('[CreditGate] Error checking credits:', error);
+        setResult({ allowed: false, reason: 'insufficient_credits', balance: 0 });
+        setShowModal(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkCredits();
+  }, [messageCount, user?.id, onApproved]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="w-6 h-6 border-2 border-accent border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  if (!result?.allowed && showModal) {
+    const r = result!;
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white max-w-md w-full overflow-hidden shadow-2xl">
+          <button
+            onClick={onCancel}
+            className="absolute top-4 right-4 p-2 text-text-muted hover:text-text-primary transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="p-6">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-8 h-8 text-accent" />
+              </div>
+              <h3 className="text-xl font-bold text-text-primary mb-2">
+                {r.balance === 0 ? 'Out of miles' : 'Low miles'}
+              </h3>
+              <p className="text-text-muted text-sm">
+                {r.balance === 0 
+                  ? 'Executive Introduction conversations are limited. Add a Starter plan to unlock miles and open all 6 leadership assessments.'
+                  : `You have ${r.balance} mi remaining.`
+                }
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <button
+                onClick={onUpgrade}
+                className="w-full py-3 px-4 bg-accent text-white font-medium hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
+              >
+                <Crown className="w-5 h-5" />
+                Upgrade to Starter
+              </button>
+
+              <button
+                onClick={onCancel}
+                className="w-full py-3 px-4 bg-bg-tertiary text-text-primary font-medium hover:bg-bg-secondary transition-colors"
+              >
+                Maybe Later
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-accent/5 to-transparent p-6 border-t border-border">
+            <h4 className="font-semibold text-text-primary mb-3 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-accent" />
+              Starter Benefits
+            </h4>
+            <ul className="space-y-2 text-sm text-text-muted">
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-accent" />
+                50 mi monthly allowance
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-accent" />
+                All 6 leadership assessments unlocked
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-accent" />
+                Personalised assessment reports
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-accent" />
+                NEXUS miles earning
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}

@@ -1,0 +1,27 @@
+User-agent: *
+Allow: /$
+Allow: /assessments$
+Allow: /assessment/[a-z-]+$
+Allow: /pricing$
+Allow: /b2b$
+Allow: /dex$
+Allow: /terms$
+Allow: /privacy$
+Allow: /cookies$
+Disallow: /api/
+Disallow: /app/
+Disallow: /member/
+Disallow: /admin/
+Disallow: /consultant/
+Disallow: /candidate/
+Disallow: /client/
+Disallow: /login$
+Disallow: /signup$
+Disallow: /reset-password$
+Disallow: /share/
+Disallow: /nexus/chat$
+Disallow: /assessment/*/take
+Disallow: /assessment/*/results
+Disallow: /*?*
+
+Sitemap: /sitemap.xml
