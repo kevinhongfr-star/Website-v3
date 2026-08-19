@@ -1,16 +1,16 @@
 /**
- * PricingPage — V3.4 VISUAL REWORK (V1 foundation)
+ * PricingPage — V3.4 VISUAL REWORK (V3 design system)
  *
- * Full pricing page. V1 light-mode line-art system. Sections top→bottom:
- *   1. Nav          — wordmark + nav links + "Begin with your positioning" CTA
- *   2. Hero         — eyebrow "Membership" + display headline + sub + billing toggle
- *   3. Tiers        — 3-tier grid: Explorer (complimentary) / Professional $99
- *                     (recommended, fuchsia) / Executive $199
- *   4. Comparison   — feature comparison table (rows × 3 tiers)
- *   5. Human Depth  — add-on section (Bronze / Silver / Gold packages, fuchsia accent)
- *   6. FAQ          — short accordion
- *   7. Final CTA    — teal-900 dark, inverted button
- *   8. Footer       — minimal
+ * Full pricing page. V3 editorial system. Sections top→bottom:
+ *   HEADER. Nav         — wordmark + nav links + "Begin with your positioning" CTA
+ *   1. Hero         — eyebrow "Membership" + display headline + sub + billing toggle
+ *   2. Tiers        — 3-tier grid: Explorer (complimentary) / Professional $99
+ *                     (recommended, teal) / Executive $199
+ *   3. Comparison   — feature comparison table (rows × 3 tiers)
+ *   4. Human Depth  — add-on section (Bronze / Silver / Gold packages, teal accent)
+ *   5. FAQ          — short accordion
+ *   6. Final CTA    — dark, inverted button
+ *   7. Footer       — minimal
  *
  * Naming rules (enforced):
  *  - "Membership" not "Pricing" in section eyebrow (page route stays /pricing)
@@ -25,17 +25,18 @@
  */
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronDown } from 'lucide-react';
 import { SEO } from '@/components/seo/SEO';
 import { trackBillingView } from '@/analytics/eventTracker';
 import { useAuthStore } from '@/stores/authStore';
-import { V1 } from '@/styles/v1-tokens';
 import { initScrollReveal } from '@/lib/utils';
 import { PRICING_TIERS } from '@/config/pricingData';
 import type { BillingCycle, PricingCurrency } from '@/config/tiers';
 import { usePricingCta } from '@/components/pricing/usePricingCta';
+import { Section, Eyebrow, Button, Divider, PricingTextTable, CapabilityRow } from '@/components/ui/v3';
 
 /* ── 3-tier membership display (landing shows 3 of the real 5 tiers) ──
- * Explorer $0 (complimentary) · Professional $99 (recommended, fuchsia)
+ * Explorer $0 (complimentary) · Professional $99 (recommended, teal)
  * · Executive $199. Human coaching is a separate add-on layer, not shown here.
  *
  * PRICING_TIERS (from pricingData.ts) is the source of truth for the 5 real
@@ -105,7 +106,7 @@ const COMPARISON_ROWS: ComparisonRow[] = [
 ];
 
 /* ── Human Depth add-on packages (Bronze / Silver / Gold) ──
- * Separate layer from AI subscription. Fuchsia accent (recommended = Silver).
+ * Separate layer from AI subscription. Teal accent (recommended = Silver).
  */
 interface HumanPackage {
   name: string;
@@ -165,48 +166,49 @@ export function PricingPage({ onUpgradeSuccess }: PricingPageProps) {
   }, []);
 
   return (
-    <div style={{ background: V1.bg, color: V1.text, minHeight: '100vh' }}>
+    <div style={{ background: 'var(--v3-color-cream)', color: 'var(--v3-color-ink)', minHeight: '100vh' }}>
       <SEO page="pricing" />
 
-      {/* ════════════════ 1. NAV ════════════════ */}
-      <nav className="v1-nav">
-        <div className="v1-nav-inner">
-          <Link to="/" className="v1-wordmark" aria-label="NEXUS home">
-            NEXUS<span className="v1-dot">.</span>
+      {/* ════════════════ HEADER / NAV ════════════════ */}
+      <Section bg="white" paddingY="sm" scope={false} style={{ borderBottom: '1px solid var(--v3-color-divider)', paddingBlock: 'var(--v3-space-5)' }}>
+        <div className="v3-root" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--v3-space-4)' }}>
+          <Link to="/" aria-label="NEXUS home" style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', fontWeight: 500, color: 'var(--v3-color-ink)', textDecoration: 'none', textTransform: 'uppercase' }}>
+            NEXUS.
           </Link>
-          <div className="v1-nav-links v1-hidden-mobile">
-            <Link to="/#how-it-works">How it works</Link>
-            <Link to="/#lenses">Lenses</Link>
-            <a href="#membership">Membership</a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--v3-space-6)', flexWrap: 'wrap' }}>
+            <Link to="/nexus/chat" style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: 'var(--v3-color-ink-secondary)', textDecoration: 'none', fontWeight: 400 }}>Chat</Link>
+            <Link to="/#lenses" style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: 'var(--v3-color-ink-secondary)', textDecoration: 'none', fontWeight: 400 }}>Lenses</Link>
           </div>
-          <div className="v1-nav-cta">
-            <Link to="/nexus/chat" className="v1-btn v1-btn-primary">
-              Begin with your positioning <span aria-hidden="true">→</span>
-            </Link>
-          </div>
+          <Button variant="primary" accent="teal" href="/nexus/chat">
+            Begin with your positioning
+          </Button>
         </div>
-      </nav>
+      </Section>
 
-      <div style={{ height: V1.navHeight }} />
-
-      {/* ════════════════ 2. HERO ════════════════ */}
-      <header className="v1-marketing v1-section" style={{ paddingTop: 80, paddingBottom: 56, textAlign: 'center' }}>
-        <div style={{ maxWidth: 760, margin: '0 auto' }}>
-          <div className="v1-eyebrow" style={{ textAlign: 'center' }}>Membership</div>
-          <h1 className="v1-display reveal" style={{ fontSize: V1.textDisplay, margin: '8px 0 16px', lineHeight: V1.leadingDisplay }}>
-            Three ways in. One thread underneath.
-          </h1>
-          <p className="reveal" style={{ fontFamily: V1.bodyFont, fontSize: V1.textBodyLg, lineHeight: V1.leadingBody, color: V1.textSecondary, maxWidth: 560, margin: '0 auto 32px' }}>
+      {/* ════════════════ 1. HERO ════════════════ */}
+      <Section bg="cream" paddingY="xl" id="membership">
+        <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto' }}>
+          <Eyebrow accent="teal" style={{ textAlign: 'center', display: 'block' }}>Membership</Eyebrow>
+          <h2 className="reveal" style={{ fontFamily: 'var(--v3-font-display)', fontSize: 'var(--v3-text-displayLG)', lineHeight: 1.15, fontWeight: 400, color: 'var(--v3-color-ink)', margin: '8px 0 16px', letterSpacing: '-0.02em' }}>
+            One subscription. The whole catalog.
+          </h2>
+          <p className="reveal" style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-bodyLG)', lineHeight: 1.6, color: 'var(--v3-color-ink-secondary)', maxWidth: 560, margin: '0 auto 32px' }}>
             Pick the depth that matches where you are. Change it whenever the work changes.
           </p>
           {/* Billing toggle */}
-          <div className="reveal" style={{ display: 'inline-flex', alignItems: 'center', gap: 0, border: `1px solid ${V1.border}`, background: V1.surface }}>
+          <div className="reveal" style={{ display: 'inline-flex', alignItems: 'center', gap: 0 }}>
             <button
               onClick={() => setCycle('monthly')}
               style={{
-                fontFamily: V1.bodyFont, fontSize: V1.textBodySm, padding: '10px 16px',
-                background: cycle === 'monthly' ? V1.text : 'transparent', color: cycle === 'monthly' ? V1.surface : V1.textSecondary,
-                border: 'none', cursor: 'pointer', fontWeight: V1.fwSemibold,
+                fontFamily: 'var(--v3-font-body)',
+                fontSize: 'var(--v3-text-body)',
+                padding: '10px 20px',
+                background: 'transparent',
+                color: cycle === 'monthly' ? 'var(--v3-color-teal)' : 'var(--v3-color-ink-muted)',
+                border: `1px solid ${cycle === 'monthly' ? 'var(--v3-color-teal)' : 'var(--v3-color-divider)'}`,
+                borderRight: cycle === 'monthly' ? '1px solid var(--v3-color-teal)' : '1px solid var(--v3-color-divider)',
+                cursor: 'pointer',
+                fontWeight: 500,
               }}
             >
               Monthly
@@ -214,163 +216,250 @@ export function PricingPage({ onUpgradeSuccess }: PricingPageProps) {
             <button
               onClick={() => setCycle('annual')}
               style={{
-                fontFamily: V1.bodyFont, fontSize: V1.textBodySm, padding: '10px 16px',
-                background: cycle === 'annual' ? V1.text : 'transparent', color: cycle === 'annual' ? V1.surface : V1.textSecondary,
-                border: 'none', cursor: 'pointer', fontWeight: V1.fwSemibold, display: 'inline-flex', alignItems: 'center', gap: 8,
+                fontFamily: 'var(--v3-font-body)',
+                fontSize: 'var(--v3-text-body)',
+                padding: '10px 20px',
+                background: 'transparent',
+                color: cycle === 'annual' ? 'var(--v3-color-teal)' : 'var(--v3-color-ink-muted)',
+                border: `1px solid ${cycle === 'annual' ? 'var(--v3-color-teal)' : 'var(--v3-color-divider)'}`,
+                borderLeft: 'none',
+                cursor: 'pointer',
+                fontWeight: 500,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
               }}
             >
-              Annual <span className="v1-mono" style={{ fontSize: 10, border: `1px solid ${cycle === 'annual' ? V1.surface : V1.teal600}`, padding: '1px 5px', color: cycle === 'annual' ? V1.surface : V1.teal600 }}>SAVE 15%</span>
+              Annual <span style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 10, border: `1px solid ${cycle === 'annual' ? 'var(--v3-color-teal)' : 'var(--v3-color-ink-muted)'}`, padding: '1px 5px', color: cycle === 'annual' ? 'var(--v3-color-teal)' : 'var(--v3-color-ink-muted)' }}>SAVE 15%</span>
             </button>
           </div>
         </div>
-      </header>
+      </Section>
 
-      {/* ════════════════ 3. TIERS ════════════════ */}
-      <section id="membership" className="v1-marketing v1-section" style={{ paddingTop: 0, paddingBottom: 80 }}>
-        <div id="pricing-tier-cards" className="v1-grid-pricing" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: V1.shellGap }}>
-          {LANDING_TIERS.map(tier => {
+      {/* ════════════════ 2. TIERS ════════════════ */}
+      <Section bg="white" paddingY="lg" style={{ borderTop: '1px solid var(--v3-color-divider)', borderBottom: '1px solid var(--v3-color-divider)' }}>
+        <div id="pricing-tier-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 0 }}>
+          {LANDING_TIERS.map((tier, idx) => {
             const realTier = PRICING_TIERS.find(t => t.key === tier.key);
-            const cta = realTier ? getCta(realTier.key as any) : { label: tier.price === 0 ? 'Begin' : `Choose ${tier.name}`, href: '/nexus/chat' };
+            const cta = realTier ? getCta(realTier.key as any) : { label: tier.price === 0 ? 'Begin complimentary' : `Go ${tier.name}`, href: '/nexus/chat' };
+            const isRec = !!tier.recommended;
+            const showLeftBorder = idx > 0;
             return (
               <div
                 key={tier.key}
-                className={`v1-card reveal ${tier.recommended ? 'v1-card-addon' : ''}`}
+                className="reveal"
                 style={{
-                  display: 'flex', flexDirection: 'column', padding: 32, minHeight: 460,
-                  borderColor: tier.recommended ? V1.fuchsia600 : V1.border,
-                  borderWidth: tier.recommended ? 2 : 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: 'var(--v3-space-8) var(--v3-space-6)',
+                  minHeight: 520,
+                  borderLeft: showLeftBorder ? '1px solid var(--v3-color-divider)' : isRec ? '1px solid var(--v3-color-teal)' : 'none',
+                  position: 'relative',
                 }}
               >
-                <div className="v1-mono" style={{ color: tier.recommended ? V1.fuchsia600 : V1.teal700, marginBottom: 8 }}>
-                  {tier.recommended ? 'Recommended' : tier.name}
+                {isRec && (
+                  <div style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', textTransform: 'uppercase', color: 'var(--v3-color-teal)', fontWeight: 500, marginBottom: 'var(--v3-space-4)' }}>
+                    RECOMMENDED
+                  </div>
+                )}
+                <div style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', textTransform: 'uppercase', color: 'var(--v3-color-ink-muted)', marginBottom: isRec ? 'var(--v3-space-2)' : 'var(--v3-space-4)' }}>
+                  {tier.name}
                 </div>
-                <h3 className="v1-display" style={{ fontSize: V1.textH2, margin: '0 0 4px' }}>{tier.name}</h3>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 16 }}>
-                  <span className="v1-display" style={{ fontSize: 36, color: V1.text }}>{tier.price === 0 ? '$0' : `$${tier.price}`}</span>
-                  <span className="v1-mono" style={{ color: V1.textDim }}>{tier.price === 0 ? '' : '/mo'}</span>
+                <h3 style={{ fontFamily: 'var(--v3-font-display)', fontSize: 'var(--v3-text-displayMD)', lineHeight: 1.2, fontWeight: 400, color: 'var(--v3-color-ink)', margin: '0 0 4px', letterSpacing: '-0.01em' }}>{tier.name}</h3>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 'var(--v3-space-5)' }}>
+                  <span style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-headingMD)', color: 'var(--v3-color-ink)', fontWeight: 500 }}>{tier.priceLabel}</span>
                 </div>
-                <p style={{ fontFamily: V1.bodyFont, fontSize: V1.textBodySm, color: V1.textSecondary, lineHeight: V1.leadingBody, margin: '0 0 24px', minHeight: 60 }}>
+                <p style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: 'var(--v3-color-ink-secondary)', lineHeight: 1.6, margin: '0 0 var(--v3-space-5)' }}>
                   {tier.blurb}
                 </p>
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px', flex: 1 }}>
-                  {tier.features.map(f => (
-                    <li key={f} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontFamily: V1.bodyFont, fontSize: V1.textBodySm, color: V1.text, marginBottom: 10 }}>
-                      <span aria-hidden="true" style={{ color: V1.teal600, marginTop: 2, flexShrink: 0 }}>✓</span>
-                      <span>{f}</span>
-                    </li>
+                <div style={{ flex: 1, marginBottom: 'var(--v3-space-5)' }}>
+                  {tier.features.map((f, fi) => (
+                    <div key={f} style={{ paddingBlock: 'var(--v3-space-3)' }}>
+                      {fi > 0 && <Divider variant="light" width="content" style={{ marginBottom: 'var(--v3-space-3)' }} />}
+                      <div style={{ display: 'flex', gap: 'var(--v3-space-3)', alignItems: 'flex-start' }}>
+                        <span aria-hidden="true" style={{ color: 'var(--v3-color-teal)', fontFamily: 'var(--v3-font-mono)', marginTop: 1, flexShrink: 0 }}>✓</span>
+                        <span style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: 'var(--v3-color-ink)' }}>{f}</span>
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
                 <div style={{ marginTop: 'auto' }}>
-                  <button
-                    onClick={() => {
-                      if (realTier) handleSelectTier(realTier.key as any, cycle);
-                      else onPrimaryCta();
-                    }}
-                    className={`v1-btn ${tier.recommended ? 'v1-btn-primary' : 'v1-btn-secondary'}`}
-                    style={{ width: '100%' }}
-                  >
-                    {tier.price === 0 ? 'Begin' : `Choose ${tier.name}`} <span aria-hidden="true">→</span>
-                  </button>
+                  {isRec ? (
+                    <Button
+                      variant="primary"
+                      accent="teal"
+                      onClick={() => {
+                        if (realTier) handleSelectTier(realTier.key as any, cycle);
+                        else onPrimaryCta();
+                      }}
+                      style={{ width: '100%' }}
+                    >
+                      Go Professional
+                    </Button>
+                  ) : tier.price === 0 ? (
+                    <Button
+                      variant="ghost"
+                      accent="teal"
+                      onClick={() => {
+                        if (realTier) handleSelectTier(realTier.key as any, cycle);
+                        else onPrimaryCta();
+                      }}
+                      style={{ width: '100%', justifyContent: 'center' }}
+                    >
+                      Start complimentary
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      accent="teal"
+                      onClick={() => {
+                        if (realTier) handleSelectTier(realTier.key as any, cycle);
+                        else onPrimaryCta();
+                      }}
+                      style={{ width: '100%', justifyContent: 'center' }}
+                    >
+                      Go Executive
+                    </Button>
+                  )}
                 </div>
               </div>
             );
           })}
         </div>
-        <p className="v1-mono" style={{ textAlign: 'center', marginTop: 32, color: V1.textDim }}>
+        <p style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', textAlign: 'center', marginTop: 'var(--v3-space-7)', color: 'var(--v3-color-ink-muted)' }}>
           All tiers include the 11-lens catalog at the mile cost shown. Human coaching sold separately.
         </p>
-      </section>
+      </Section>
 
-      {/* ════════════════ 4. COMPARISON TABLE ════════════════ */}
-      <section className="v1-section" style={{ background: V1.surfaceAlt, borderTop: `1px solid ${V1.border}`, borderBottom: `1px solid ${V1.border}`, padding: '64px 0' }}>
-        <div className="v1-marketing">
-          <div className="v1-eyebrow">Compare</div>
-          <h2 className="v1-display reveal" style={{ fontSize: V1.textH1, margin: '8px 0 32px' }}>What each tier includes.</h2>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: V1.bodyFont, fontSize: V1.textBodySm }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${V1.dividerStrong}` }}>
-                  <th style={{ textAlign: 'left', padding: '16px 12px', fontFamily: V1.monoFont, fontSize: V1.textCaption, letterSpacing: V1.trackingMono, textTransform: 'uppercase', color: V1.textDim, fontWeight: V1.fwSemibold }}>Feature</th>
-                  {LANDING_TIERS.map(t => (
-                    <th key={t.key} style={{ textAlign: 'left', padding: '16px 12px', fontFamily: V1.displayFont, fontSize: V1.textH3, color: V1.text, fontWeight: V1.fwSemibold }}>
-                      {t.name}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {COMPARISON_ROWS.map((row, i) => (
-                  <tr key={row.feature} style={{ borderBottom: `1px solid ${V1.dividerRow}` }}>
-                    <td style={{ padding: '14px 12px', color: V1.text, fontWeight: V1.fwMedium }}>{row.feature}</td>
-                    <td style={{ padding: '14px 12px', color: row.explorer === '—' ? V1.textDim : V1.textSecondary }}>{row.explorer}</td>
-                    <td style={{ padding: '14px 12px', color: row.professional === '—' ? V1.textDim : V1.textSecondary }}>{row.professional}</td>
-                    <td style={{ padding: '14px 12px', color: row.executive === '—' ? V1.textDim : V1.textSecondary }}>{row.executive}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      {/* ════════════════ 3. COMPARISON TABLE ════════════════ */}
+      <Section bg="cream" paddingY="lg">
+        <div style={{ marginBottom: 'var(--v3-space-7)' }}>
+          <Eyebrow accent="teal">Full comparison</Eyebrow>
         </div>
-      </section>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid var(--v3-color-divider-strong)' }}>
+                <th style={{ textAlign: 'left', padding: '16px 12px', fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', textTransform: 'uppercase', color: 'var(--v3-color-ink-muted)', fontWeight: 500 }}>Feature</th>
+                {LANDING_TIERS.map(t => (
+                  <th key={t.key} style={{ textAlign: 'left', padding: '16px 12px', fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', textTransform: 'uppercase', color: t.recommended ? 'var(--v3-color-teal)' : 'var(--v3-color-ink)', fontWeight: 500 }}>
+                    {t.name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON_ROWS.map((row) => (
+                <tr key={row.feature} style={{ borderBottom: '1px solid var(--v3-color-divider)' }}>
+                  <td style={{ padding: '16px 12px', fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-body)', color: 'var(--v3-color-ink)', fontWeight: 400 }}>{row.feature}</td>
+                  <td style={{ padding: '16px 12px', fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: row.explorer === '—' ? 'var(--v3-color-ink-muted)' : 'var(--v3-color-ink-secondary)' }}>{row.explorer}</td>
+                  <td style={{ padding: '16px 12px', fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: row.professional === '—' ? 'var(--v3-color-ink-muted)' : 'var(--v3-color-ink-secondary)' }}>{row.professional}</td>
+                  <td style={{ padding: '16px 12px', fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: row.executive === '—' ? 'var(--v3-color-ink-muted)' : 'var(--v3-color-ink-secondary)' }}>{row.executive}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
 
-      {/* ════════════════ 5. HUMAN DEPTH ADD-ON ════════════════ */}
-      <section className="v1-marketing v1-section" style={{ paddingTop: 80, paddingBottom: 80 }}>
-        <div style={{ marginBottom: 40, textAlign: 'center' }}>
-          <div className="v1-eyebrow" style={{ textAlign: 'center' }}>Human Depth</div>
-          <h2 className="v1-display reveal" style={{ fontSize: V1.textH1, margin: '8px 0 16px' }}>When the readout deserves a human.</h2>
-          <p className="reveal" style={{ fontFamily: V1.bodyFont, fontSize: V1.textBodyLg, color: V1.textSecondary, maxWidth: 560, margin: '0 auto', lineHeight: V1.leadingBody }}>
+      {/* ════════════════ 4. HUMAN DEPTH ADD-ONS ════════════════ */}
+      <Section bg="white" paddingY="lg" style={{ borderTop: '1px solid var(--v3-color-divider)', borderBottom: '1px solid var(--v3-color-divider)' }}>
+        <div style={{ marginBottom: 'var(--v3-space-8)', textAlign: 'center' }}>
+          <Eyebrow accent="teal" style={{ textAlign: 'center', display: 'block' }}>Human Depth</Eyebrow>
+          <h2 className="reveal" style={{ fontFamily: 'var(--v3-font-display)', fontSize: 'var(--v3-text-displayMD)', lineHeight: 1.2, fontWeight: 400, color: 'var(--v3-color-ink)', margin: '8px 0 16px', letterSpacing: '-0.01em' }}>When the readout deserves a human.</h2>
+          <p className="reveal" style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-bodyLG)', color: 'var(--v3-color-ink-secondary)', maxWidth: 560, margin: '0 auto', lineHeight: 1.6 }}>
             A separate add-on layer — not part of any AI membership. Book debriefs by the session or as a sustained partnership.
           </p>
         </div>
-        <div className="v1-grid-pricing" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: V1.shellGap }}>
-          {HUMAN_PACKAGES.map(pkg => (
-            <div
-              key={pkg.name}
-              className={`v1-card reveal ${pkg.recommended ? 'v1-card-addon' : ''}`}
-              style={{ padding: 28, borderColor: pkg.recommended ? V1.fuchsia600 : V1.border, borderWidth: pkg.recommended ? 2 : 1 }}
-            >
-              <div className="v1-mono" style={{ color: pkg.recommended ? V1.fuchsia600 : V1.teal700, marginBottom: 8 }}>
-                {pkg.recommended ? 'Recommended' : pkg.name}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 0 }}>
+          {HUMAN_PACKAGES.map((pkg, idx) => {
+            const showLeftBorder = idx > 0;
+            return (
+              <div
+                key={pkg.name}
+                className="reveal"
+                style={{
+                  padding: 'var(--v3-space-7) var(--v3-space-6)',
+                  borderLeft: showLeftBorder ? '1px solid var(--v3-color-divider)' : 'none',
+                }}
+              >
+                {pkg.recommended && (
+                  <div style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', textTransform: 'uppercase', color: 'var(--v3-color-teal)', fontWeight: 500, marginBottom: 'var(--v3-space-4)' }}>
+                    RECOMMENDED
+                  </div>
+                )}
+                <div style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', textTransform: 'uppercase', color: 'var(--v3-color-ink-muted)', marginBottom: pkg.recommended ? 'var(--v3-space-2)' : 'var(--v3-space-4)' }}>
+                  {pkg.name}
+                </div>
+                <h3 style={{ fontFamily: 'var(--v3-font-display)', fontSize: 'var(--v3-text-headingLG)', lineHeight: 1.3, fontWeight: 400, color: 'var(--v3-color-ink)', margin: '0 0 4px' }}>{pkg.name}</h3>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 'var(--v3-space-5)' }}>
+                  <span style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-headingMD)', color: 'var(--v3-color-ink)', fontWeight: 500 }}>{pkg.price}</span>
+                  <span style={{ fontFamily: 'var(--v3-font-mono)', color: 'var(--v3-color-ink-muted)', fontSize: 'var(--v3-text-label)' }}>· {pkg.sessions}</span>
+                </div>
+                <p style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: 'var(--v3-color-ink-secondary)', lineHeight: 1.6, margin: '0 0 var(--v3-space-6)' }}>
+                  {pkg.blurb}
+                </p>
+                {pkg.recommended ? (
+                  <Button variant="primary" accent="teal" href="/debrief/book" style={{ width: '100%' }}>
+                    Book a debrief
+                  </Button>
+                ) : (
+                  <Button variant="ghost" accent="teal" href="/debrief/book" style={{ width: '100%', justifyContent: 'center' }}>
+                    Book a debrief
+                  </Button>
+                )}
               </div>
-              <h3 className="v1-display" style={{ fontSize: V1.textH2, margin: '0 0 4px' }}>{pkg.name}</h3>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 16 }}>
-                <span className="v1-display" style={{ fontSize: 28, color: V1.text }}>{pkg.price}</span>
-                <span className="v1-mono" style={{ color: V1.textDim }}>· {pkg.sessions}</span>
-              </div>
-              <p style={{ fontFamily: V1.bodyFont, fontSize: V1.textBodySm, color: V1.textSecondary, lineHeight: V1.leadingBody, margin: '0 0 24px' }}>
-                {pkg.blurb}
-              </p>
-              <Link to="/debrief/book" className={`v1-btn ${pkg.recommended ? 'v1-btn-primary' : 'v1-btn-secondary'}`} style={{ width: '100%' }}>
-                Book a debrief <span aria-hidden="true">→</span>
-              </Link>
-            </div>
-          ))}
+            );
+          })}
         </div>
-      </section>
+      </Section>
 
-      {/* ════════════════ 6. FAQ ════════════════ */}
-      <section className="v1-section" style={{ background: V1.surfaceAlt, borderTop: `1px solid ${V1.border}`, borderBottom: `1px solid ${V1.border}`, padding: '64px 0' }}>
-        <div className="v1-marketing" style={{ maxWidth: 760 }}>
-          <div className="v1-eyebrow">FAQ</div>
-          <h2 className="v1-display reveal" style={{ fontSize: V1.textH1, margin: '8px 0 32px' }}>Questions, answered.</h2>
+      {/* ════════════════ 5. FAQ ════════════════ */}
+      <Section bg="cream" paddingY="lg">
+        <div style={{ maxWidth: 760 }}>
+          <div style={{ marginBottom: 'var(--v3-space-7)' }}>
+            <Eyebrow accent="teal">FAQ</Eyebrow>
+            <h2 className="reveal" style={{ fontFamily: 'var(--v3-font-display)', fontSize: 'var(--v3-text-displayMD)', lineHeight: 1.2, fontWeight: 400, color: 'var(--v3-color-ink)', margin: '8px 0 0', letterSpacing: '-0.01em' }}>Questions, answered.</h2>
+          </div>
           <div>
             {FAQ_ITEMS.map((item, i) => {
               const open = openFaq === i;
               return (
-                <div key={i} style={{ borderBottom: `1px solid ${V1.dividerRow}` }}>
+                <div key={i} style={{ borderBottom: '1px solid var(--v3-color-divider)' }}>
                   <button
                     onClick={() => setOpenFaq(open ? null : i)}
                     style={{
-                      width: '100%', textAlign: 'left', padding: '20px 0', background: 'transparent', border: 'none',
-                      display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, cursor: 'pointer',
-                      fontFamily: V1.displayFont, fontSize: V1.textH3, color: V1.text,
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: 'var(--v3-space-5) 0',
+                      background: 'transparent',
+                      border: 'none',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: 'var(--v3-space-4)',
+                      cursor: 'pointer',
                     }}
                   >
-                    <span>{item.q}</span>
-                    <span aria-hidden="true" style={{ color: V1.textDim, fontSize: V1.textBody }}>{open ? '−' : '+'}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--v3-space-4)' }}>
+                      <span style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', textTransform: 'uppercase', color: 'var(--v3-color-teal)', fontWeight: 500, flexShrink: 0 }}>
+                        Q{i + 1}
+                      </span>
+                      <span style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-headingMD)', lineHeight: 1.4, color: 'var(--v3-color-ink)', fontWeight: 400 }}>{item.q}</span>
+                    </div>
+                    <ChevronDown
+                      aria-hidden="true"
+                      size={20}
+                      style={{
+                        color: 'var(--v3-color-ink-muted)',
+                        flexShrink: 0,
+                        transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform var(--v3-dur) var(--v3-ease)',
+                      }}
+                    />
                   </button>
                   {open && (
-                    <p style={{ fontFamily: V1.bodyFont, fontSize: V1.textBody, color: V1.textSecondary, lineHeight: V1.leadingBody, margin: '0 0 20px', maxWidth: 600 }}>
+                    <p style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: 'var(--v3-color-ink-secondary)', lineHeight: 1.6, margin: '0 0 var(--v3-space-5) var(--v3-space-8)', maxWidth: 600 }}>
                       {item.a}
                     </p>
                   )}
@@ -379,39 +468,55 @@ export function PricingPage({ onUpgradeSuccess }: PricingPageProps) {
             })}
           </div>
         </div>
-      </section>
+      </Section>
 
-      {/* ════════════════ 7. FINAL CTA (teal-900 dark, inverted) ════════════════ */}
-      <section className="v1-section-dark" style={{ padding: '96px 0', textAlign: 'center' }}>
-        <div className="v1-marketing">
-          <div style={{ maxWidth: 640, margin: '0 auto' }}>
-            <h2 className="v1-display" style={{ fontSize: V1.textH1, margin: '0 0 16px', color: V1.onDark }}>
-              Begin where you are.
-            </h2>
-            <p style={{ fontFamily: V1.bodyFont, fontSize: V1.textBodyLg, lineHeight: V1.leadingBody, color: V1.onDarkMuted, margin: '0 0 32px' }}>
-              No form to fill out first. The conversation is the onboarding.
-            </p>
-            <Link to="/nexus/chat" className="v1-btn v1-btn-primary v1-on-dark" style={{ padding: '14px 28px' }}>
-              Begin with your positioning <span aria-hidden="true">→</span>
-            </Link>
-          </div>
+      {/* ════════════════ 6. FINAL CTA (dark, inverted) ════════════════ */}
+      <Section bg="dark" paddingY="xl">
+        <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
+          <Eyebrow accent="teal" style={{ textAlign: 'center', display: 'block' }}>Get started</Eyebrow>
+          <h2 style={{ fontFamily: 'var(--v3-font-display)', fontSize: 'var(--v3-text-displayLG)', lineHeight: 1.15, margin: '8px 0 16px', color: 'var(--v3-color-paper)', fontWeight: 400, letterSpacing: '-0.02em' }}>
+            Begin where you are.
+          </h2>
+          <p style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-bodyLG)', lineHeight: 1.6, color: 'var(--v3-color-paper-secondary)', margin: '0 0 32px' }}>
+            No form to fill out first. The conversation is the onboarding.
+          </p>
+          <Button variant="primary" accent="teal" href="/nexus/chat" style={{ paddingInline: '32px' }}>
+            Begin with your positioning
+          </Button>
         </div>
-      </section>
+      </Section>
 
-      {/* ════════════════ 8. FOOTER ════════════════ */}
-      <footer style={{ background: V1.surface, borderTop: `1px solid ${V1.border}`, padding: '40px 0' }}>
-        <div className="v1-marketing" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <Link to="/" className="v1-wordmark">
-            NEXUS<span className="v1-dot">.</span>
+      {/* ════════════════ 7. FOOTER ════════════════ */}
+      <Section bg="white" paddingY="md" style={{ borderTop: '1px solid var(--v3-color-divider)', paddingBlock: 'var(--v3-space-7)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--v3-space-4)' }}>
+          <Link to="/" style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', fontWeight: 500, color: 'var(--v3-color-ink)', textDecoration: 'none', textTransform: 'uppercase' }}>
+            NEXUS.
           </Link>
-          <p className="v1-mono" style={{ color: V1.textDim }}>Your context stays yours.</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--v3-space-6)', flexWrap: 'wrap' }}>
+            <Link to="/nexus/chat" style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: 'var(--v3-color-ink-secondary)', textDecoration: 'none', fontWeight: 400 }}>Chat</Link>
+            <Link to="/#lenses" style={{ fontFamily: 'var(--v3-font-body)', fontSize: 'var(--v3-text-body)', color: 'var(--v3-color-ink-secondary)', textDecoration: 'none', fontWeight: 400 }}>Lenses</Link>
+          </div>
+          <p style={{ fontFamily: 'var(--v3-font-mono)', fontSize: 'var(--v3-text-label)', lineHeight: 'var(--v3-leading-label)', letterSpacing: 'var(--v3-tracking-label)', color: 'var(--v3-color-ink-muted)', margin: 0 }}>Your context stays yours.</p>
         </div>
-      </footer>
+      </Section>
 
       {/* Responsive */}
       <style>{`
         @media (max-width: 900px) {
-          .v1-grid-pricing { grid-template-columns: 1fr !important; }
+          .v3-container > [style*="grid-template-columns: repeat(3"] {
+            grid-template-columns: 1fr !important;
+          }
+          .v3-container > [style*="grid-template-columns: repeat(3"] > * {
+            border-left: none !important;
+            border-top: 1px solid var(--v3-color-divider);
+          }
+          .v3-container > [style*="grid-template-columns: repeat(3"] > *:first-child {
+            border-top: none !important;
+          }
+          .v3-root[style*="justify-content: space-between"] {
+            flex-direction: column;
+            align-items: flex-start !important;
+          }
         }
       `}</style>
     </div>

@@ -7,7 +7,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { BookingFlow } from '@/components/debrief/BookingFlow';
-import { ACCENT, INK, TEXT, MUTED, BG } from '@/tokens';
+import {
+  Section,
+  Eyebrow,
+  Divider,
+} from '@/components/ui/v3';
 
 export function BookDebriefPage() {
   const navigate = useNavigate();
@@ -16,86 +20,75 @@ export function BookDebriefPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Small delay so skeleton paints cleanly on slow mounts.
     const t = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(t);
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh', background: BG }}>
-      {/* Page heading strip */}
-      <div
-        style={{
-          borderBottom: `1px solid ${MUTED}22`,
-          padding: '40px 24px 32px',
-          background: INK,
-          color: '#FFFFFF',
-        }}
-      >
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'var(--v3-color-cream)',
+      }}
+    >
+      <Section bg="dark" paddingY="lg" scope={true}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div
-            style={{
-              fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
-              fontSize: 12,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: MUTED,
-              marginBottom: 12,
-            }}
-          >
-            [Emily: Booking flow eyebrow — placeholder] · Human Debrief
-          </div>
+          <Eyebrow accent="fuchsia">Booking Flow · Human Debrief</Eyebrow>
           <h1
             style={{
-              fontFamily: 'Georgia, "Times New Roman", serif',
-              fontSize: 40,
-              fontWeight: 600,
-              lineHeight: 1.1,
-              margin: 0,
-              color: '#FFFFFF',
+              fontFamily: 'var(--v3-font-display)',
+              fontSize: 'var(--v3-text-display-md)',
+              fontWeight: 300,
+              lineHeight: 'var(--v3-leading-display-md)',
+              letterSpacing: '-0.015em',
+              margin: '12px 0 0',
+              color: 'var(--v3-color-paper)',
             }}
           >
             [Emily: Booking flow page headline — placeholder]
           </h1>
           <p
             style={{
-              fontFamily: 'DM Sans, system-ui, sans-serif',
-              fontSize: 17,
-              lineHeight: 1.6,
-              color: '#CCCCDD',
+              fontFamily: 'var(--v3-font-body)',
+              fontSize: 'var(--v3-text-body)',
+              lineHeight: 'var(--v3-leading-body)',
+              color: 'var(--v3-color-paper-secondary)',
               maxWidth: 640,
               marginTop: 12,
+              marginBottom: 0,
             }}
           >
             [Emily: Booking flow page subhead — placeholder. Three steps: pick a session, find a time, confirm. Live debriefs with certified coaches.]
           </p>
         </div>
-      </div>
+      </Section>
+      <Divider variant="light" width="full" />
 
-      {/* Booking flow body */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '48px 24px 80px' }}>
-        {mounted ? (
-          <BookingFlow
-            initialSessionSlug={initialSessionSlug}
-            onComplete={() => navigate('/app/bookings')}
-            onClose={() => navigate('/debrief')}
-          />
-        ) : (
-          <div
-            style={{
-              height: 480,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: MUTED,
-              fontFamily: 'DM Sans, system-ui, sans-serif',
-              fontSize: 14,
-            }}
-          >
-            Loading booking flow…
-          </div>
-        )}
-      </div>
+      <Section bg="cream" paddingY="xl" scope={true}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          {mounted ? (
+            <BookingFlow
+              initialSessionSlug={initialSessionSlug}
+              onComplete={() => navigate('/app/bookings')}
+              onClose={() => navigate('/debrief')}
+            />
+          ) : (
+            <div
+              style={{
+                height: 480,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--v3-color-ink-muted)',
+                fontFamily: 'var(--v3-font-body)',
+                fontSize: 14,
+              }}
+            >
+              Loading booking flow…
+            </div>
+          )}
+        </div>
+      </Section>
     </div>
   );
 }

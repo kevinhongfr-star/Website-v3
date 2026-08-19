@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, ArrowRight, Loader2, AlertCircle, Shield } from 'lucide-react';
+import { Mail, Lock, Loader2, AlertCircle, Shield } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { getDefaultRoute } from '@/components/auth/PostLoginRedirect';
 import { trackLoginSuccess } from '@/analytics/eventTracker';
 import { reportError } from '@/analytics/errorMonitor';
-import { DS } from '@/tokens';
 import { Logo } from '@/components/ui/Logo';
+import { Section, Eyebrow, Button, Divider } from '@/components/ui/v3';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -17,7 +17,6 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Preload platform route on hover for instant navigation
   const handleMouseEnter = useCallback(() => {
     import('../components/dashboard/ConsultantDashboard');
     import('../components/layout/AppLayout');
@@ -41,13 +40,11 @@ export function LoginPage() {
     setLoading(false);
 
     if (result.success) {
-      // Load profile to determine user role before redirecting
       const store = useAuthStore.getState?.() || {};
       if (store.loadProfile) {
         await store.loadProfile();
       }
       const profile = useAuthStore.getState?.().profile;
-      // Fire login_success event with role context
       trackLoginSuccess('email', profile?.role ?? undefined);
       const target = getDefaultRoute(profile?.role);
       navigate(target);
@@ -58,129 +55,171 @@ export function LoginPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: DS.bg }}>
-      {/* Header */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 32px', borderBottom: `1px solid ${DS.border}` }}>
+    <div style={{ minHeight: '100vh', background: 'var(--v3-color-cream)' }} className="v3-root" data-bg-mode="light">
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 32px', borderBottom: '1px solid var(--v3-color-divider)' }}>
         <Logo size="md" variant="light" />
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-          <Link to="/" style={{ fontSize: '13px', color: DS.muted, textDecoration: 'none' }}>Back to site</Link>
+          <Link to="/" style={{ fontSize: '13px', color: 'var(--v3-color-ink-muted)', textDecoration: 'none', fontFamily: 'var(--v3-font-body)' }}>Back to site</Link>
         </div>
       </nav>
 
-      {/* Login Form */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '64px 24px' }}>
-        <div style={{ maxWidth: '400px', width: '100%' }}>
+      <Divider variant="light" width="full" />
 
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <div style={{ width: '48px', height: '48px',  background: `${DS.accent}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-              <Shield style={{ width: 24, height: 24, color: DS.accent }} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '64px 24px' }}>
+        <div style={{ maxWidth: '420px', width: '100%' }}>
+
+          <div style={{ textAlign: 'left', marginBottom: '32px' }}>
+            <div style={{ width: '48px', height: '48px', border: '1px solid var(--v3-color-divider)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
+              <Shield style={{ width: 24, height: 24, color: 'var(--v3-color-fuchsia)' }} />
             </div>
-            <h1 style={{ fontFamily: DS.headingFont, fontSize: '28px', fontWeight: 600, color: DS.text, margin: '0 0 8px' }}>
-              Platform Access
+            <Eyebrow style={{ marginBottom: '16px' }}>Sign in</Eyebrow>
+            <h1 style={{ fontFamily: 'var(--v3-font-display)', fontSize: '32px', fontWeight: 500, color: 'var(--v3-color-ink)', margin: '0 0 8px', lineHeight: 1.1 }}>
+              System Access
             </h1>
-            <p style={{ fontSize: '14px', color: DS.muted, lineHeight: 1.6 }}>
-              Leadership Intelligence Platform
+            <p style={{ fontSize: '16px', color: 'var(--v3-color-ink-secondary)', lineHeight: 1.6, fontFamily: 'var(--v3-font-body)', margin: '0 0 4px' }}>
+              Leadership Intelligence System
+            </p>
+            <p style={{ fontSize: '14px', color: 'var(--v3-color-ink-muted)', lineHeight: 1.6, fontFamily: 'var(--v3-font-body)', margin: 0 }}>
+              Please sign in to continue
             </p>
           </div>
 
-          <div style={{ background: DS.card, border: `1px solid ${DS.cardBorder}`,  padding: '32px', boxShadow: DS.shadow }}>
-            <form onSubmit={handleSubmit}
-              onMouseEnter={handleMouseEnter}
-            >
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: DS.textSecondary, marginBottom: '8px' }}>
-                  Email
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <Mail style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', width: 18, height: 18, color: DS.muted }} />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@company.com"
-                    autoComplete="email"
-                    style={{
-                      width: '100%', padding: '12px 16px 12px 44px',
-                      background: DS.bg, border: `1px solid ${DS.cardBorder}`, 
-                      color: DS.text, fontSize: '15px', outline: 'none', minHeight: '44px',
-                      fontFamily: DS.bodyFont,
-                    }}
-                  />
-                </div>
+          <form onSubmit={handleSubmit} onMouseEnter={handleMouseEnter}>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: 'var(--v3-color-ink-secondary)', marginBottom: '8px', fontFamily: 'var(--v3-font-body)' }}>
+                Email
+              </label>
+              <div style={{ position: 'relative' }}>
+                <Mail style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', width: 18, height: 18, color: 'var(--v3-color-ink-muted)' }} />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@company.com"
+                  autoComplete="email"
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px 14px 48px',
+                    background: 'var(--v3-color-white)',
+                    border: '1px solid var(--v3-color-divider)',
+                    borderRadius: 0,
+                    color: 'var(--v3-color-ink)',
+                    fontSize: '14px',
+                    outline: 'none',
+                    minHeight: '48px',
+                    fontFamily: 'var(--v3-font-body)',
+                    boxSizing: 'border-box',
+                    transition: 'border-color 200ms cubic-bezier(0.4,0,0.2,1), box-shadow 200ms cubic-bezier(0.4,0,0.2,1)',
+                  }}
+                />
               </div>
+            </div>
 
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: DS.textSecondary, marginBottom: '8px' }}>
-                  Password
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <Lock style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', width: 18, height: 18, color: DS.muted }} />
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    autoComplete="current-password"
-                    style={{
-                      width: '100%', padding: '12px 16px 12px 44px',
-                      background: DS.bg, border: `1px solid ${DS.cardBorder}`, 
-                      color: DS.text, fontSize: '15px', outline: 'none', minHeight: '44px',
-                      fontFamily: DS.bodyFont,
-                    }}
-                  />
-                </div>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: 'var(--v3-color-ink-secondary)', marginBottom: '8px', fontFamily: 'var(--v3-font-body)' }}>
+                Password
+              </label>
+              <div style={{ position: 'relative' }}>
+                <Lock style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', width: 18, height: 18, color: 'var(--v3-color-ink-muted)' }} />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px 14px 48px',
+                    background: 'var(--v3-color-white)',
+                    border: '1px solid var(--v3-color-divider)',
+                    borderRadius: 0,
+                    color: 'var(--v3-color-ink)',
+                    fontSize: '14px',
+                    outline: 'none',
+                    minHeight: '48px',
+                    fontFamily: 'var(--v3-font-body)',
+                    boxSizing: 'border-box',
+                    transition: 'border-color 200ms cubic-bezier(0.4,0,0.2,1), box-shadow 200ms cubic-bezier(0.4,0,0.2,1)',
+                  }}
+                />
               </div>
+            </div>
 
-              {error && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', background: '#FEF2F2',  color: '#DC2626', fontSize: '14px', marginBottom: '20px', fontFamily: DS.bodyFont }}>
-                  <AlertCircle style={{ width: 18, height: 18, flexShrink: 0 }} />
-                  {error}
-                </div>
-              )}
+            {error && (
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', padding: '14px 16px', border: '1px solid var(--v3-color-error)', color: 'var(--v3-color-error)', fontSize: '14px', marginBottom: '20px', fontFamily: 'var(--v3-font-body)', background: 'transparent' }}>
+                <AlertCircle style={{ width: 18, height: 18, flexShrink: 0, marginTop: '1px' }} />
+                {error}
+              </div>
+            )}
 
+            {loading ? (
               <button
                 type="submit"
                 disabled={loading}
-                className="cta-glow"
                 style={{
-                  width: '100%', padding: '14px',
-                  background: DS.accent, color: '#FFFFFF',
-                  border: 'none', 
-                  fontSize: '15px', fontWeight: 600,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                  minHeight: '48px', transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
-                  fontFamily: DS.bodyFont,
+                  width: '100%',
+                  padding: '16px 24px',
+                  background: 'var(--v3-color-fuchsia)',
+                  color: 'var(--v3-color-cream)',
+                  border: 0,
+                  borderRadius: 0,
+                  fontSize: 'var(--v3-text-label)',
+                  fontWeight: 500,
+                  letterSpacing: 'var(--v3-tracking-label)',
+                  textTransform: 'uppercase',
+                  fontFamily: 'var(--v3-font-mono)',
+                  cursor: 'not-allowed',
+                  opacity: 0.7,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  minHeight: '48px',
+                  boxSizing: 'border-box',
                 }}
               >
-                {loading ? (
-                  <><Loader2 style={{ width: 18, height: 18, animation: 'spin 1s linear infinite' }} />Signing in...</>
-                ) : (
-                  <>Sign In <ArrowRight style={{ width: 18, height: 18 }} /></>
-                )}
+                <Loader2 style={{ width: 18, height: 18, animation: 'spin 1s linear infinite' }} />Signing in...
               </button>
-              <div style={{ textAlign: 'center', marginTop: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
-                  <Link to="/reset-password" style={{ fontSize: '13px', color: DS.muted, textDecoration: 'none', fontFamily: DS.bodyFont }}>
-                    Forgot password?
-                  </Link>
-                  <span style={{ fontSize: '13px', color: DS.border }}>·</span>
-                  <Link to="/signup" style={{ fontSize: '13px', color: DS.accent, textDecoration: 'none', fontFamily: DS.bodyFont, fontWeight: 500 }}>
-                    Create account
-                  </Link>
-                </div>
-              </div>
-            </form>
-          </div>
+            ) : (
+              <Button
+                type="submit"
+                variant="primary"
+                accent="fuchsia"
+                style={{ width: '100%' }}
+              >
+                Sign In
+              </Button>
+            )}
 
-          <p style={{ fontSize: '12px', color: DS.muted, textAlign: 'center', marginTop: '20px', lineHeight: 1.5 }}>
+            <div style={{ textAlign: 'center', marginTop: '24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', alignItems: 'center' }}>
+                <Link to="/reset-password" style={{ fontSize: '13px', color: 'var(--v3-color-ink-muted)', textDecoration: 'none', fontFamily: 'var(--v3-font-body)' }}>
+                  Forgot password?
+                </Link>
+                <span style={{ fontSize: '13px', color: 'var(--v3-color-divider)' }}>·</span>
+                <Link to="/signup" style={{ fontSize: '13px', color: 'var(--v3-color-fuchsia)', textDecoration: 'none', fontFamily: 'var(--v3-font-mono)', fontWeight: 400, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                  Create account
+                </Link>
+              </div>
+            </div>
+          </form>
+
+          <p style={{ fontSize: '12px', color: 'var(--v3-color-ink-muted)', textAlign: 'center', marginTop: '32px', lineHeight: 1.5, fontFamily: 'var(--v3-font-mono)', letterSpacing: '0.02em' }}>
             Sign in to access LYC Intelligence.
           </p>
         </div>
       </div>
 
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } input:focus { border-color: ${DS.accent} !important; box-shadow: 0 0 0 2px rgba(193,8,171,0.2) !important; } input::placeholder { color: ${DS.muted}; }`}</style>
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        input:focus {
+          border-color: var(--v3-color-fuchsia) !important;
+          box-shadow: 0 0 0 2px color-mix(in srgb, var(--v3-color-fuchsia) 20%, transparent) !important;
+        }
+        input::placeholder {
+          color: var(--v3-color-ink-muted);
+        }
+      `}</style>
     </div>
   );
 }

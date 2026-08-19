@@ -4,7 +4,6 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getShareCard, type ShareCard, type ShareCardType } from '../services/shareCardService';
 import type { SharedAssessmentPayload } from '../services/assessmentShareService';
 import { SEO } from '@/components/seo/SEO';
-import { DS, WHITE } from '@/tokens';
 
 interface Teaser {
   eyebrow: string;
@@ -108,7 +107,7 @@ function buildTeaserFromCard(card: ShareCard): Teaser {
       const hasReadiness =
         readiness && (readiness.label || typeof readiness.score === 'number');
       return {
-        eyebrow: 'Assessment',
+        eyebrow: 'Diagnostic',
         name: data.name || 'Executive',
         headline: data.archetype || 'Strategic Architect',
         headlineSub: data.tagline,
@@ -126,7 +125,6 @@ function buildTeaserFromCard(card: ShareCard): Teaser {
   }
 }
 
-/** Build a teaser from the newer assessment_shares SharedAssessmentPayload shape. */
 function buildTeaserFromPayload(payload: SharedAssessmentPayload): Teaser {
   const insights: string[] = [];
   const dims = payload.dimensions || [];
@@ -150,12 +148,12 @@ function buildTeaserFromPayload(payload: SharedAssessmentPayload): Teaser {
   const headline = payload.archetype || payload.overall_tier || 'Leadership Profile';
   const headlineSub = payload.archetype_description
     ? String(payload.archetype_description).slice(0, 180)
-    : payload.assessment_name || 'Executive Assessment';
+    : payload.assessment_name || 'Executive Diagnostic';
 
   return {
     eyebrow: payload.assessment_code
-      ? `${payload.assessment_code} · Assessment Result`
-      : 'Assessment Result',
+      ? `${payload.assessment_code} · Diagnostic Result`
+      : 'Diagnostic Result',
     name: 'Shared Result',
     headline,
     headlineSub,
@@ -169,7 +167,6 @@ function buildTeaserFromPayload(payload: SharedAssessmentPayload): Teaser {
   };
 }
 
-/** SharedAssessmentPayload-aware dimension table rows (extra panel when payload available). */
 interface PayloadDimsRow {
   label: string;
   score: number;
@@ -184,16 +181,16 @@ function getDimsRows(payload: SharedAssessmentPayload): PayloadDimsRow[] {
 }
 
 const eyebrowStyle: React.CSSProperties = {
-  fontFamily: DS.monoFont,
+  fontFamily: 'var(--v3-font-mono)',
   fontSize: '11px',
   letterSpacing: '2px',
   textTransform: 'uppercase',
-  color: DS.eyebrow,
-  fontWeight: 600,
+  color: 'var(--v3-color-ink-muted)',
+  fontWeight: 500,
 };
 
-function Divider() {
-  return <div style={{ height: '1px', background: DS.border }} />;
+function ThinDivider() {
+  return <div style={{ height: '1px', background: 'var(--v3-color-divider)' }} />;
 }
 
 export function SharePage() {
@@ -212,22 +209,14 @@ export function SharePage() {
     loadShareData(id);
   }, [id]);
 
-  /**
-   * Y1-4 dual-fallback loader:
-   * 1. Legacy share_cards path (public_uuid) — Trident/progress/cards pre-Y1
-   * 2. Newer assessment_shares capability-URL path (/api/assessments/meta?action=share&token=X)
-   *    — Assessment share links created via createShareLink / POST share endpoint.
-   */
   const loadShareData = async (publicId: string) => {
     try {
-      // 1. Try legacy share_cards table via supabase direct
       const card = await getShareCard(publicId);
       if (card) {
         setShareCard(card);
         return;
       }
 
-      // 2. Fallback: assessment_shares capability token via public API
       const api = await fetch(`/api/assessments/meta?action=share&token=${encodeURIComponent(publicId)}`);
       if (api.ok) {
         const body = await api.json();
@@ -255,7 +244,7 @@ export function SharePage() {
       <div
         style={{
           minHeight: '100vh',
-          background: DS.bgAlt,
+          background: 'var(--v3-color-cream)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -271,12 +260,12 @@ export function SharePage() {
           style={{
             width: '40px',
             height: '40px',
-            border: `3px solid ${DS.border}`,
-            borderTopColor: DS.accent,
+            border: `3px solid var(--v3-color-divider)`,
+            borderTopColor: 'var(--v3-color-fuchsia)',
             animation: 'echo-spin 1s linear infinite',
           }}
         />
-        <div style={{ ...eyebrowStyle, color: DS.muted }}>Preparing profile</div>
+        <div style={{ ...eyebrowStyle, color: 'var(--v3-color-ink-muted)' }}>Preparing profile</div>
       </div>
     );
   }
@@ -286,7 +275,7 @@ export function SharePage() {
       <div
         style={{
           minHeight: '100vh',
-          background: DS.bgAlt,
+          background: 'var(--v3-color-cream)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -299,17 +288,16 @@ export function SharePage() {
           <div style={{ ...eyebrowStyle, marginBottom: '12px' }}>LYC Intelligence</div>
           <h1
             style={{
-              fontFamily: DS.headingFont,
+              fontFamily: 'var(--v3-font-display)',
               fontSize: '28px',
               fontWeight: 700,
-              color: DS.text,
-              marginBottom: '8px',
+              color: 'var(--v3-color-ink)',
               margin: '0 0 8px',
             }}
           >
             Profile unavailable
           </h1>
-          <p style={{ fontFamily: DS.bodyFont, fontSize: '14px', color: DS.muted, marginBottom: '24px' }}>
+          <p style={{ fontFamily: 'var(--v3-font-body)', fontSize: '14px', color: 'var(--v3-color-ink-secondary)', marginBottom: '24px' }}>
             {error || 'This share card may have expired or been removed.'}
           </p>
           <Link
@@ -317,20 +305,22 @@ export function SharePage() {
             style={{
               display: 'inline-block',
               minHeight: '44px',
-              padding: '12px 24px',
-              background: DS.accent,
-              color: WHITE,
+              padding: '14px 24px',
+              background: 'var(--v3-color-fuchsia)',
+              color: 'var(--v3-color-cream)',
               border: 'none',
-              fontFamily: DS.bodyFont,
-              fontSize: '14px',
-              fontWeight: 600,
+              fontFamily: 'var(--v3-font-mono)',
+              fontSize: '12px',
+              fontWeight: 500,
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
               textDecoration: 'none',
               lineHeight: '20px',
               boxSizing: 'border-box',
-              transition: `background ${DS.transition}`,
+              transition: 'opacity 200ms ease',
             }}
-            onMouseOver={(e) => (e.currentTarget.style.background = DS.accentHover)}
-            onMouseOut={(e) => (e.currentTarget.style.background = DS.accent)}
+            onMouseOver={(e) => (e.currentTarget.style.opacity = '0.9')}
+            onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
           >
             Go Home
           </Link>
@@ -346,11 +336,11 @@ export function SharePage() {
   const seoDescription =
     `${teaser.eyebrow} from LYC Intelligence — ${teaser.headline}${
       teaser.metric ? ` · ${teaser.metric.label}: ${teaser.metric.value}` : ''
-    }. Take your complimentary assessment to unlock your full report.`;
+    }. Take your complimentary diagnostic to unlock your full report.`;
   const payloadDims = sharedPayload ? getDimsRows(sharedPayload) : [];
 
   return (
-    <div style={{ minHeight: '100vh', background: DS.bgAlt, padding: '32px 16px 48px' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--v3-color-cream)', padding: '32px 16px 48px' }}>
       <SEO
         title={seoTitle}
         description={seoDescription}
@@ -360,58 +350,54 @@ export function SharePage() {
 
       <div
         style={{
-          maxWidth: '560px',
+          maxWidth: '800px',
           margin: '0 auto',
           animation: 'echo-fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1) both',
         }}
       >
-        {/* Brand wordmark */}
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <span
             style={{
-              fontFamily: DS.monoFont,
+              fontFamily: 'var(--v3-font-mono)',
               fontSize: '11px',
               letterSpacing: '3px',
               textTransform: 'uppercase',
-              color: DS.text,
-              fontWeight: 600,
+              color: 'var(--v3-color-ink)',
+              fontWeight: 500,
             }}
           >
             LYC Intelligence
           </span>
         </div>
 
-        {/* Report card */}
         <article
           style={{
-            background: DS.card,
-            border: `1px solid ${DS.cardBorder}`,
-            boxShadow: DS.shadow,
+            background: 'var(--v3-color-white)',
+            border: '1px solid var(--v3-color-divider)',
             animation: 'echo-slide-in-up 300ms cubic-bezier(0.16, 1, 0.3, 1) both',
           }}
         >
-          {/* Header */}
-          <div style={{ padding: '28px 24px 24px' }}>
-            <div style={{ ...eyebrowStyle, marginBottom: '12px' }}>{teaser.eyebrow}</div>
+          <div style={{ padding: '32px 28px 28px' }}>
+            <div style={{ ...eyebrowStyle, marginBottom: '14px', color: 'var(--v3-color-fuchsia)' }}>{teaser.eyebrow}</div>
             <h1
               style={{
-                fontFamily: DS.headingFont,
-                fontSize: 'clamp(28px, 8vw, 36px)',
+                fontFamily: 'var(--v3-font-display)',
+                fontSize: 'var(--v3-text-display-md)',
                 fontWeight: 700,
-                lineHeight: 1.1,
-                color: DS.text,
-                margin: '0 0 10px',
+                lineHeight: 'var(--v3-leading-display-md)',
+                color: 'var(--v3-color-ink)',
+                margin: '0 0 12px',
               }}
             >
               {teaser.name}
             </h1>
             <div
               style={{
-                fontFamily: DS.headingFont,
+                fontFamily: 'var(--v3-font-display)',
                 fontSize: '22px',
                 fontWeight: 600,
-                color: DS.accent,
-                lineHeight: 1.2,
+                color: 'var(--v3-color-fuchsia)',
+                lineHeight: 1.25,
               }}
             >
               {teaser.headline}
@@ -419,10 +405,10 @@ export function SharePage() {
             {teaser.headlineSub && (
               <div
                 style={{
-                  fontFamily: DS.bodyFont,
+                  fontFamily: 'var(--v3-font-body)',
                   fontSize: '14px',
-                  color: DS.muted,
-                  marginTop: '8px',
+                  color: 'var(--v3-color-ink-secondary)',
+                  marginTop: '10px',
                   lineHeight: 1.5,
                 }}
               >
@@ -431,13 +417,12 @@ export function SharePage() {
             )}
           </div>
 
-          {/* Metric */}
           {teaser.metric && (
             <>
-              <Divider />
+              <ThinDivider />
               <div
                 style={{
-                  padding: '18px 24px',
+                  padding: '20px 28px',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'baseline',
@@ -447,10 +432,10 @@ export function SharePage() {
                 <span style={eyebrowStyle}>{teaser.metric.label}</span>
                 <span
                   style={{
-                    fontFamily: DS.headingFont,
-                    fontSize: '20px',
+                    fontFamily: 'var(--v3-font-display)',
+                    fontSize: '22px',
                     fontWeight: 700,
-                    color: DS.text,
+                    color: 'var(--v3-color-ink)',
                     whiteSpace: 'nowrap',
                   }}
                 >
@@ -460,10 +445,9 @@ export function SharePage() {
             </>
           )}
 
-          {/* Key insights */}
-          <Divider />
-          <div style={{ padding: '24px' }}>
-            <div style={{ ...eyebrowStyle, marginBottom: '14px' }}>Key Insights</div>
+          <ThinDivider />
+          <div style={{ padding: '28px' }}>
+            <div style={{ ...eyebrowStyle, marginBottom: '16px' }}>Key Insights</div>
             {teaser.insights.length > 0 ? (
               <ul
                 style={{
@@ -472,7 +456,7 @@ export function SharePage() {
                   padding: '0',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '10px',
+                  gap: '12px',
                 }}
               >
                 {teaser.insights.map((insight, i) => (
@@ -480,12 +464,12 @@ export function SharePage() {
                     key={i}
                     style={{
                       display: 'flex',
-                      gap: '10px',
+                      gap: '12px',
                       alignItems: 'flex-start',
-                      fontFamily: DS.bodyFont,
-                      fontSize: '14px',
-                      lineHeight: 1.55,
-                      color: DS.textSecondary,
+                      fontFamily: 'var(--v3-font-body)',
+                      fontSize: '15px',
+                      lineHeight: 1.6,
+                      color: 'var(--v3-color-ink-secondary)',
                     }}
                   >
                     <span
@@ -494,8 +478,8 @@ export function SharePage() {
                         flexShrink: 0,
                         width: '6px',
                         height: '6px',
-                        background: DS.accent,
-                        marginTop: '7px',
+                        background: 'var(--v3-color-fuchsia)',
+                        marginTop: '9px',
                       }}
                     />
                     <span>{insight}</span>
@@ -505,11 +489,11 @@ export function SharePage() {
             ) : (
               <p
                 style={{
-                  fontFamily: DS.bodyFont,
+                  fontFamily: 'var(--v3-font-body)',
                   fontSize: '14px',
-                  color: DS.muted,
+                  color: 'var(--v3-color-ink-muted)',
                   margin: '0',
-                  lineHeight: 1.55,
+                  lineHeight: 1.6,
                 }}
               >
                 A preview of this profile is available in the full report.
@@ -517,17 +501,16 @@ export function SharePage() {
             )}
           </div>
 
-          {/* Dimension breakdown (assessment_shares payloads only) */}
           {payloadDims.length > 0 && (
             <>
-              <Divider />
-              <div style={{ padding: '24px' }}>
-                <div style={{ ...eyebrowStyle, marginBottom: '14px' }}>Dimension Breakdown</div>
+              <ThinDivider />
+              <div style={{ padding: '28px' }}>
+                <div style={{ ...eyebrowStyle, marginBottom: '16px' }}>Dimension Breakdown</div>
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '12px',
+                    gap: '16px',
                   }}
                 >
                   {payloadDims.map((d) => (
@@ -538,24 +521,24 @@ export function SharePage() {
                           justifyContent: 'space-between',
                           alignItems: 'baseline',
                           gap: '12px',
-                          marginBottom: '6px',
+                          marginBottom: '8px',
                         }}
                       >
                         <span
                           style={{
-                            fontFamily: DS.bodyFont,
-                            fontSize: '13px',
+                            fontFamily: 'var(--v3-font-body)',
+                            fontSize: '14px',
                             fontWeight: 500,
-                            color: DS.text,
+                            color: 'var(--v3-color-ink)',
                           }}
                         >
                           {d.label}
                         </span>
                         <span
                           style={{
-                            fontFamily: DS.monoFont,
+                            fontFamily: 'var(--v3-font-mono)',
                             fontSize: '12px',
-                            color: DS.textSecondary,
+                            color: 'var(--v3-color-ink-secondary)',
                             whiteSpace: 'nowrap',
                           }}
                         >
@@ -567,14 +550,14 @@ export function SharePage() {
                         style={{
                           width: '100%',
                           height: '6px',
-                          background: DS.border,
+                          background: 'var(--v3-color-divider)',
                         }}
                       >
                         <div
                           style={{
                             width: `${Math.max(0, Math.min(100, d.score))}%`,
                             height: '100%',
-                            background: DS.accent,
+                            background: 'var(--v3-color-fuchsia)',
                           }}
                         />
                       </div>
@@ -585,46 +568,45 @@ export function SharePage() {
             </>
           )}
 
-          {/* Privacy / sharer banner — Y1-4 "Privacy: users control what's shared" */}
-          <Divider />
+          <ThinDivider />
           <div
             style={{
-              padding: '14px 24px',
-              background: 'rgba(26,26,26,0.02)',
+              padding: '20px 28px',
+              background: 'var(--v3-color-cream)',
             }}
           >
             <p
               style={{
-                fontFamily: DS.bodyFont,
+                fontFamily: 'var(--v3-font-body)',
                 fontSize: '12px',
-                color: DS.muted,
-                margin: '0 0 4px',
-                lineHeight: 1.5,
+                color: 'var(--v3-color-ink-secondary)',
+                margin: '0 0 6px',
+                lineHeight: 1.6,
               }}
             >
               <span
                 style={{
-                  fontFamily: DS.monoFont,
+                  fontFamily: 'var(--v3-font-mono)',
                   letterSpacing: '1px',
                   textTransform: 'uppercase',
-                  fontWeight: 600,
-                  color: DS.eyebrow,
+                  fontWeight: 500,
+                  color: 'var(--v3-color-ink-muted)',
                   marginRight: '8px',
                 }}
               >
                 Privacy
               </span>
-              This share was created by the original assessment owner and contains no
+              This share was created by the original diagnostic owner and contains no
               personally identifiable information. Share links can be revoked by the owner at
               any time.
             </p>
             <p
               style={{
-                fontFamily: DS.bodyFont,
+                fontFamily: 'var(--v3-font-body)',
                 fontSize: '12px',
-                color: DS.muted,
+                color: 'var(--v3-color-ink-secondary)',
                 margin: '0',
-                lineHeight: 1.5,
+                lineHeight: 1.6,
               }}
             >
               This is a preview. Full reports include executive narrative, archetype deep
@@ -633,35 +615,35 @@ export function SharePage() {
           </div>
         </article>
 
-        {/* Primary CTA */}
-        <div style={{ marginTop: '24px' }}>
+        <div style={{ marginTop: '28px' }}>
           <Link
-            to="/assessments"
+            to="/diagnostics"
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '8px',
               minHeight: '48px',
-              padding: '14px 24px',
-              background: DS.accent,
-              color: WHITE,
+              padding: '16px 24px',
+              background: 'var(--v3-color-fuchsia)',
+              color: 'var(--v3-color-cream)',
               border: 'none',
-              fontFamily: DS.bodyFont,
-              fontSize: '15px',
-              fontWeight: 600,
+              fontFamily: 'var(--v3-font-mono)',
+              fontSize: '12px',
+              fontWeight: 500,
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
               textDecoration: 'none',
               boxSizing: 'border-box',
-              transition: `background ${DS.transition}`,
+              transition: 'opacity 200ms ease',
             }}
-            onMouseOver={(e) => (e.currentTarget.style.background = DS.accentHover)}
-            onMouseOut={(e) => (e.currentTarget.style.background = DS.accent)}
+            onMouseOver={(e) => (e.currentTarget.style.opacity = '0.9')}
+            onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
           >
-            Take this assessment yourself →
+            Take this diagnostic yourself →
           </Link>
         </div>
 
-        {/* Sign-in prompt */}
         <div style={{ marginTop: '12px' }}>
           <Link
             to="/login"
@@ -670,48 +652,47 @@ export function SharePage() {
               alignItems: 'center',
               justifyContent: 'center',
               minHeight: '48px',
-              padding: '13px 24px',
+              padding: '14px 24px',
               background: 'transparent',
-              color: DS.textSecondary,
-              border: `1px solid ${DS.cardBorder}`,
-              fontFamily: DS.bodyFont,
+              color: 'var(--v3-color-ink-secondary)',
+              border: '1px solid var(--v3-color-divider)',
+              fontFamily: 'var(--v3-font-body)',
               fontSize: '14px',
               fontWeight: 600,
               textDecoration: 'none',
               boxSizing: 'border-box',
-              transition: `border-color ${DS.transition}, color ${DS.transition}`,
+              transition: 'border-color 200ms ease, color 200ms ease',
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.borderColor = DS.accent;
-              e.currentTarget.style.color = DS.accent;
+              e.currentTarget.style.borderColor = 'var(--v3-color-fuchsia)';
+              e.currentTarget.style.color = 'var(--v3-color-fuchsia)';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.borderColor = DS.cardBorder;
-              e.currentTarget.style.color = DS.textSecondary;
+              e.currentTarget.style.borderColor = 'var(--v3-color-divider)';
+              e.currentTarget.style.color = 'var(--v3-color-ink-secondary)';
             }}
           >
             Sign in to unlock your full report
           </Link>
         </div>
 
-        {/* Footer */}
         <footer
           style={{
-            marginTop: '32px',
+            marginTop: '36px',
             textAlign: 'center',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '8px',
+            gap: '10px',
           }}
         >
           <div
             style={{
-              fontFamily: DS.monoFont,
+              fontFamily: 'var(--v3-font-mono)',
               fontSize: '11px',
               letterSpacing: '1.5px',
               textTransform: 'uppercase',
-              color: DS.muted,
+              color: 'var(--v3-color-ink-muted)',
             }}
           >
             Powered by LYC Intelligence
@@ -721,32 +702,32 @@ export function SharePage() {
             style={{
               display: 'inline-block',
               minHeight: '44px',
-              padding: '11px 16px',
-              fontFamily: DS.bodyFont,
+              padding: '12px 16px',
+              fontFamily: 'var(--v3-font-body)',
               fontSize: '13px',
               fontWeight: 500,
-              color: DS.text,
+              color: 'var(--v3-color-ink)',
               textDecoration: 'none',
-              borderBottom: `1px solid ${DS.border}`,
+              borderBottom: '1px solid var(--v3-color-divider)',
               boxSizing: 'border-box',
-              transition: `border-color ${DS.transition}, color ${DS.transition}`,
+              transition: 'border-color 200ms ease, color 200ms ease',
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.borderColor = DS.accent;
-              e.currentTarget.style.color = DS.accent;
+              e.currentTarget.style.borderColor = 'var(--v3-color-fuchsia)';
+              e.currentTarget.style.color = 'var(--v3-color-fuchsia)';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.borderColor = DS.border;
-              e.currentTarget.style.color = DS.text;
+              e.currentTarget.style.borderColor = 'var(--v3-color-divider)';
+              e.currentTarget.style.color = 'var(--v3-color-ink)';
             }}
           >
             Discuss your results with NEXUS →
           </Link>
           <div
             style={{
-              fontFamily: DS.bodyFont,
+              fontFamily: 'var(--v3-font-body)',
               fontSize: '11px',
-              color: DS.muted,
+              color: 'var(--v3-color-ink-muted)',
               marginTop: '4px',
             }}
           >

@@ -1,17 +1,19 @@
 /**
  * W2-3 — SPARK landing page (rebuilt).
  *
- * Hero assessment #2. Focused AI leadership readiness. Content verified against
+ * Hero diagnostic #2. Focused AI leadership readiness. Content verified against
  * akira_source/diagnostic_portfolio/06_scoring_engine_code/spark_config.json
  * (W2-5): 3 dimensions · 4 archetypes · 27 questions · 1-5 Likert.
  *
  * Replaces the prior stale SparkLanding (5 dims / 10 questions / generic AI
  * theming) with the canonical akira_source instrument definition.
  *
- * Brand: ONE accent per page — AMBER (#B45309), reserved for SPARK only.
+ * Brand: TIER B — TEAL accent.
  */
 import { LandingTemplate, type LandingDimension, type LandingArchetype } from '@/components/templates/LandingTemplate';
-import { ACCENT, ACCENT_DARK } from '@/tokens';
+
+const TEAL = '#00897B';
+const TEAL_DARK = '#00695C';
 
 // ── SPARK DATA (verified against akira_source/spark_config.json) ─────
 // Full name: "AI Leadership Readiness & Enterprise Governance"
@@ -26,7 +28,7 @@ const SPARK_DIMENSIONS: LandingDimension[] = [
   },
   {
     id: 'D2',
-    name: 'Capability Exposure Assessment',
+    name: 'Capability Exposure Diagnostic',
     short: 'Exposure',
     description:
       'How aware you are of which AI capabilities are being deployed across your organisation and bilateral ecosystem — and which of your own capabilities are exposed.',
@@ -50,7 +52,7 @@ const SPARK_ARCHETYPES: LandingArchetype[] = [
 
 const SPARK_METHOD_STEPS = [
   {
-    mono: '01 · Self-Assessment',
+    mono: '01 · Self-Diagnostic',
     title: 'Twenty-seven benchmarked questions.',
     body: 'Three dimensions — individual adoption, capability exposure, organisational preparedness — nine questions each. No technical knowledge required; honest executive reflection is enough.',
   },
@@ -75,14 +77,14 @@ const SPARK_WHO_FOR = [
 const SPARK_DIFFERENT = [
   'Three focused dimensions, not generic AI literacy. Individual adoption, capability exposure, and organisational preparedness are scored independently.',
   'Four governance archetypes tied to board accountability — pairing AI fluency with governance maturity so the profile reflects real director behaviour.',
-  'Reads both the individual and the organisation. Most AI assessments stop at personal skill; SPARK benchmarks whether your enterprise can actually adopt.',
+  'Reads both the individual and the organisation. Most AI diagnostics stop at personal skill; SPARK benchmarks whether your enterprise can actually adopt.',
   'Grounded in enterprise governance, not consumer tooling. Built for the decisions boards and executives actually face.',
 ];
 
 const SPARK_FAQ = [
   {
     q: 'What is SPARK?',
-    a: 'SPARK (AI Leadership Readiness & Enterprise Governance) is a hero assessment measuring your readiness to lead in the age of AI. Three dimensions — individual adoption, capability exposure, and organisational preparedness — four governance archetypes, and a composite 0–100 readiness score.',
+    a: 'SPARK (AI Leadership Readiness & Enterprise Governance) is a hero diagnostic measuring your readiness to lead in the age of AI. Three dimensions — individual adoption, capability exposure, and organisational preparedness — four governance archetypes, and a composite 0–100 readiness score.',
   },
   {
     q: 'Do I need technical AI knowledge?',
@@ -94,7 +96,7 @@ const SPARK_FAQ = [
   },
   {
     q: 'Is my data private?',
-    a: 'Yes. SPARK results are private to your LYC Intelligence account. We do not sell personal information, and assessment data is never used to train public-facing models or shared outside LYC Intelligence / LYC Partners unless explicitly authorised.',
+    a: 'Yes. SPARK results are private to your LYC Intelligence account. We do not sell personal information, and diagnostic data is never used to train public-facing models or shared outside LYC Intelligence / LYC Partners unless explicitly authorised.',
   },
 ];
 
@@ -105,13 +107,13 @@ export function SparkLanding() {
       name="SPARK"
       fullName="AI Leadership Readiness & Enterprise Governance"
       tagline="Strategic potential and readiness for AI-era leadership. Three dimensions. Four governance archetypes. Focused and fast."
-      heroDescription="Assess your readiness to lead in the age of AI. Three dimensions — individual adoption, capability exposure, and organisational preparedness. Four governance archetypes. A clear readiness profile in approximately twelve minutes."
+      heroDescription="Check your readiness to lead in the age of AI. Three dimensions — individual adoption, capability exposure, and organisational preparedness. Four governance archetypes. A clear readiness profile in approximately twelve minutes."
       categoryLabel="AI Leadership Readiness"
-      tierBadge="HERO ASSESSMENT"
+      tierBadge="HERO DIAGNOSTIC"
       heroH1="Know where you stand on AI adoption before it becomes a competitive disadvantage"
       heroEyebrow="SPARK · AI LEADERSHIP READINESS"
-      accent={ACCENT}
-      accentDark={ACCENT_DARK}
+      accent={TEAL}
+      accentDark={TEAL_DARK}
       dimensions={SPARK_DIMENSIONS}
       archetypes={SPARK_ARCHETYPES}
       methodologySteps={SPARK_METHOD_STEPS}
@@ -124,11 +126,11 @@ export function SparkLanding() {
         { num: '27', label: 'QUESTIONS', sub: '~12 minutes' },
       ]}
       ctaHref="/assessment/spark/take"
-      ctaLabel="Start Your SPARK Assessment"
+      ctaLabel="Start Your SPARK Diagnostic"
       finalCtaLabel="Get Your SPARK Readiness Profile"
-      finalSubtext="Twelve minutes. Three dimension verdicts. One governance archetype. Your complimentary baseline covers the self-assessment layer and composite readiness band."
+      finalSubtext="Twelve minutes. Three dimension verdicts. One governance archetype. Your complimentary baseline covers the self-diagnostic layer and composite readiness band."
       seoTitle="SPARK — AI Leadership Readiness & Governance | LYC Intelligence"
-      seoDescription="Assess your readiness to lead in the age of AI. 3 dimensions, 4 governance archetypes, composite readiness band. ~12 minutes. Complimentary Executive Introduction baseline."
+      seoDescription="Check your readiness to lead in the age of AI. 3 dimensions, 4 governance archetypes, composite readiness band. ~12 minutes. Complimentary Executive Introduction baseline."
       seoPath="/assessment/spark"
       prefix="spark"
       heroSampleValues={[0.78, 0.62, 0.55]}

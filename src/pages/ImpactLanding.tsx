@@ -1,123 +1,112 @@
 /**
  * W2-4 — IMPACT landing page.
  *
- * Hero assessment #3. Board & team impact. Content verified against
+ * Hero diagnostic #3. Board effectiveness. Content verified against
  * akira_source/diagnostic_portfolio/06_scoring_engine_code/impact_config.json
- * (W2-5): 5 dimensions · 8 archetypes · 30 questions · 1-5 Likert.
+ * (W2-5): 4 dimensions · 10 archetypes · 36 questions · 1-5 Likert.
  *
- * Note on archetype count: akira_source lists 10 entries in the archetypes
- * array — 8 real board-effectiveness archetypes plus 2 framework axes
- * ("Axis 1: Impact Orientation", "Axis 2: Mandate Strength Band"). Per the
- * existing `filterArchetypes` convention in src/assessments/catalog.ts, the
- * 2 axes are framework modulators, not archetypes, so 8 archetypes are
- * displayed. The 2 axes still modulate every archetype (orientation + band).
- *
- * Brand: ONE accent per page — FOREST_GREEN (#166534), reserved for IMPACT.
+ * Brand: TIER B — TEAL accent.
  */
 import { LandingTemplate, type LandingDimension, type LandingArchetype } from '@/components/templates/LandingTemplate';
-import { ACCENT, ACCENT_DARK } from '@/tokens';
 
-// ── IMPACT DATA (verified against akira_source/impact_config.json) ───
-// Full name: "Board Effectiveness Assessment"
+const TEAL = '#00897B';
+const TEAL_DARK = '#00695C';
+
+// ── IMPACT DATA (verified against akira_source/impact_config.json) ──
+// Full name: "Board Effectiveness Diagnostic"
 
 const IMPACT_DIMENSIONS: LandingDimension[] = [
   {
     id: 'D1',
-    name: 'Strategic Oversight',
-    short: 'Strategy',
+    name: 'Behaviour',
+    short: 'Behaviour',
     description:
-      'How effectively you contribute to strategy formulation at the board level — challenging management proposals and framing the strategic conversation rather than ratifying it.',
+      'How board members conduct themselves in meetings, debate, challenge, and interact — including conflict patterns and meeting dynamics.',
   },
   {
     id: 'D2',
-    name: 'Governance Rigour',
-    short: 'Governance',
+    name: 'Competency',
+    short: 'Competency',
     description:
-      'Your rigour on process, fiduciary duties, compliance, and governance mechanics. Whether you protect the institution while enabling progress.',
+      'Whether the board has the right skills, composition, and domain expertise to steer the business — including whether capabilities fit the current strategic context.',
   },
   {
     id: 'D3',
-    name: 'Stakeholder Intelligence',
-    short: 'Stakeholders',
+    name: 'Process',
+    short: 'Process',
     description:
-      'How well you read stakeholder ecosystems, manage boardroom dynamics, and build relationships that create influence beyond formal authority.',
+      'Meeting rhythm, agenda design, information flow, decision cadence, and committee structures — whether governance is run on a deliberate operating system.',
   },
   {
     id: 'D4',
-    name: 'Mandate Legacy',
-    short: 'Legacy',
+    name: 'Outcomes',
+    short: 'Outcomes',
     description:
-      'Whether you think about lasting institutional value, not just short-term decisions. The degree to which you build boards that outlive your tenure.',
-  },
-  {
-    id: 'D5',
-    name: 'Executive Presence & Influence',
-    short: 'Presence',
-    description:
-      'Your ability to command attention, build credibility, and drive influence at the highest organizational levels — including boardroom presence, executive communications, and stakeholder impact.',
+      'What the board actually delivers: strategic decisions, oversight value, risk management, and clear measurable outcomes rather than attendance and input.',
   },
 ];
 
-// 8 board-effectiveness archetypes per akira_source/impact_config.json
-// (Axis 1 / Axis 2 are framework modulators, excluded per filterArchetypes).
+// 10 archetypes per akira_source/impact_config.json. Codes assigned A1–A10.
 const IMPACT_ARCHETYPES: LandingArchetype[] = [
-  { code: '01', name: 'The Strategic Builder', tagline: 'Governance + Strategy dominant · High band. Sets the standards and sees the big picture.' },
-  { code: '02', name: 'The Steward', tagline: 'Governance + Legacy dominant · High band. Protects what is built while building for the future.' },
-  { code: '03', name: 'The Networker', tagline: 'Relationship-dominant · High band. Connects stakeholders and reads boardroom dynamics with precision.' },
-  { code: '04', name: 'The Guardian', tagline: 'Governance-dominant · Building band. Rigorous on process; strategic contribution still developing.' },
-  { code: '05', name: 'The Visionary', tagline: 'Strategy-dominant · Building band. Sees the future clearly; governance mechanics still tightening.' },
-  { code: '06', name: 'The Bridge-Builder', tagline: 'Relationship + Legacy dominant · Building band. A connector committed to lasting value.' },
-  { code: '07', name: 'The Nominee', tagline: 'Any profile · Fragile band. Recently appointed; at least one dimension shows credible foundation.' },
-  { code: '08', name: 'The Passenger', tagline: 'All dims low · Fragile band. Contributes minimally; presence does not strengthen the board.' },
+  { code: 'A1', name: 'High-Performing Board', tagline: 'Behaviour × Process × Outcomes: sets the standard for value-adding governance.' },
+  { code: 'A2', name: 'Rubber-Stamp Board', tagline: 'Behaviour low + Process strong — polished procedures, negligible strategic value.' },
+  { code: 'A3', name: 'Micromanaging Board', tagline: 'Behaviour interfering with Outcomes — directors operating as shadow management.' },
+  { code: 'A4', name: 'Crisis Board', tagline: 'Process collapsed + Outcomes reactive — surviving on firefighting, not governance.' },
+  { code: 'A5', name: 'Competency Gap Board', tagline: 'Competency low — wrong skills, wrong composition, wrong fit for the strategic moment.' },
+  { code: 'A6', name: 'Sleepwalking Board', tagline: 'Process nominal, Outcomes unmeasured — everyone arrives on time and nothing improves.' },
+  { code: 'A7', name: 'Founder-Style Board', tagline: 'Behaviour founder-dominated, Competency shaped around founder context rather than institutional mandate.' },
+  { code: 'A8', name: 'Political Board', tagline: 'Behaviour driven by personal and factional alignment instead of organisational outcomes.' },
+  { code: 'A9', name: 'Dysfunctional Meeting Board', tagline: 'Behaviour + Process — meeting dynamics so toxic that competent members disengage.' },
+  { code: 'A10', name: 'Underperforming Board', tagline: 'Across-dimensions low: requires deliberate board transformation, not incremental adjustment.' },
 ];
 
 const IMPACT_METHOD_STEPS = [
   {
-    mono: '01 · Self-Assessment',
-    title: 'Thirty questions across five governance dimensions.',
-    body: 'Strategic Oversight, Governance Rigour, Stakeholder Intelligence, Mandate Legacy, and Executive Presence & Influence — six questions each. An honest read of your board contribution.',
+    mono: '01 · Board Self-Diagnostic',
+    title: 'A structured governance self-view.',
+    body: 'Thirty-six questions across four dimensions — Behaviour, Competency, Process, Outcomes. Board members, chairs, or company secretaries complete the diagnostic; multi-rater is available in the paid tier.',
   },
   {
-    mono: '02 · Dimension Verdicts',
-    title: 'Five independent mandate verdicts.',
-    body: 'Each dimension scores from Gap to Strong, with written meaning tied to real board behaviour — benchmarked against the governance trade-offs directors actually face.',
+    mono: '02 · Dimension Scoring',
+    title: 'Four independent effectiveness verdicts.',
+    body: 'Each dimension scored from Dysfunctional to High-Performing, with interpretive text grounded in real board operating patterns, not generic governance checklists.',
   },
   {
-    mono: '03 · Archetype & Mandate Band',
-    title: 'Your board archetype and mandate strength.',
-    body: 'A composite 0–100 mandate score, a band from Fragile to High Mandate, and one of eight board archetypes — modulated by your Impact Orientation and APAC credibility.',
+    mono: '03 · Archetype & Band',
+    title: 'Your board archetype and composite band.',
+    body: 'A composite 0–100 board effectiveness score, a band from Dysfunctional Board to High-Performing Board, and one of ten board archetypes with its primary intervention.',
   },
 ];
 
 const IMPACT_WHO_FOR = [
-  { title: 'Board directors', desc: 'Sitting directors benchmarking their contribution and identifying the dimension that most limits board effectiveness.' },
-  { title: 'Executives preparing board roles', desc: 'Leaders stepping toward governance who need an honest read on governance rigour before the mandate begins.' },
-  { title: 'Leaders shaping organisational culture', desc: 'Executives accountable for team and institutional impact, not just personal delivery.' },
+  { title: 'Chairs & company secretaries', desc: 'A structured baseline read before board evaluations, AGMs, or a new chair mandate.' },
+  { title: 'Directors and board members', desc: 'Individual directors who want an honest read on the board they serve, separate from institutional feedback cycles.' },
+  { title: 'Investors and governance leads', desc: 'Portfolio-level governance intelligence: the first diagnostic to focus specifically on governance efficacy at the board level.' },
 ];
 
 const IMPACT_DIFFERENT = [
-  'Board-level focus, not just individual capability. IMPACT measures your contribution to collective governance, where most leadership assessments stop at personal style.',
-  'Eight archetypes paired with explicit mandate bands — High, Building, Fragile — so the profile says how credibly you operate, not just how you prefer to.',
-  'APAC Mandate Credibility as a first-class dimension. Western governance credibility does not automatically translate; IMPACT makes the APAC gap visible.',
-  'Bridges personal and institutional performance. Mandate Legacy measures whether you build boards that outlive your tenure, not just decisions you ratify.',
+  'Reads the board, not just individual directors. Most board instruments are 360s for individual members. IMPACT scores the board itself.',
+  'Four governance-specific dimensions — Behaviour, Competency, Process, Outcomes — built on how boards actually create or destroy value.',
+  'Ten archetypes of board operating patterns. From Rubber-Stamp to Sleepwalking to Crisis, each archetype carries a primary intervention.',
+  'Governance grounded in real practice, not compliance checklists. A board can be fully compliant and still entirely ineffective — IMPACT measures the gap.',
 ];
 
 const IMPACT_FAQ = [
   {
     q: 'What is IMPACT?',
-    a: 'IMPACT (Board Effectiveness Assessment) is a hero assessment benchmarking your contribution at the board and organisational level. Five dimensions — strategic oversight, governance rigour, stakeholder intelligence, mandate legacy, and APAC mandate credibility — eight board archetypes, and a composite 0–100 mandate score.',
+    a: 'IMPACT (Board Effectiveness Diagnostic) is a hero diagnostic measuring whether a board actually governs effectively. Four dimensions — Behaviour, Competency, Process, Outcomes — ten archetypes, and a composite 0–100 board effectiveness score.',
   },
   {
-    q: 'Is IMPACT only for sitting directors?',
-    a: 'No. IMPACT is built for sitting directors and for executives preparing for board roles. The dimension verdicts and mandate band give both groups an honest read on governance rigour before it becomes a boardroom liability.',
+    q: 'Who completes IMPACT?',
+    a: 'The Executive Introduction tier can be completed by a chair, company secretary, or any single board member. The CPI-integrated multi-rater tier collects reads across the board, with anonymity controls appropriate for board-level reporting.',
   },
   {
-    q: 'How long does it take?',
-    a: 'Approximately fifteen minutes for thirty questions. The Executive Introduction tier includes your composite mandate score, five dimension verdicts, board archetype, and NEXUS follow-up integration.',
+    q: 'How is IMPACT different from a standard board evaluation?',
+    a: 'Standard board evaluations are compliance exercises with anonymous comments and vague recommendations. This diagnostic produces a composite score across four dimensions, a board archetype, and a concrete intervention — grounded in real operating patterns, not process compliance.',
   },
   {
-    q: 'Is my data private?',
-    a: 'Yes. IMPACT results are private to your LYC Intelligence account. We do not sell personal information, and assessment data is never used to train public-facing models or shared outside LYC Intelligence / LYC Partners unless explicitly authorised.',
+    q: 'Is board-level data anonymous?',
+    a: 'Yes, where the respondent requests it. IMPACT results are private to your LYC Intelligence account. Multi-rater aggregation, anonymity controls, and report segmentation are configurable in the paid tier.',
   },
 ];
 
@@ -126,15 +115,15 @@ export function ImpactLanding() {
     <LandingTemplate
       code="IMPACT"
       name="IMPACT"
-      fullName="Board Effectiveness Assessment"
-      tagline="Understand your leadership impact on boards, teams, and culture. Five dimensions. Eight archetypes. Governance-level benchmarking."
-      heroDescription="Benchmark your contribution at the board and organisational level. Five dimensions — strategic oversight, governance rigour, stakeholder intelligence, mandate legacy, and APAC mandate credibility. Eight board-effectiveness archetypes."
-      categoryLabel="Board & Team Impact"
-      tierBadge="HERO ASSESSMENT"
-      heroH1="A board mandate that's actually built for the governance decisions you face today"
+      fullName="Board Effectiveness Diagnostic"
+      tagline="Board effectiveness across Behaviour, Competency, Process, Outcomes. Ten archetypes. A real governance read, not a compliance exercise."
+      heroDescription="Is your board actually governing, or just meeting? IMPACT scores four dimensions of board effectiveness, classifies your board across ten archetypes, and delivers a concrete governance read in approximately twelve minutes."
+      categoryLabel="Board Effectiveness"
+      tierBadge="HERO DIAGNOSTIC"
+      heroH1="Boards can be fully compliant and entirely ineffective — know the difference"
       heroEyebrow="IMPACT · BOARD EFFECTIVENESS"
-      accent={ACCENT}
-      accentDark={ACCENT_DARK}
+      accent={TEAL}
+      accentDark={TEAL_DARK}
       dimensions={IMPACT_DIMENSIONS}
       archetypes={IMPACT_ARCHETYPES}
       methodologySteps={IMPACT_METHOD_STEPS}
@@ -142,19 +131,19 @@ export function ImpactLanding() {
       whatMakesDifferent={IMPACT_DIFFERENT}
       faq={IMPACT_FAQ}
       stats={[
-        { num: '5', label: 'DIMENSIONS', sub: 'of board effectiveness' },
-        { num: '8', label: 'ARCHETYPES', sub: 'board operating patterns' },
-        { num: '30', label: 'QUESTIONS', sub: '~15 minutes' },
+        { num: '4', label: 'DIMENSIONS', sub: 'of board operation' },
+        { num: '10', label: 'ARCHETYPES', sub: 'board operating patterns' },
+        { num: '36', label: 'QUESTIONS', sub: '~12 minutes' },
       ]}
       ctaHref="/assessment/impact/take"
-      ctaLabel="Start Your IMPACT Assessment"
-      finalCtaLabel="Get Your IMPACT Profile"
-      finalSubtext="Fifteen minutes. Five mandate verdicts. One board archetype. Your complimentary baseline covers the self-assessment layer and composite mandate score."
-      seoTitle="IMPACT — Board Effectiveness Assessment | LYC Intelligence"
-      seoDescription="Benchmark your board and organisational impact. 5 dimensions, 8 board archetypes, APAC mandate credibility. ~15 minutes. Complimentary Executive Introduction baseline."
+      ctaLabel="Start Your IMPACT Diagnostic"
+      finalCtaLabel="Get Your Board Effectiveness Read"
+      finalSubtext="Twelve minutes. Four dimension verdicts. One of ten board archetypes. Your complimentary baseline covers the self-diagnostic layer and composite effectiveness band."
+      seoTitle="IMPACT — Board Effectiveness Diagnostic | LYC Intelligence"
+      seoDescription="Board effectiveness across Behaviour, Competency, Process, Outcomes. 10 archetypes. A real governance read, not a compliance exercise. Complimentary Executive Introduction baseline."
       seoPath="/assessment/impact"
       prefix="impact"
-      heroSampleValues={[0.82, 0.70, 0.75, 0.60, 0.55]}
+      heroSampleValues={[0.62, 0.70, 0.55, 0.48]}
     />
   );
 }

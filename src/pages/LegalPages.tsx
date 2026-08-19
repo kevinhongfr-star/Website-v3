@@ -11,50 +11,152 @@ import { ArrowLeft, FileText, Shield, Cookie, Download, Trash2, Loader2, AlertCi
 import { useAuthStore } from '@/stores/authStore';
 import { authFetch } from '@/utils/authFetch';
 import { SEO } from '@/components/seo/SEO';
-import { DS } from '@/tokens';
+import { Section, Eyebrow, Button, Divider } from '@/components/ui/v3';
 
 interface Section {
   heading: string;
   body: React.ReactNode;
 }
 
-function LegalLayout({ title, icon, intro, sections, lastUpdated, actions }: {
+function LegalLayout({ title, intro, sections, lastUpdated, actions }: {
   title: string;
-  icon: React.ReactNode;
   intro: string;
   sections: Section[];
   lastUpdated: string;
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-3xl mx-auto px-4 md:px-6 py-12">
-        <a href="/" className="flex items-center gap-1 text-sm text-gray-500 hover:text-fuchsia mb-8">
+    <div style={{ background: 'var(--v3-color-white)', minHeight: '100vh' }}>
+      <div style={{ maxWidth: '720px', margin: '0 auto', padding: '96px 24px 128px' }}>
+        <a
+          href="/"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontFamily: 'var(--v3-font-mono)',
+            fontSize: 'var(--v3-text-label)',
+            lineHeight: 'var(--v3-leading-label)',
+            letterSpacing: 'var(--v3-tracking-label)',
+            textTransform: 'uppercase',
+            color: 'var(--v3-color-ink-muted)',
+            textDecoration: 'none',
+            marginBottom: '48px',
+          }}
+        >
           <ArrowLeft className="w-4 h-4" /> Back to home
         </a>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-fuchsia/10 text-fuchsia flex items-center justify-center">{icon}</div>
-          <h1
-            className="text-3xl font-bold"
-            style={{ color: DS.text, fontFamily: DS.headingFont }}
-          >
-            {title}
-          </h1>
-        </div>
-        <p className="text-xs text-gray-400 mb-6">Last updated: {lastUpdated}</p>
-        <p className="text-sm text-gray-600 leading-relaxed mb-8">{intro}</p>
-        <div className="space-y-8">
+
+        <h1
+          style={{
+            fontFamily: 'var(--v3-font-display)',
+            fontSize: 'var(--v3-text-display-md)',
+            lineHeight: 'var(--v3-leading-display-md)',
+            fontWeight: 700,
+            color: 'var(--v3-color-ink)',
+            margin: '0 0 16px',
+          }}
+        >
+          {title}
+        </h1>
+
+        <p
+          style={{
+            fontFamily: 'var(--v3-font-mono)',
+            fontSize: 'var(--v3-text-label)',
+            lineHeight: 'var(--v3-leading-label)',
+            letterSpacing: 'var(--v3-tracking-label)',
+            color: 'var(--v3-color-ink-muted)',
+            margin: '0 0 24px',
+          }}
+        >
+          Last updated: {lastUpdated}
+        </p>
+
+        <p
+          style={{
+            fontFamily: 'var(--v3-font-body)',
+            fontSize: 'var(--v3-text-body)',
+            lineHeight: 1.6,
+            color: 'var(--v3-color-ink-secondary)',
+            margin: '0 0 64px',
+          }}
+        >
+          {intro}
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
           {sections.map((s, i) => (
             <section key={i}>
-              <h2 className="font-semibold mb-2" style={{ color: DS.text }}>{i + 1}. {s.heading}</h2>
-              <div className="text-sm text-gray-700 leading-relaxed space-y-2">{s.body}</div>
+              <div style={{ marginBottom: '16px' }}>
+                <h2
+                  style={{
+                    fontFamily: 'var(--v3-font-display)',
+                    fontSize: 'var(--v3-text-heading-md)',
+                    lineHeight: 'var(--v3-leading-heading-md)',
+                    fontWeight: 700,
+                    color: 'var(--v3-color-ink)',
+                    margin: 0,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: 'var(--v3-font-mono)',
+                      fontSize: 'var(--v3-text-label)',
+                      lineHeight: 'var(--v3-leading-label)',
+                      letterSpacing: 'var(--v3-tracking-label)',
+                      color: 'var(--v3-color-ink-muted)',
+                      marginRight: '12px',
+                      fontWeight: 400,
+                    }}
+                  >
+                    {i + 1}.
+                  </span>
+                  {s.heading}
+                </h2>
+              </div>
+              <Divider variant="strong" width="full" style={{ marginBottom: '20px' }} />
+              <div
+                style={{
+                  fontFamily: 'var(--v3-font-body)',
+                  fontSize: '16px',
+                  lineHeight: 1.6,
+                  color: 'var(--v3-color-ink)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                {s.body}
+              </div>
             </section>
           ))}
         </div>
+
         {actions}
-        <div className="mt-12 pt-6 border-t border-gray-100 text-xs text-gray-400">
-          LYC Partners Shanghai · For questions about this policy, contact{''}
-          <a href="mailto:legal@lyc-intelligence.app" className="text-fuchsia hover:underline">legal@lyc-intelligence.app</a>
+
+        <div
+          style={{
+            marginTop: '96px',
+            paddingTop: '24px',
+            borderTop: '1px solid var(--v3-color-divider)',
+            fontFamily: 'var(--v3-font-mono)',
+            fontSize: 'var(--v3-text-label)',
+            lineHeight: 'var(--v3-leading-label)',
+            letterSpacing: 'var(--v3-tracking-label)',
+            color: 'var(--v3-color-ink-muted)',
+          }}
+        >
+          LYC Partners Shanghai · For questions about this policy, contact{' '}
+          <a
+            href="mailto:legal@lyc-intelligence.app"
+            style={{
+              color: 'var(--v3-color-fuchsia)',
+              textDecoration: 'none',
+            }}
+          >
+            legal@lyc-intelligence.app
+          </a>
         </div>
       </div>
     </div>
@@ -66,7 +168,7 @@ export function TermsPage() {
   const sections: Section[] = [
     {
       heading: 'Service Description',
-      body: <p>LYC Intelligence ("the Service") is an executive intelligence service operated by LYC Partners Shanghai, providing AI-powered advisory (LYC Intelligence), candidate-client matching, assessment tools, and coaching services for China-APAC executives and the organizations that hire them.</p>,
+      body: <p>LYC Intelligence ("the Service") is an executive intelligence service operated by LYC Partners Shanghai, providing AI-powered advisory (LYC Intelligence), candidate-client matching, diagnostic tools, and coaching services for China-APAC executives and the organizations that hire them.</p>,
     },
     {
       heading: 'User Accounts',
@@ -82,7 +184,7 @@ export function TermsPage() {
     },
     {
       heading: 'Intellectual Property',
-      body: <p>All platform content, software, and branding are the property of LYC Partners or its licensors. You retain rights to content you submit (e.g., assessment answers, resumes) and grant us a license to process it solely to provide the Service.</p>,
+      body: <p>All service content, software, and branding are the property of LYC Partners or its licensors. You retain rights to content you submit (e.g., diagnostic answers, resumes) and grant us a license to process it solely to provide the Service.</p>,
     },
     {
       heading: 'Acceptable Use',
@@ -106,7 +208,6 @@ export function TermsPage() {
       <SEO page="terms" />
       <LegalLayout
         title="Terms of Service"
-        icon={<FileText className="w-5 h-5" />}
         intro="These Terms govern your use of LYC Intelligence. By accessing or using the Service, you agree to be bound by these Terms."
         sections={sections}
         lastUpdated="August 4, 2026"
@@ -120,27 +221,27 @@ export function PrivacyPage() {
   const sections: Section[] = [
     {
       heading: 'Data Controller',
-      body: <p>LYC Partners Shanghai is the data controller responsible for your personal data. Contact us at <a href="mailto:privacy@lyc-intelligence.app" className="text-fuchsia hover:underline">privacy@lyc-intelligence.app</a> for privacy inquiries.</p>,
+      body: <p>LYC Partners Shanghai is the data controller responsible for your personal data. Contact us at <a href="mailto:privacy@lyc-intelligence.app" style={{ color: 'var(--v3-color-fuchsia)', textDecoration: 'none' }}>privacy@lyc-intelligence.app</a> for privacy inquiries.</p>,
     },
     {
       heading: 'Data We Collect',
       body: (
-        <ul className="list-disc pl-5 space-y-1">
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <li><strong>Account data:</strong> name, email, password (hashed), role, organization.</li>
           <li><strong>Profile data:</strong> title, company, industry, seniority, location, resume.</li>
-          <li><strong>Activity data:</strong> assessment answers, chat history, applications, bookings.</li>
+          <li><strong>Activity data:</strong> diagnostic answers, chat history, applications, bookings.</li>
           <li><strong>Usage data:</strong> device, browser, IP address, pages visited (via cookies).</li>
         </ul>
       ),
     },
     {
       heading: 'Purpose of Processing',
-      body: <p>We process your data to provide the Service (matching, advisory, assessments), to operate and improve the platform, to communicate with you, to process payments, and to comply with legal obligations.</p>,
+      body: <p>We process your data to provide the Service (matching, advisory, diagnostics), to operate and improve the service, to communicate with you, to process payments, and to comply with legal obligations.</p>,
     },
     {
       heading: 'Third-Party Processors',
       body: (
-        <ul className="list-disc pl-5 space-y-1">
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <li><strong>Supabase</strong> — database, authentication, and file storage (Netherlands).</li>
           <li><strong>DeepSeek</strong> — AI language model processing for LYC Intelligence responses.</li>
           <li><strong>Stripe</strong> — payment processing (PCI-DSS compliant).</li>
@@ -159,7 +260,7 @@ export function PrivacyPage() {
     {
       heading: 'Your Rights (GDPR / PIPL)',
       body: (
-        <ul className="list-disc pl-5 space-y-1">
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <li>Access, correct, or delete your personal data.</li>
           <li>Restrict or object to processing.</li>
           <li>Data portability (receive your data in a structured format).</li>
@@ -170,7 +271,7 @@ export function PrivacyPage() {
     },
     {
       heading: 'Data Export & Deletion',
-      body: <p>To exercise your rights, contact <a href="mailto:privacy@lyc-intelligence.app" className="text-fuchsia hover:underline">privacy@lyc-intelligence.app</a>. We will respond within 30 days. Account deletion initiates a soft delete followed by a hard delete after 30 days.</p>,
+      body: <p>To exercise your rights, contact <a href="mailto:privacy@lyc-intelligence.app" style={{ color: 'var(--v3-color-fuchsia)', textDecoration: 'none' }}>privacy@lyc-intelligence.app</a>. We will respond within 30 days. Account deletion initiates a soft delete followed by a hard delete after 30 days.</p>,
     },
     {
       heading: 'Security',
@@ -182,7 +283,6 @@ export function PrivacyPage() {
       <SEO page="privacy" />
       <LegalLayout
         title="Privacy Policy"
-        icon={<Shield className="w-5 h-5" />}
         intro="This Privacy Policy explains how LYC Partners Shanghai collects, uses, and protects your personal data when you use LYC Intelligence."
         sections={sections}
         lastUpdated="August 4, 2026"
@@ -225,7 +325,6 @@ export function CookiesPage() {
       <SEO page="cookies" />
       <LegalLayout
         title="Cookie Policy"
-        icon={<Cookie className="w-5 h-5" />}
         intro="This policy explains how LYC Intelligence uses cookies and similar technologies, and how you can control them."
         sections={sections}
         lastUpdated="August 4, 2026"
@@ -290,81 +389,226 @@ function PrivacyActionsPanel() {
     }
   };
 
-  // Not signed in — nudge to login rather than showing dead buttons.
   if (!user) {
     return (
-      <div className="mt-12 p-5 border border-gray-200 bg-gray-50 text-sm text-gray-600 leading-relaxed">
-        <div className="flex items-start gap-2">
-          <AlertCircle className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
-          <span>
-            To download your personal data or request account deletion, please{''}
-            <a href="/login" className="text-fuchsia hover:underline font-medium">sign in</a>{''}
-            first. You may also email{''}
-            <a href="mailto:privacy@lyc-intelligence.app" className="text-fuchsia hover:underline">privacy@lyc-intelligence.app</a>.
-          </span>
+      <div
+        style={{
+          marginTop: '48px',
+          padding: '24px',
+          border: '1px solid var(--v3-color-divider)',
+          background: 'var(--v3-color-cream)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+          <AlertCircle style={{ width: '16px', height: '16px', color: 'var(--v3-color-ink-muted)', flexShrink: 0, marginTop: '2px' }} />
+          <div
+            style={{
+              fontFamily: 'var(--v3-font-body)',
+              fontSize: '14px',
+              lineHeight: 1.6,
+              color: 'var(--v3-color-ink-secondary)',
+            }}
+          >
+            To download your personal data or request account deletion, please{' '}
+            <a href="/login" style={{ color: 'var(--v3-color-fuchsia)', textDecoration: 'none', fontWeight: 500 }}>sign in</a>{' '}
+            first. You may also email{' '}
+            <a href="mailto:privacy@lyc-intelligence.app" style={{ color: 'var(--v3-color-fuchsia)', textDecoration: 'none' }}>privacy@lyc-intelligence.app</a>.
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mt-12 p-5 border border-gray-200 bg-gray-50">
-      <h3 className="font-semibold mb-1" style={{ color: DS.text }}>Exercise your rights</h3>
-      <p className="text-xs text-gray-500 mb-4">
+    <div
+      style={{
+        marginTop: '48px',
+        padding: '24px',
+        border: '1px solid var(--v3-color-divider)',
+        background: 'var(--v3-color-cream)',
+      }}
+    >
+      <h3
+        style={{
+          fontFamily: 'var(--v3-font-display)',
+          fontSize: 'var(--v3-text-heading-md)',
+          lineHeight: 'var(--v3-leading-heading-md)',
+          fontWeight: 700,
+          color: 'var(--v3-color-ink)',
+          margin: '0 0 8px',
+        }}
+      >
+        Exercise your rights
+      </h3>
+      <p
+        style={{
+          fontFamily: 'var(--v3-font-body)',
+          fontSize: '14px',
+          color: 'var(--v3-color-ink-secondary)',
+          lineHeight: 1.6,
+          margin: '0 0 24px',
+        }}
+      >
         Download a copy of your personal data (right to portability) or request account deletion.
       </p>
 
       {error && (
-        <div className="mb-3 flex items-start gap-2 p-3 bg-red-50 border border-red-200 text-xs text-red-700">
-          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-          <span>{error}</span>
+        <div
+          style={{
+            marginBottom: '16px',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '10px',
+            padding: '12px',
+            background: 'rgba(239, 68, 68, 0.08)',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+          }}
+        >
+          <AlertCircle style={{ width: '16px', height: '16px', color: 'var(--v3-color-error)', flexShrink: 0, marginTop: '1px' }} />
+          <span
+            style={{
+              fontFamily: 'var(--v3-font-body)',
+              fontSize: '14px',
+              lineHeight: 1.5,
+              color: 'var(--v3-color-error)',
+            }}
+          >
+            {error}
+          </span>
         </div>
       )}
       {success && (
-        <div className="mb-3 flex items-start gap-2 p-3 bg-green-50 border border-green-200 text-xs text-green-700">
-          <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
-          <span>{success}</span>
+        <div
+          style={{
+            marginBottom: '16px',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '10px',
+            padding: '12px',
+            background: 'rgba(16, 185, 129, 0.08)',
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+          }}
+        >
+          <CheckCircle2 style={{ width: '16px', height: '16px', color: 'var(--v3-color-success)', flexShrink: 0, marginTop: '1px' }} />
+          <span
+            style={{
+              fontFamily: 'var(--v3-font-body)',
+              fontSize: '14px',
+              lineHeight: 1.5,
+              color: 'var(--v3-color-success)',
+            }}
+          >
+            {success}
+          </span>
         </div>
       )}
 
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+        <Button
+          variant="ghost"
+          accent="fuchsia"
           onClick={handleExport}
           disabled={exporting || deleting}
-          className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-fuchsia hover:opacity-90 disabled:opacity-50 transition-opacity"
+          style={exporting || deleting ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' } : undefined}
         >
-          {exporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-          Download my data
-        </button>
+          {exporting ? <Loader2 style={{ width: '14px', height: '14px', animation: 'spin 1s linear infinite' }} /> : <Download style={{ width: '14px', height: '14px' }} />}
+          <span>Download my data</span>
+        </Button>
 
         {!confirming ? (
           <button
             type="button"
             onClick={() => { setConfirming(true); setError(null); setSuccess(null); }}
             disabled={exporting || deleting}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-red-700 border border-red-300 bg-white hover:bg-red-50 disabled:opacity-50 transition-colors"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '14px 20px',
+              background: 'transparent',
+              border: '1px solid var(--v3-color-error)',
+              color: 'var(--v3-color-error)',
+              fontFamily: 'var(--v3-font-mono)',
+              fontSize: 'var(--v3-text-label)',
+              lineHeight: 'var(--v3-leading-label)',
+              letterSpacing: 'var(--v3-tracking-label)',
+              textTransform: 'uppercase',
+              fontWeight: 400,
+              cursor: exporting || deleting ? 'not-allowed' : 'pointer',
+              opacity: exporting || deleting ? 0.5 : 1,
+              borderRadius: 0,
+              boxShadow: 'none',
+              transition: 'background var(--v3-dur) var(--v3-ease)',
+            }}
+            onMouseEnter={(e) => { if (!exporting && !deleting) e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 style={{ width: '14px', height: '14px' }} />
             Delete my account
           </button>
         ) : (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-red-700">This schedules permanent deletion in 30 days. Confirm?</span>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px' }}>
+            <span
+              style={{
+                fontFamily: 'var(--v3-font-body)',
+                fontSize: '14px',
+                lineHeight: 1.5,
+                color: 'var(--v3-color-error)',
+              }}
+            >
+              This schedules permanent deletion in 30 days. Confirm?
+            </span>
             <button
               type="button"
               onClick={handleDelete}
               disabled={deleting}
-              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '14px 20px',
+                background: 'var(--v3-color-error)',
+                border: '1px solid var(--v3-color-error)',
+                color: 'var(--v3-color-white)',
+                fontFamily: 'var(--v3-font-mono)',
+                fontSize: 'var(--v3-text-label)',
+                lineHeight: 'var(--v3-leading-label)',
+                letterSpacing: 'var(--v3-tracking-label)',
+                textTransform: 'uppercase',
+                fontWeight: 400,
+                cursor: deleting ? 'not-allowed' : 'pointer',
+                opacity: deleting ? 0.5 : 1,
+                borderRadius: 0,
+                boxShadow: 'none',
+                transition: 'background var(--v3-dur) var(--v3-ease)',
+              }}
             >
-              {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+              {deleting ? <Loader2 style={{ width: '14px', height: '14px', animation: 'spin 1s linear infinite' }} /> : <Trash2 style={{ width: '14px', height: '14px' }} />}
               Yes, delete
             </button>
             <button
               type="button"
               onClick={() => setConfirming(false)}
               disabled={deleting}
-              className="px-4 py-2 text-xs font-medium text-gray-600 border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
+              style={{
+                padding: '14px 20px',
+                background: 'transparent',
+                border: '1px solid var(--v3-color-divider)',
+                color: 'var(--v3-color-ink-secondary)',
+                fontFamily: 'var(--v3-font-mono)',
+                fontSize: 'var(--v3-text-label)',
+                lineHeight: 'var(--v3-leading-label)',
+                letterSpacing: 'var(--v3-tracking-label)',
+                textTransform: 'uppercase',
+                fontWeight: 400,
+                cursor: deleting ? 'not-allowed' : 'pointer',
+                opacity: deleting ? 0.5 : 1,
+                borderRadius: 0,
+                boxShadow: 'none',
+                transition: 'background var(--v3-dur) var(--v3-ease)',
+              }}
+              onMouseEnter={(e) => { if (!deleting) e.currentTarget.style.background = 'var(--v3-color-cream)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
             >
               Cancel
             </button>

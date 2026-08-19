@@ -2,7 +2,8 @@ import { AssessmentLanding, type AssessmentLandingConfig } from '@/components/as
 import { ASSESSMENT_CATALOG } from '@/assessments/catalog';
 import { SEO } from '@/components/seo/SEO';
 import { getAssessmentMeta } from '@/seo/pageMetadata';
-import { DS } from '@/tokens';
+
+const PAGE_ACCENT = '#00897B';
 
 const config: AssessmentLandingConfig = {
   code: 'PRISM',
@@ -12,9 +13,9 @@ const config: AssessmentLandingConfig = {
     'Discover your leadership profile across five core dimensions. Benchmark against real executives. Get a personalized development plan in fifteen minutes.',
   heroH1: 'A clear professional brand for executives between mandates',
   heroEyebrow: 'PRISM · PROFESSIONAL BRAND LEGIBILITY',
-  accent: DS.accent,
+  accent: PAGE_ACCENT,
   prefix: 'prism',
-  ctaLabel: 'Start the assessment',
+  ctaLabel: 'Start the diagnostic',
   ctaHref: '/prism/take',
   ctaSecondaryLabel: 'See how it works',
   ctaSecondaryHref: '#how-it-works',

@@ -1,14 +1,16 @@
 /**
  * W2-2 — LEAP landing page.
  *
- * Hero assessment #1. Deep leadership self-awareness. Content verified against
+ * Hero diagnostic #1. Deep leadership self-awareness. Content verified against
  * akira_source/diagnostic_portfolio/06_scoring_engine_code/leap_config.json
  * (W2-5): 5 dimensions · 17 archetypes · 30 questions · 1-5 Likert.
  *
- * Brand: ONE accent per page — OCEAN (#1E4D8C), reserved for LEAP only.
+ * Brand: TIER B — TEAL accent.
  */
 import { LandingTemplate, type LandingDimension, type LandingArchetype } from '@/components/templates/LandingTemplate';
-import { ACCENT, ACCENT_DARK } from '@/tokens';
+
+const TEAL = '#00897B';
+const TEAL_DARK = '#00695C';
 
 // ── LEAP DATA (verified against akira_source/leap_config.json) ──────
 // Full name: "Leadership Archetype & APAC Translation"
@@ -74,7 +76,7 @@ const LEAP_ARCHETYPES: LandingArchetype[] = [
 
 const LEAP_METHOD_STEPS = [
   {
-    mono: '01 · Self-Assessment',
+    mono: '01 · Self-Diagnostic',
     title: 'Your own view of your leadership operation.',
     body: 'Thirty benchmarked questions across five dimensions — Market, Capability, Timing, Risk, Impact. The self-view baseline of how you actually operate.',
   },
@@ -97,7 +99,7 @@ const LEAP_WHO_FOR = [
 ];
 
 const LEAP_DIFFERENT = [
-  'Seventeen archetypes — the most of any single LYC assessment. A granular operating-pattern map, not a four-label personality box.',
+  'Seventeen archetypes — the most of any single LYC diagnostic. A granular operating-pattern map, not a four-label personality box.',
   'Five dimensions built around how executives actually create value: Market, Capability, Timing, Risk, Impact — not abstract traits.',
   'APAC translation overlay. Every archetype carries an explicit cross-border read, so the profile travels with you into APAC mandates.',
   'Multi-phase structure. Self-view, dimension verdicts, and archetype mapping layered so the profile reflects behaviour, not a single snapshot.',
@@ -106,7 +108,7 @@ const LEAP_DIFFERENT = [
 const LEAP_FAQ = [
   {
     q: 'What is LEAP?',
-    a: 'LEAP (Leadership Archetype & APAC Translation) is a hero leadership self-awareness assessment. It measures five dimensions of executive operation, classifies you across seventeen archetypes, and produces a composite 0–100 profile with an APAC translation overlay.',
+    a: 'LEAP (Leadership Archetype & APAC Translation) is a hero leadership self-awareness diagnostic. It measures five dimensions of executive operation, classifies you across seventeen archetypes, and produces a composite 0–100 profile with an APAC translation overlay.',
   },
   {
     q: 'How long does it take?',
@@ -114,11 +116,11 @@ const LEAP_FAQ = [
   },
   {
     q: 'How is LEAP different from CPI?',
-    a: 'CPI is the flagship multi-layer instrument with multi-rater capability. LEAP is a focused hero assessment — the deepest single-instrument archetype map in the suite, with seventeen archetypes and an explicit APAC translation layer. Many leaders take both.',
+    a: 'CPI is the flagship multi-layer instrument with multi-rater capability. LEAP is a focused hero diagnostic — the deepest single-instrument archetype map in the suite, with seventeen archetypes and an explicit APAC translation layer. Many leaders take both.',
   },
   {
     q: 'Is my data private?',
-    a: 'Yes. LEAP results are private to your LYC Intelligence account. We do not sell personal information, and assessment data is never used to train public-facing models or shared outside LYC Intelligence / LYC Partners unless explicitly authorised.',
+    a: 'Yes. LEAP results are private to your LYC Intelligence account. We do not sell personal information, and diagnostic data is never used to train public-facing models or shared outside LYC Intelligence / LYC Partners unless explicitly authorised.',
   },
 ];
 
@@ -131,11 +133,11 @@ export function LeapLanding() {
       tagline="Deep leadership self-awareness across five operating dimensions. Seventeen archetypes. Comprehensive multi-phase profiling."
       heroDescription="The deepest single-instrument leadership profile in the LYC suite. Five dimensions. Seventeen archetypes. A composite profile grounded in how executives actually operate — including APAC translation."
       categoryLabel="Leadership Self-Awareness"
-      tierBadge="HERO ASSESSMENT"
+      tierBadge="HERO DIAGNOSTIC"
       heroH1="See the leadership decisions you'll make before you make them"
       heroEyebrow="LEAP · LEARNING & EXECUTION POTENTIAL"
-      accent={ACCENT}
-      accentDark={ACCENT_DARK}
+      accent={TEAL}
+      accentDark={TEAL_DARK}
       dimensions={LEAP_DIMENSIONS}
       archetypes={LEAP_ARCHETYPES}
       methodologySteps={LEAP_METHOD_STEPS}
@@ -148,9 +150,9 @@ export function LeapLanding() {
         { num: '30', label: 'QUESTIONS', sub: '~15 minutes' },
       ]}
       ctaHref="/assessment/leap/take"
-      ctaLabel="Start Your LEAP Assessment"
+      ctaLabel="Start Your LEAP Diagnostic"
       finalCtaLabel="Get Your LEAP Profile"
-      finalSubtext="A few minutes. A clear scorecard. Seventeen archetypes. An APAC translation overlay. Your complimentary baseline covers the self-assessment layer and archetype classification."
+      finalSubtext="A few minutes. A clear scorecard. Seventeen archetypes. An APAC translation overlay. Your complimentary baseline covers the self-diagnostic layer and archetype classification."
       seoTitle="LEAP — Leadership Archetype & APAC Translation | LYC Intelligence"
       seoDescription="The deepest single-instrument leadership profile in the LYC suite. 5 dimensions, 17 archetypes, APAC translation overlay. ~15 minutes. Complimentary Executive Introduction baseline."
       seoPath="/assessment/leap"

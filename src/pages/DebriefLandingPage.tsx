@@ -4,24 +4,23 @@
  * Debrief sessions landing page at route /debrief.
  *
  * Structure:
+ *  - Top nav wordmark + links
  *  - Hero: headline + subhead + CTA to booking flow
- *  - 4 session cards in grid (render SessionCard for each in SESSION_CATALOG)
- *  - "How it works": 3 steps — Book, Meet, Action plan
- *  - Coach roster: COACH_ROSTER from sessions.ts
- *  - FAQ: 8-10 placeholder questions
- *  - Tier-benefit callout strip
- *  - Final CTA section
+ *  - 4 session rows (CapabilityRow × 4 from SESSION_CATALOG)
+ *  - "How it works": 3 MethodologySteps — Book, Meet, Action plan
+ *  - Coach roster: UseCaseColumns from COACH_ROSTER
+ *  - FAQ: 10 minimal accordion items
+ *  - Tier-benefit callout strip (dark)
+ *  - Final CTA section (dark)
+ *  - UnifiedFooter
  *
  * Brand rules:
- *  - Radius = 0 everywhere
- *  - Font trio: serif headings, sans body, mono labels
- *  - Inline style objects (no Tailwind)
- *  - ONE accent: fuchsia ACCENT from tokens
- *  - All data from sessions.ts / tiers.ts config — no hardcoded numbers
- *  - All copy = placeholders mapped with "[Emily: ... — placeholder]"
+ *  - Zero radius, zero shadows, zero cards everywhere
+ *  - Font trio: serif display, sans body, mono labels
+ *  - One accent: fuchsia (Debrief = coaching/advisory → Tier A programmatic)
+ *  - All data from sessions.ts / tiers.ts config
  */
-import React, { useEffect, useState } from 'react';
-import { DS, ACCENT } from '@/tokens';
+import React, { useState } from 'react';
 import {
   SESSION_CATALOG,
   COACH_ROSTER,
@@ -29,13 +28,19 @@ import {
   COACH_TYPES,
   getComplimentaryAllocation,
 } from '@/config/sessions';
-import { tierDisplayName, TIERS } from '@/config/tiers';
-import { SessionCard } from '@/components/debrief/SessionCard';
+import { tierDisplayName } from '@/config/tiers';
 import { SEO } from '@/components/seo/SEO';
 import { UnifiedFooter } from '@/components/layout/UnifiedFooter';
-import { ChevronDown, ArrowRight } from 'lucide-react';
-
-// ── FAQ (placeholder copy — Emily TBD) ───────────────────────────
+import { ChevronDown } from 'lucide-react';
+import {
+  Section,
+  Eyebrow,
+  Button,
+  Divider,
+  MethodologyStep,
+  CapabilityRow,
+  UseCaseColumns,
+} from '@/components/ui/v3';
 
 const DEBRIEF_FAQ = [
   {
@@ -52,7 +57,7 @@ const DEBRIEF_FAQ = [
   },
   {
     q: '[Emily: FAQ Q4 — placeholder. e.g. "What is the cancellation policy?"]',
-    a: '[Emily: FAQ A4 — placeholder. Explanation of 24-hour free cancellation window, 50% charge for late cancellations within 24 hours, and 100% no-show policy.]',
+    a: '[Emily: FAQ A4 — placeholder. Explanation of 24-hour complimentary cancellation window, 50% charge for late cancellations within 24 hours, and 100% no-show policy.]',
   },
   {
     q: '[Emily: FAQ Q5 — placeholder. e.g. "What are complimentary sessions?"]',
@@ -80,58 +85,29 @@ const DEBRIEF_FAQ = [
   },
 ];
 
-// ── "How it works" 3-step placeholders ───────────────────────────
-
 const HOW_IT_WORKS_STEPS = [
   {
-    mono: '01 · Book',
+    mono: '01',
     title: '[Emily: Step 1 title — placeholder. "Choose your session type and time."]',
     body: '[Emily: Step 1 body — placeholder. Select the session length and coach type that match your current goal. Pick from available coach time slots in your timezone. Pay or use your complimentary allocation.]',
   },
   {
-    mono: '02 · Meet',
+    mono: '02',
     title: '[Emily: Step 2 title — placeholder. "1:1 video session with your coach."]',
     body: '[Emily: Step 2 body — placeholder. Join a structured 1:1 video debrief. Your coach comes prepared with context from your profile and any relevant diagnostics. The session is recorded if you wish, with your consent.]',
   },
   {
-    mono: '03 · Action Plan',
+    mono: '03',
     title: '[Emily: Step 3 title — placeholder. "Written action summary and next steps."]',
     body: '[Emily: Step 3 body — placeholder. Receive a written debrief document with prioritised actions within 24–72 hours, depending on session type. Book a follow-up session when you are ready for the next level of depth.]',
   },
 ];
 
-// ── INLINE STYLE CONSTANTS (matching LandingTemplate patterns) ───
-
-const COLOR_BG_DARK = DS.bgDark;
-const COLOR_TEXT_ON_DARK = DS.bg;
-const COLOR_MUTED_ON_DARK = 'rgba(255,255,255,0.62)';
-
-const EYEBROW_MONO: React.CSSProperties = {
-  fontFamily: DS.monoFont,
-  fontSize: 10,
-  letterSpacing: '0.24em',
-  color: DS.muted,
-  textTransform: 'uppercase',
-  marginBottom: 12,
-  fontWeight: 600,
-};
-
-const SECTION_TITLE: React.CSSProperties = {
-  fontFamily: DS.headingFont,
-  fontSize: 'clamp(28px, 3.6vw, 40px)',
-  fontWeight: 700,
-  letterSpacing: '-0.015em',
-  margin: 0,
-  color: DS.text,
-  lineHeight: 1.15,
-};
-
-const SECTION_LEAD: React.CSSProperties = {
-  fontFamily: DS.bodyFont,
-  color: DS.textSecondary,
-  maxWidth: 620,
-  marginTop: 12,
-  lineHeight: 1.6,
+const SESSION_CODES: Record<string, string> = {
+  'career-30': 'S1',
+  'executive-45': 'S2',
+  'leadership-60': 'S3',
+  'cpi-deepdive-90': 'S4',
 };
 
 export function DebriefLandingPage() {
@@ -141,14 +117,63 @@ export function DebriefLandingPage() {
   const councilAlloc = getComplimentaryAllocation('council');
 
   const handleBookClick = (session: SessionType) => {
-    // Placeholder: would navigate to booking flow
     console.log('[Debrief] Book session clicked:', session.slug);
   };
 
+  const coachUseCases = COACH_ROSTER.map((coach, i) => {
+    const coachTypeMeta = COACH_TYPES[coach.type];
+    const code = `C0${i + 1}`;
+    return {
+      label: code,
+      title: coach.name,
+      description: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div>{coach.bioPlaceholder}</div>
+          <div
+            style={{
+              fontFamily: 'var(--v3-font-mono)',
+              fontSize: 'var(--v3-text-label)',
+              lineHeight: 'var(--v3-leading-label)',
+              letterSpacing: 'var(--v3-tracking-label)',
+              textTransform: 'uppercase',
+              color: 'var(--v3-color-fuchsia)',
+            }}
+          >
+            {coachTypeMeta.displayName} · {coach.timezone}
+          </div>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {coach.canDeliver.map((ct) => (
+              <span
+                key={ct}
+                style={{
+                  fontFamily: 'var(--v3-font-mono)',
+                  fontSize: '10px',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: 'var(--v3-color-ink-secondary)',
+                  padding: '3px 8px',
+                  border: '1px solid var(--v3-color-divider)',
+                }}
+              >
+                {ct.replace('_', ' ')}
+              </span>
+            ))}
+          </div>
+        </div>
+      ),
+    };
+  });
+
   return (
-    <div style={{ minHeight: '100vh', background: DS.bg, color: DS.text }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'var(--v3-color-cream)',
+        color: 'var(--v3-color-ink)',
+      }}
+    >
       <SEO
-        page="landing"
+        page="debrief"
         title="[Emily: SEO title — placeholder. Debrief Sessions | LYC Intelligence]"
         description="[Emily: SEO meta description — placeholder. 1:1 human debrief sessions with certified career, executive, leadership, and CPI coaches. Tier-discounted pricing, complimentary session allocations, and APAC expertise.]"
         path="/debrief"
@@ -156,747 +181,441 @@ export function DebriefLandingPage() {
 
       <style>{`
         [data-debrief-page="root"] .debrief-session-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 20px;
+          display: flex;
+          flex-direction: column;
         }
-        [data-debrief-page="root"] .debrief-how-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
+        [data-debrief-page="root"] .debrief-faq-row {
+          border-bottom: 1px solid var(--v3-color-divider);
         }
-        [data-debrief-page="root"] .debrief-coach-grid {
+        [data-debrief-page="root"] .debrief-nav {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        [data-debrief-page="root"] .debrief-nav-wordmark {
+          font-family: var(--v3-font-display);
+          font-weight: 400;
+          font-size: 20px;
+          letter-spacing: -0.01em;
+          color: var(--v3-color-ink);
+        }
+        [data-debrief-page="root"] .debrief-nav-links {
+          display: flex;
+          gap: 32px;
+          align-items: center;
+          font-family: var(--v3-font-mono);
+          font-size: var(--v3-text-label);
+          line-height: var(--v3-leading-label);
+          letter-spacing: var(--v3-tracking-label);
+          text-transform: uppercase;
+          color: var(--v3-color-ink-secondary);
+        }
+        [data-debrief-page="root"] .debrief-nav-links a {
+          color: inherit;
+          text-decoration: none;
+        }
+        [data-debrief-page="root"] .debrief-nav-links a:hover {
+          color: var(--v3-color-fuchsia);
+        }
+        [data-debrief-page="root"] .debrief-hero-meta {
+          display: flex;
+          gap: 16px;
+          flex-wrap: wrap;
+          align-items: center;
+          font-family: var(--v3-font-mono);
+          font-size: 11px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--v3-color-paper-muted);
+          margin-top: 40px;
+        }
+        [data-debrief-page="root"] .debrief-hero-meta .dot {
+          color: var(--v3-color-divider-dark);
+        }
+        [data-debrief-page="root"] .debrief-tier-callout-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-          gap: 20px;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 0;
+        }
+        [data-debrief-page="root"] .debrief-tier-callout-col {
+          padding: 0 32px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          border-right: 1px solid var(--v3-color-divider-dark);
+        }
+        [data-debrief-page="root"] .debrief-tier-callout-col:last-child {
+          border-right: none;
+        }
+        [data-debrief-page="root"] .debrief-tier-callout-mono {
+          font-family: var(--v3-font-mono);
+          fontSize: 14px;
+          fontWeight: 700;
+          color: var(--v3-color-fuchsia);
+        }
+        [data-debrief-page="root"] .debrief-tier-callout-title {
+          font-family: var(--v3-font-display);
+          fontSize: 22px;
+          fontWeight: 400;
+          color: var(--v3-color-paper);
+          line-height: 1.25;
+          margin: 0;
+        }
+        [data-debrief-page="root"] .debrief-tier-callout-body {
+          font-family: var(--v3-font-body);
+          fontSize: var(--v3-text-body);
+          color: var(--v3-color-paper-secondary);
+          line-height: 1.6;
+          margin: 0;
+        }
+        [data-debrief-page="root"] .debrief-tier-callout-tag {
+          margin-top: 4px;
+          font-family: var(--v3-font-mono);
+          fontSize: 11px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--v3-color-fuchsia);
+          fontWeight: 500;
+        }
+        [data-debrief-page="root"] .debrief-final-meta {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 24px;
+          margin-top: 28px;
+        }
+        [data-debrief-page="root"] .debrief-final-meta-item {
+          font-family: var(--v3-font-mono);
+          fontSize: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: var(--v3-color-paper-muted);
+        }
+        [data-debrief-page="root"] .debrief-final-meta .dot {
+          color: var(--v3-color-divider-dark);
+        }
+        [data-debrief-page="root"] .debrief-session-cost {
+          font-family: var(--v3-font-mono);
+          font-size: var(--v3-text-label);
+          lineHeight: var(--v3-leading-label);
+          letter-spacing: var(--v3-tracking-label);
+          text-transform: uppercase;
+          color: var(--v3-color-ink-muted);
+          margin-top: 8px;
         }
         @media (max-width: 900px) {
-          [data-debrief-page="root"] .debrief-how-grid {
-            grid-template-columns: 1fr;
+          [data-debrief-page="root"] .debrief-nav {
+            flex-direction: column;
+            gap: 16px;
+            align-items: flex-start;
+          }
+          [data-debrief-page="root"] .debrief-nav-links {
+            gap: 20px;
+            flex-wrap: wrap;
+          }
+          [data-debrief-page="root"] .debrief-tier-callout-grid {
+            grid-template-columns: 1fr !important;
+            gap: 24px;
+          }
+          [data-debrief-page="root"] .debrief-tier-callout-col {
+            border-right: none !important;
+            border-bottom: 1px solid var(--v3-color-divider-dark);
+            padding: 0 0 24px 0;
+          }
+          [data-debrief-page="root"] .debrief-tier-callout-col:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
           }
         }
       `}</style>
 
       <main data-debrief-page="root">
-        {/* ══════════════════════════════════════════
-            1. HERO
-            ══════════════════════════════════════════ */}
-        <section style={{ background: COLOR_BG_DARK }}>
-          <div
-            style={{
-              maxWidth: 1200,
-              margin: '0 auto',
-              padding: '96px 32px',
-            }}
-          >
-            <div style={{ maxWidth: 720 }}>
-              <div
-                style={{
-                  background: ACCENT,
-                  color: DS.bg,
-                  fontFamily: DS.monoFont,
-                  fontSize: 10,
-                  letterSpacing: '0.20em',
-                  padding: '4px 10px',
-                  display: 'inline-block',
-                  textTransform: 'uppercase',
-                  fontWeight: 600,
-                  marginBottom: 20,
-                }}
-              >
-                HUMAN DEBRIEF · STREAM 3
-              </div>
+        <Section bg="white" paddingY="sm" scope={true}>
+          <div className="debrief-nav">
+            <div className="debrief-nav-wordmark">LYC Intelligence</div>
+            <nav className="debrief-nav-links" aria-label="Primary">
+              <a href="#sessions">Sessions</a>
+              <a href="#how-it-works">How it works</a>
+              <a href="#coach-roster">Coaches</a>
+              <a href="#faq">FAQ</a>
+              <a href="/pricing">Pricing</a>
+            </nav>
+          </div>
+        </Section>
+        <Divider variant="light" width="full" />
 
-              <div
+        <Section bg="dark" paddingY="xl" scope={true}>
+          <div style={{ position: 'relative' }}>
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                inset: '-40px -40px 0 -40px',
+                background:
+                  'radial-gradient(circle at 30% 20%, rgba(193,8,171,0.15) 0%, transparent 60%)',
+                pointerEvents: 'none',
+              }}
+            />
+            <div style={{ maxWidth: 720, position: 'relative' }}>
+              <Eyebrow accent="fuchsia">Human Debrief Sessions</Eyebrow>
+              <h2
                 style={{
-                  fontFamily: DS.monoFont,
-                  fontSize: 10,
-                  letterSpacing: '0.22em',
-                  color: DS.muted,
-                  textTransform: 'uppercase',
-                  marginBottom: 10,
-                  fontWeight: 500,
-                }}
-              >
-                [Emily: Hero eyebrow — placeholder. e.g. "1:1 COACHING · 4 SESSION TYPES"]
-              </div>
-
-              <h1
-                style={{
-                  fontFamily: DS.headingFont,
-                  fontSize: 'clamp(40px, 6vw, 68px)',
-                  fontWeight: 700,
-                  color: COLOR_TEXT_ON_DARK,
-                  lineHeight: 1.08,
-                  letterSpacing: '-0.02em',
-                  margin: 0,
+                  fontFamily: 'var(--v3-font-display)',
+                  fontSize: 'var(--v3-text-display-md)',
+                  lineHeight: 'var(--v3-leading-display-md)',
+                  fontWeight: 300,
+                  letterSpacing: '-0.015em',
+                  color: 'var(--v3-color-paper)',
+                  margin: '12px 0 0',
                 }}
               >
                 [Emily: Debrief hero headline — placeholder]
-              </h1>
-
+              </h2>
               <p
                 style={{
-                  fontFamily: DS.bodyFont,
-                  fontSize: 'clamp(15px, 1.5vw, 17px)',
-                  color: COLOR_MUTED_ON_DARK,
-                  lineHeight: 1.55,
+                  fontFamily: 'var(--v3-font-body)',
+                  fontSize: 'var(--v3-text-body)',
+                  lineHeight: 'var(--v3-leading-body)',
+                  color: 'var(--v3-color-paper-secondary)',
                   maxWidth: 620,
                   marginTop: 18,
+                  marginBottom: 0,
                 }}
               >
                 [Emily: Debrief hero subhead — placeholder. Description of human debrief sessions, what they enable, coach certifications, tier benefits, and APAC regional focus.]
               </p>
 
-              <div style={{ display: 'flex', gap: 12, marginTop: 28, flexWrap: 'wrap' }}>
-                <a
+              <div style={{ display: 'flex', gap: 24, marginTop: 32, flexWrap: 'wrap' }}>
+                <Button
+                  variant="primary"
+                  accent="fuchsia"
                   href="/debrief/book"
-                  style={{
-                    background: ACCENT,
-                    color: DS.bg,
-                    border: `1px solid ${ACCENT}`,
-                    fontFamily: DS.bodyFont,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.15em',
-                    padding: '14px 22px',
-                    minHeight: 44,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    textDecoration: 'none',
-                    cursor: 'pointer',
-                    transition: `background ${DS.transition}`,
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = DS.accentHover)}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = ACCENT)}
                 >
-                  Book a Session <ArrowRight style={{ width: 14, height: 14 }} />
-                </a>
-                <a
-                  href="#session-types"
-                  style={{
-                    background: 'transparent',
-                    color: COLOR_TEXT_ON_DARK,
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    fontFamily: DS.bodyFont,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    padding: '14px 22px',
-                    minHeight: 44,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.15em',
-                    textDecoration: 'none',
-                    transition: `background ${DS.transition}`,
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                  Book your session
+                </Button>
+                <Button
+                  variant="secondary"
+                  accent="fuchsia"
+                  href="#sessions"
                 >
-                  Explore Session Types
-                </a>
+                  Explore session types
+                </Button>
               </div>
 
-              <div
-                style={{
-                  display: 'flex',
-                  gap: 16,
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  fontFamily: DS.monoFont,
-                  fontSize: 11,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  color: COLOR_MUTED_ON_DARK,
-                  marginTop: 40,
-                }}
-              >
-                <span>
-                  [Emily: Hero meta 1 — placeholder. e.g. "4 Session Types"]
-                </span>
-                <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
-                <span>
-                  [Emily: Hero meta 2 — placeholder. e.g. "{COACH_ROSTER.length} Certified Coaches"]
-                </span>
-                <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
-                <span>
-                  [Emily: Hero meta 3 — placeholder. e.g. "APAC Timezones"]
-                </span>
+              <div className="debrief-hero-meta">
+                <span>4 Session Types</span>
+                <span className="dot">·</span>
+                <span>{COACH_ROSTER.length} Certified Coaches</span>
+                <span className="dot">·</span>
+                <span>APAC Timezones</span>
               </div>
             </div>
           </div>
-        </section>
+        </Section>
+        <Divider variant="light" width="full" />
 
-        {/* ══════════════════════════════════════════
-            2. SESSION TYPE CARDS (4 from SESSION_CATALOG)
-            ══════════════════════════════════════════ */}
-        <section id="session-types" style={{ background: DS.bg, padding: '96px 32px' }}>
-          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <div
-                style={{
-                  fontFamily: DS.monoFont,
-                  fontSize: 10,
-                  letterSpacing: '0.24em',
-                  color: DS.muted,
-                  textTransform: 'uppercase',
-                  marginBottom: 12,
-                  fontWeight: 600,
-                }}
-              >
-                [Emily: Session cards eyebrow — placeholder. e.g. "FOUR SESSION FORMATS"]
-              </div>
-              <h2 style={{ ...SECTION_TITLE, textAlign: 'center', margin: '0 auto' }}>
-                [Emily: Session cards H2 — placeholder. e.g. "Pick the session that matches your goal."]
-              </h2>
-              <p style={{ ...SECTION_LEAD, margin: '12px auto 0', textAlign: 'center' }}>
-                [Emily: Session cards lead paragraph — placeholder. Overview of four session types, coach specialisations, duration options, and tier pricing benefits.]
-              </p>
-            </div>
-
-            <div className="debrief-session-grid">
-              {SESSION_CATALOG.map((session) => (
-                <SessionCard
-                  key={session.slug}
-                  session={session}
-                  showCta={true}
-                  onBookClick={handleBookClick}
-                />
-              ))}
-            </div>
+        <Section bg="cream" paddingY="lg" id="sessions" scope={true}>
+          <div style={{ textAlign: 'left', maxWidth: 720, marginBottom: 16 }}>
+            <Eyebrow accent="fuchsia">Session Catalog</Eyebrow>
+            <h2
+              style={{
+                fontFamily: 'var(--v3-font-display)',
+                fontSize: 'var(--v3-text-display-md)',
+                lineHeight: 'var(--v3-leading-display-md)',
+                fontWeight: 300,
+                letterSpacing: '-0.015em',
+                color: 'var(--v3-color-ink)',
+                margin: '12px 0 0',
+              }}
+            >
+              [Emily: Session cards H2 — placeholder. e.g. "Pick the session that matches your goal."]
+            </h2>
+            <p
+              style={{
+                fontFamily: 'var(--v3-font-body)',
+                fontSize: 'var(--v3-text-body)',
+                lineHeight: 'var(--v3-leading-body)',
+                color: 'var(--v3-color-ink-secondary)',
+                maxWidth: 620,
+                marginTop: 12,
+                marginBottom: 0,
+              }}
+            >
+              [Emily: Session cards lead paragraph — placeholder. Overview of four session types, coach specialisations, duration options, and tier pricing benefits.]
+            </p>
           </div>
-        </section>
 
-        {/* ══════════════════════════════════════════
-            3. TIER-BENEFIT CALLOUT STRIP
-            ══════════════════════════════════════════ */}
-        <section style={{ background: DS.bgAlt, padding: '48px 32px', borderTop: `1px solid ${DS.border}`, borderBottom: `1px solid ${DS.border}` }}>
-          <div
-            style={{
-              maxWidth: 1120,
-              margin: '0 auto',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: 32,
-              alignItems: 'start',
-            }}
-          >
-            <div style={{ display: 'flex', gap: 16 }}>
-              <div
-                style={{
-                  width: 44,
-                  height: 44,
-                  background: `${ACCENT}14`,
-                  border: `1px solid ${ACCENT}40`,
-                  flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: DS.monoFont,
-                    fontSize: 14,
-                    fontWeight: 700,
-                    color: ACCENT,
-                  }}
-                >
-                  E
-                </span>
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontFamily: DS.headingFont,
-                    fontSize: 18,
-                    fontWeight: 600,
-                    color: DS.text,
-                    marginBottom: 4,
-                  }}
-                >
-                  {tierDisplayName('executive')} tier
-                </div>
-                <div
-                  style={{
-                    fontFamily: DS.bodyFont,
-                    fontSize: 14,
-                    color: DS.textSecondary,
-                    lineHeight: 1.55,
-                  }}
-                >
-                  [Emily: Executive tier callout — placeholder. Includes 1 free 30-min session/month]
-                </div>
-                {execAlloc && (
-                  <div
-                    style={{
-                      marginTop: 8,
-                      fontFamily: DS.monoFont,
-                      fontSize: 11,
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
-                      color: ACCENT,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {execAlloc.count} × {execAlloc.coversDurationMinutes}min / month · Complimentary
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: 16 }}>
-              <div
-                style={{
-                  width: 44,
-                  height: 44,
-                  background: `${ACCENT}14`,
-                  border: `1px solid ${ACCENT}40`,
-                  flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: DS.monoFont,
-                    fontSize: 14,
-                    fontWeight: 700,
-                    color: ACCENT,
-                  }}
-                >
-                  C
-                </span>
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontFamily: DS.headingFont,
-                    fontSize: 18,
-                    fontWeight: 600,
-                    color: DS.text,
-                    marginBottom: 4,
-                  }}
-                >
-                  {tierDisplayName('council')} tier
-                </div>
-                <div
-                  style={{
-                    fontFamily: DS.bodyFont,
-                    fontSize: 14,
-                    color: DS.textSecondary,
-                    lineHeight: 1.55,
-                  }}
-                >
-                  [Emily: Council tier callout — placeholder. Includes 2 free 60-min sessions/month + CPI Deep-Dive access]
-                </div>
-                {councilAlloc && (
-                  <div
-                    style={{
-                      marginTop: 8,
-                      fontFamily: DS.monoFont,
-                      fontSize: 11,
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
-                      color: ACCENT,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {councilAlloc.count} × {councilAlloc.coversDurationMinutes}min / month · Complimentary
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: 16 }}>
-              <div
-                style={{
-                  width: 44,
-                  height: 44,
-                  background: `${ACCENT}14`,
-                  border: `1px solid ${ACCENT}40`,
-                  flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: DS.monoFont,
-                    fontSize: 14,
-                    fontWeight: 700,
-                    color: ACCENT,
-                  }}
-                >
-                  %
-                </span>
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontFamily: DS.headingFont,
-                    fontSize: 18,
-                    fontWeight: 600,
-                    color: DS.text,
-                    marginBottom: 4,
-                  }}
-                >
-                  [Emily: Tier discount callout title — placeholder. e.g. "Tier pricing discounts"]
-                </div>
-                <div
-                  style={{
-                    fontFamily: DS.bodyFont,
-                    fontSize: 14,
-                    color: DS.textSecondary,
-                    lineHeight: 1.55,
-                  }}
-                >
-                  [Emily: Tier discount callout body — placeholder. Tier session discounts scale with membership (10%→25%). Annual plan stacks +10% extra on top of tier pricing.]
-                </div>
-                <div
-                  style={{
-                    marginTop: 8,
-                    fontFamily: DS.monoFont,
-                    fontSize: 11,
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: ACCENT,
-                    fontWeight: 600,
-                  }}
-                >
-                  {tierDisplayName('starter')} 10% · {tierDisplayName('professional')} 15% · {tierDisplayName('executive')} 20% · {tierDisplayName('council')} 25% · +10% Annual
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════════
-            4. "HOW IT WORKS" — 3 steps
-            ══════════════════════════════════════════ */}
-        <section id="how-it-works" style={{ background: DS.bg, padding: '96px 32px' }}>
-          <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: 56 }}>
-              <div style={EYEBROW_MONO}>
-                [Emily: How-it-works eyebrow — placeholder. e.g. "HOW IT WORKS"]
-              </div>
-              <h2 style={{ ...SECTION_TITLE, textAlign: 'center', margin: '0 auto' }}>
-                [Emily: How-it-works H2 — placeholder. e.g. "From booking to action plan in three steps."]
-              </h2>
-              <p style={{ ...SECTION_LEAD, margin: '12px auto 0', textAlign: 'center' }}>
-                [Emily: How-it-works lead paragraph — placeholder. Summary of the three-step process: select session, meet coach, receive written action plan.]
-              </p>
-            </div>
-
-            <div className="debrief-how-grid">
-              {HOW_IT_WORKS_STEPS.map((step, i) => (
-                <div
-                  key={i}
-                  style={{
-                    background: DS.card,
-                    border: `1px solid ${DS.border}`,
-                    padding: 28,
-                    boxShadow: DS.shadow,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    position: 'relative',
-                  }}
-                >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: -18,
-                      left: 28,
-                      width: 36,
-                      height: 36,
-                      background: ACCENT,
-                      color: DS.bg,
-                      fontFamily: DS.monoFont,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {i + 1}
-                  </div>
-
-                  <div style={{ marginTop: 8 }}>
-                    <div
-                      style={{
-                        fontFamily: DS.monoFont,
-                        fontSize: 10,
-                        letterSpacing: '0.2em',
-                        color: ACCENT,
-                        textTransform: 'uppercase',
-                        marginBottom: 10,
-                      }}
-                    >
-                      {step.mono}
-                    </div>
-                    <h3
-                      style={{
-                        fontFamily: DS.headingFont,
-                        fontSize: 20,
-                        fontWeight: 600,
-                        color: DS.text,
-                        margin: '0 0 12px',
-                        lineHeight: 1.3,
-                      }}
-                    >
-                      {step.title}
-                    </h3>
-                    <p
-                      style={{
-                        fontFamily: DS.bodyFont,
-                        fontSize: 14,
-                        color: DS.textSecondary,
-                        lineHeight: 1.6,
-                        margin: 0,
-                      }}
-                    >
-                      {step.body}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════════
-            5. COACH ROSTER
-            ══════════════════════════════════════════ */}
-        <section id="coach-roster" style={{ background: DS.bgAlt, padding: '96px 32px' }}>
-          <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <div
-                style={{
-                  fontFamily: DS.monoFont,
-                  fontSize: 10,
-                  letterSpacing: '0.24em',
-                  color: DS.muted,
-                  textTransform: 'uppercase',
-                  marginBottom: 12,
-                  fontWeight: 600,
-                }}
-              >
-                [Emily: Coach roster eyebrow — placeholder. e.g. "YOUR COACHES"]
-              </div>
-              <h2 style={{ ...SECTION_TITLE, textAlign: 'center', margin: '0 auto' }}>
-                [Emily: Coach roster H2 — placeholder. e.g. "Certified coaches, real APAC executive experience."]
-              </h2>
-              <p style={{ ...SECTION_LEAD, margin: '12px auto 0', textAlign: 'center' }}>
-                [Emily: Coach roster lead paragraph — placeholder. Coach certifications, backgrounds, specialisations, and APAC timezone coverage.]
-              </p>
-            </div>
-
-            <div className="debrief-coach-grid">
-              {COACH_ROSTER.map((coach) => {
-                const coachTypeMeta = COACH_TYPES[coach.type];
-                return (
-                  <div
-                    key={coach.id}
-                    style={{
-                      background: DS.card,
-                      border: `1px solid ${DS.border}`,
-                      padding: 24,
-                      boxShadow: DS.shadow,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      transition: DS.transition,
-                    }}
-                  >
-                    <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 16 }}>
-                      <div
-                        style={{
-                          width: 56,
-                          height: 56,
-                          background: DS.bgDark,
-                          color: DS.bg,
-                          borderRadius: '9999px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontFamily: DS.headingFont,
-                          fontSize: 18,
-                          fontWeight: 600,
-                          flexShrink: 0,
-                        }}
-                      >
-                        {coach.avatarInitials}
-                      </div>
-                      <div style={{ minWidth: 0 }}>
+          <Divider variant="strong" width="full" />
+          <div className="debrief-session-grid">
+            {SESSION_CATALOG.map((session, i) => {
+              const code = SESSION_CODES[session.slug] ?? `S${i + 1}`;
+              return (
+                <React.Fragment key={session.slug}>
+                  <CapabilityRow
+                    label={code}
+                    title={
+                      <div>
                         <div
                           style={{
-                            fontFamily: DS.headingFont,
-                            fontSize: 17,
+                            fontFamily: 'var(--v3-font-body)',
                             fontWeight: 600,
-                            color: DS.text,
-                            lineHeight: 1.25,
+                            fontSize: 'var(--v3-text-heading-lg)',
+                            lineHeight: 'var(--v3-leading-heading-lg)',
+                            color: 'var(--v3-color-ink)',
                           }}
                         >
-                          {coach.name}
+                          {session.displayName}
                         </div>
-                        <div
-                          style={{
-                            fontFamily: DS.monoFont,
-                            fontSize: 10,
-                            letterSpacing: '0.16em',
-                            textTransform: 'uppercase',
-                            color: ACCENT,
-                            marginTop: 4,
-                          }}
-                        >
-                          {coachTypeMeta.displayName}
+                        <div className="debrief-session-cost">
+                          {session.durationMinutes}min · ${session.basePriceUsd} / ¥{session.basePriceCny}
                         </div>
                       </div>
-                    </div>
-
-                    <div
-                      style={{
-                        fontFamily: DS.bodyFont,
-                        fontSize: 13,
-                        color: DS.textSecondary,
-                        lineHeight: 1.6,
-                        marginBottom: 16,
-                      }}
-                    >
-                      {coach.bioPlaceholder}
-                    </div>
-
-                    <div
-                      style={{
-                        marginTop: 'auto',
-                        paddingTop: 16,
-                        borderTop: `1px solid ${DS.border}`,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                        gap: 8,
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontFamily: DS.monoFont,
-                          fontSize: 10,
-                          letterSpacing: '0.14em',
-                          textTransform: 'uppercase',
-                          color: DS.muted,
-                        }}
+                    }
+                    description={session.shortDescriptor}
+                    cta={
+                      <Button
+                        variant="ghost"
+                        accent="fuchsia"
+                        href={`/debrief/book?session=${session.slug}`}
                       >
-                        {coach.timezone}
-                      </div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: 6,
-                          flexWrap: 'wrap',
-                        }}
-                      >
-                        {coach.canDeliver.map((ct) => (
-                          <span
-                            key={ct}
-                            style={{
-                              fontFamily: DS.monoFont,
-                              fontSize: 9,
-                              letterSpacing: '0.12em',
-                              textTransform: 'uppercase',
-                              color: DS.muted,
-                              padding: '3px 8px',
-                              background: DS.bgAlt,
-                              border: `1px solid ${DS.border}`,
-                            }}
-                          >
-                            {ct.replace('_', ' ')}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                        Details &amp; Book
+                      </Button>
+                    }
+                  />
+                  {i < SESSION_CATALOG.length - 1 && (
+                    <Divider variant="light" width="full" />
+                  )}
+                </React.Fragment>
+              );
+            })}
           </div>
-        </section>
+          <Divider variant="strong" width="full" />
+        </Section>
+        <Divider variant="light" width="full" />
 
-        {/* ══════════════════════════════════════════
-            6. MID-PAGE CTA
-            ══════════════════════════════════════════ */}
-        <section style={{ background: DS.bg, padding: '56px 32px', textAlign: 'center' }}>
-          <a
-            href="/debrief/book"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '16px 32px',
-              background: ACCENT,
-              color: DS.bg,
-              fontFamily: DS.bodyFont,
-              fontSize: 13,
-              fontWeight: 600,
-              textDecoration: 'none',
-              textTransform: 'uppercase',
-              letterSpacing: '0.18em',
-              border: `1px solid ${ACCENT}`,
-              transition: `background ${DS.transition}`,
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = DS.accentHover)}
-            onMouseLeave={(e) => (e.currentTarget.style.background = ACCENT)}
-          >
-            [Emily: Mid-page CTA label — placeholder. e.g. "Start Booking Your Session"] <ArrowRight style={{ width: 14, height: 14 }} />
-          </a>
-        </section>
+        <Section bg="white" paddingY="lg" id="how-it-works" scope={true}>
+          <div style={{ maxWidth: 720, marginBottom: 8 }}>
+            <Eyebrow accent="fuchsia">How It Works</Eyebrow>
+            <h2
+              style={{
+                fontFamily: 'var(--v3-font-display)',
+                fontSize: 'var(--v3-text-display-md)',
+                lineHeight: 'var(--v3-leading-display-md)',
+                fontWeight: 300,
+                letterSpacing: '-0.015em',
+                color: 'var(--v3-color-ink)',
+                margin: '12px 0 0',
+              }}
+            >
+              [Emily: How-it-works H2 — placeholder. e.g. "From booking to action plan in three steps."]
+            </h2>
+            <p
+              style={{
+                fontFamily: 'var(--v3-font-body)',
+                fontSize: 'var(--v3-text-body)',
+                lineHeight: 'var(--v3-leading-body)',
+                color: 'var(--v3-color-ink-secondary)',
+                maxWidth: 620,
+                marginTop: 12,
+                marginBottom: 0,
+              }}
+            >
+              [Emily: How-it-works lead paragraph — placeholder. Summary of the three-step process: select session, meet coach, receive written action plan.]
+            </p>
+          </div>
 
-        {/* ══════════════════════════════════════════
-            7. FAQ
-            ══════════════════════════════════════════ */}
-        <section id="faq" style={{ background: DS.bgAlt, padding: '96px 32px' }}>
+          <Divider variant="strong" width="full" />
+          {HOW_IT_WORKS_STEPS.map((step, i) => (
+            <React.Fragment key={i}>
+              <MethodologyStep
+                number={step.mono}
+                title={step.title}
+                description={step.body}
+                accent="fuchsia"
+              />
+              {i < HOW_IT_WORKS_STEPS.length - 1 && (
+                <Divider variant="light" width="full" />
+              )}
+            </React.Fragment>
+          ))}
+          <Divider variant="strong" width="full" />
+        </Section>
+        <Divider variant="light" width="full" />
+
+        <Section bg="cream" paddingY="lg" id="coach-roster" scope={true}>
+          <div style={{ maxWidth: 720, marginBottom: 8 }}>
+            <Eyebrow accent="fuchsia">Coaches</Eyebrow>
+            <h2
+              style={{
+                fontFamily: 'var(--v3-font-display)',
+                fontSize: 'var(--v3-text-display-md)',
+                lineHeight: 'var(--v3-leading-display-md)',
+                fontWeight: 300,
+                letterSpacing: '-0.015em',
+                color: 'var(--v3-color-ink)',
+                margin: '12px 0 0',
+              }}
+            >
+              [Emily: Coach roster H2 — placeholder. e.g. "Certified coaches, real APAC executive experience."]
+            </h2>
+            <p
+              style={{
+                fontFamily: 'var(--v3-font-body)',
+                fontSize: 'var(--v3-text-body)',
+                lineHeight: 'var(--v3-leading-body)',
+                color: 'var(--v3-color-ink-secondary)',
+                maxWidth: 620,
+                marginTop: 12,
+                marginBottom: 0,
+              }}
+            >
+              [Emily: Coach roster lead paragraph — placeholder. Coach certifications, backgrounds, specialisations, and APAC timezone coverage.]
+            </p>
+          </div>
+
+          <UseCaseColumns items={coachUseCases} labelAccent="fuchsia" />
+        </Section>
+        <Divider variant="light" width="full" />
+
+        <Section bg="white" paddingY="lg" id="faq" scope={true}>
           <div style={{ maxWidth: 820, margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: 40 }}>
-              <div
+            <div style={{ textAlign: 'left', maxWidth: 720, marginBottom: 16 }}>
+              <Eyebrow accent="fuchsia">Frequently Asked</Eyebrow>
+              <h2
                 style={{
-                  fontFamily: DS.monoFont,
-                  fontSize: 10,
-                  letterSpacing: '0.24em',
-                  color: DS.muted,
-                  textTransform: 'uppercase',
-                  marginBottom: 12,
-                  fontWeight: 600,
+                  fontFamily: 'var(--v3-font-display)',
+                  fontSize: 'var(--v3-text-display-md)',
+                  lineHeight: 'var(--v3-leading-display-md)',
+                  fontWeight: 300,
+                  letterSpacing: '-0.015em',
+                  color: 'var(--v3-color-ink)',
+                  margin: '12px 0 0',
                 }}
               >
-                [Emily: FAQ eyebrow — placeholder. e.g. "FREQUENTLY ASKED"]
-              </div>
-              <h2 style={{ ...SECTION_TITLE, textAlign: 'center', margin: '0 auto' }}>
                 [Emily: FAQ H2 — placeholder. e.g. "Questions about debrief sessions."]
               </h2>
-              <p style={{ ...SECTION_LEAD, margin: '12px auto 0', textAlign: 'center' }}>
+              <p
+                style={{
+                  fontFamily: 'var(--v3-font-body)',
+                  fontSize: 'var(--v3-text-body)',
+                  lineHeight: 'var(--v3-leading-body)',
+                  color: 'var(--v3-color-ink-secondary)',
+                  maxWidth: 620,
+                  marginTop: 12,
+                  marginBottom: 0,
+                }}
+              >
                 [Emily: FAQ lead paragraph — placeholder. Booking, pricing, coaches, cancellations, complimentary sessions, and the CPI deep-dive.]
               </p>
             </div>
 
+            <Divider variant="strong" width="full" />
             <div>
               {DEBRIEF_FAQ.map((item, i) => {
                 const open = openFaq === i;
+                const qNum = `Q${i + 1}`;
                 return (
-                  <div
-                    key={i}
-                    style={{
-                      borderBottom: `1px solid ${DS.border}`,
-                      background: open ? DS.card : 'transparent',
-                      transition: `background ${DS.transition}`,
-                    }}
-                  >
+                  <div key={i} className="debrief-faq-row">
                     <button
                       type="button"
                       onClick={() => setOpenFaq(open ? null : i)}
@@ -905,39 +624,59 @@ export function DebriefLandingPage() {
                         display: 'flex',
                         alignItems: 'flex-start',
                         justifyContent: 'space-between',
-                        padding: '24px 16px',
+                        padding: '28px 0',
                         background: 'transparent',
                         border: 'none',
                         cursor: 'pointer',
                         textAlign: 'left',
-                        transition: `background ${DS.transition}`,
-                        gap: 16,
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!open) e.currentTarget.style.background = DS.card;
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!open) e.currentTarget.style.background = 'transparent';
+                        gap: 24,
                       }}
                     >
-                      <span
+                      <div
                         style={{
-                          fontFamily: DS.headingFont,
-                          fontSize: 17,
-                          fontWeight: 600,
-                          color: DS.text,
-                          lineHeight: 1.4,
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: 24,
+                          flex: 1,
+                          minWidth: 0,
                         }}
                       >
-                        {item.q}
-                      </span>
+                        <span
+                          style={{
+                            fontFamily: 'var(--v3-font-mono)',
+                            fontWeight: 400,
+                            fontSize: 'var(--v3-text-label)',
+                            lineHeight: 'var(--v3-leading-label)',
+                            letterSpacing: 'var(--v3-tracking-label)',
+                            textTransform: 'uppercase',
+                            color: 'var(--v3-color-fuchsia)',
+                            width: 40,
+                            minWidth: 40,
+                            flexShrink: 0,
+                            marginTop: 4,
+                          }}
+                        >
+                          {qNum}
+                        </span>
+                        <span
+                          style={{
+                            fontFamily: 'var(--v3-font-body)',
+                            fontSize: 'var(--v3-text-heading-lg)',
+                            fontWeight: 600,
+                            lineHeight: 'var(--v3-leading-heading-lg)',
+                            color: 'var(--v3-color-ink)',
+                          }}
+                        >
+                          {item.q}
+                        </span>
+                      </div>
                       <ChevronDown
                         size={20}
-                        color={open ? ACCENT : DS.muted}
+                        color={open ? 'var(--v3-color-fuchsia)' : 'var(--v3-color-ink-muted)'}
                         style={{
                           flexShrink: 0,
-                          marginTop: 2,
-                          transition: `transform ${DS.transition}`,
+                          marginTop: 4,
+                          transition: 'transform 200ms ease',
                           transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
                         }}
                       />
@@ -946,17 +685,18 @@ export function DebriefLandingPage() {
                       style={{
                         maxHeight: open ? 400 : 0,
                         overflow: 'hidden',
-                        transition: `max-height ${DS.transition}`,
+                        transition: 'max-height 280ms ease',
                       }}
                     >
                       <p
                         style={{
-                          fontFamily: DS.bodyFont,
-                          fontSize: 15,
-                          color: DS.textSecondary,
-                          lineHeight: 1.65,
-                          padding: '0 16px 28px',
+                          fontFamily: 'var(--v3-font-body)',
+                          fontSize: 'var(--v3-text-body)',
+                          lineHeight: 'var(--v3-leading-body)',
+                          color: 'var(--v3-color-ink-secondary)',
+                          padding: '0 0 28px 64px',
                           margin: 0,
+                          maxWidth: '68ch',
                         }}
                       >
                         {item.a}
@@ -967,135 +707,113 @@ export function DebriefLandingPage() {
               })}
             </div>
           </div>
-        </section>
+        </Section>
+        <Divider variant="light" width="full" />
 
-        {/* ══════════════════════════════════════════
-            8. FINAL CTA
-            ══════════════════════════════════════════ */}
-        <section
-          id="final-cta"
-          style={{
-            background: COLOR_BG_DARK,
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <div
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: `radial-gradient(circle at 50% 40%, ${ACCENT}0F 0%, transparent 70%)`,
-              pointerEvents: 'none',
-            }}
-          />
+        <Section bg="dark" paddingY="md" scope={true}>
+          <div className="debrief-tier-callout-grid">
+            <div className="debrief-tier-callout-col">
+              <div className="debrief-tier-callout-mono">E</div>
+              <h3 className="debrief-tier-callout-title">
+                {tierDisplayName('executive')} tier
+              </h3>
+              <p className="debrief-tier-callout-body">
+                [Emily: Executive tier callout — placeholder. Includes 1 complimentary 30-min session/month]
+              </p>
+              {execAlloc && (
+                <div className="debrief-tier-callout-tag">
+                  {execAlloc.count} × {execAlloc.coversDurationMinutes}min / month · Complimentary
+                </div>
+              )}
+            </div>
+            <div className="debrief-tier-callout-col">
+              <div className="debrief-tier-callout-mono">C</div>
+              <h3 className="debrief-tier-callout-title">
+                {tierDisplayName('council')} tier
+              </h3>
+              <p className="debrief-tier-callout-body">
+                [Emily: Council tier callout — placeholder. Includes 2 complimentary 60-min sessions/month + CPI Deep-Dive access]
+              </p>
+              {councilAlloc && (
+                <div className="debrief-tier-callout-tag">
+                  {councilAlloc.count} × {councilAlloc.coversDurationMinutes}min / month · Complimentary
+                </div>
+              )}
+            </div>
+            <div className="debrief-tier-callout-col">
+              <div className="debrief-tier-callout-mono">%</div>
+              <h3 className="debrief-tier-callout-title">
+                [Emily: Tier discount callout title — placeholder. e.g. "Tier pricing discounts"]
+              </h3>
+              <p className="debrief-tier-callout-body">
+                [Emily: Tier discount callout body — placeholder. Tier session discounts scale with membership (10%→25%). Annual plan stacks +10% extra on top of tier pricing.]
+              </p>
+              <div className="debrief-tier-callout-tag">
+                {tierDisplayName('starter')} 10% · {tierDisplayName('professional')} 15% · {tierDisplayName('executive')} 20% · {tierDisplayName('council')} 25% · +10% Annual
+              </div>
+            </div>
+          </div>
+        </Section>
+        <Divider variant="light" width="full" />
+
+        <Section bg="dark" paddingY="xl" scope={true}>
           <div
             style={{
               maxWidth: 720,
               margin: '0 auto',
-              padding: '112px 32px',
               position: 'relative',
               textAlign: 'center',
             }}
           >
-            <div
-              style={{
-                fontFamily: DS.monoFont,
-                fontSize: 10,
-                letterSpacing: '0.22em',
-                color: DS.muted,
-                textTransform: 'uppercase',
-                marginBottom: 16,
-                fontWeight: 600,
-              }}
-            >
-              [Emily: Final CTA eyebrow — placeholder. e.g. "READY TO BOOK?"]
-            </div>
+            <Eyebrow accent="fuchsia">Ready to book?</Eyebrow>
             <h2
               style={{
-                fontFamily: DS.headingFont,
-                fontSize: 'clamp(28px, 4vw, 44px)',
-                fontWeight: 700,
-                color: COLOR_TEXT_ON_DARK,
-                lineHeight: 1.15,
+                fontFamily: 'var(--v3-font-display)',
+                fontSize: 'var(--v3-text-display-md)',
+                lineHeight: 'var(--v3-leading-display-md)',
+                fontWeight: 300,
                 letterSpacing: '-0.015em',
-                margin: 0,
+                color: 'var(--v3-color-paper)',
+                margin: '12px 0 0',
               }}
             >
               [Emily: Final CTA H2 — placeholder. e.g. "Book your first debrief session."]
             </h2>
             <p
               style={{
-                fontFamily: DS.bodyFont,
-                color: COLOR_MUTED_ON_DARK,
-                fontSize: 15,
-                lineHeight: 1.6,
+                fontFamily: 'var(--v3-font-body)',
+                fontSize: 'var(--v3-text-body)',
+                lineHeight: 'var(--v3-leading-body)',
+                color: 'var(--v3-color-paper-secondary)',
                 marginTop: 20,
                 maxWidth: 560,
                 marginLeft: 'auto',
                 marginRight: 'auto',
+                marginBottom: 0,
               }}
             >
               [Emily: Final CTA subtext — placeholder. Call to action encouraging users to book their session. Mentions tier discounts, complimentary allocations, 24h cancellation policy, certified coaches, and written action plans.]
             </p>
 
-            <div style={{ marginTop: 32 }}>
-              <a
+            <div style={{ marginTop: 36 }}>
+              <Button
+                variant="primary"
+                accent="fuchsia"
                 href="/debrief/book"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  padding: '20px 40px',
-                  background: ACCENT,
-                  color: DS.bg,
-                  border: `1px solid ${ACCENT}`,
-                  fontFamily: DS.bodyFont,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.18em',
-                  textDecoration: 'none',
-                  minHeight: 52,
-                  transition: `background ${DS.transition}`,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = DS.accentHover)}
-                onMouseLeave={(e) => (e.currentTarget.style.background = ACCENT)}
               >
-                [Emily: Final CTA button label — placeholder. e.g. "Book Your Debrief Session"] <ArrowRight style={{ width: 14, height: 14 }} />
-              </a>
+                Book your debrief session
+              </Button>
             </div>
 
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                gap: 24,
-                marginTop: 28,
-              }}
-            >
+            <div className="debrief-final-meta">
               {[
-                '[Emily: Final meta 1 — placeholder. e.g. "TIER DISCOUNTS APPLIED"]',
-                '[Emily: Final meta 2 — placeholder. e.g. "COMPLIMENTARY SESSIONS"]',
-                '[Emily: Final meta 3 — placeholder. e.g. "24H CANCELLATION POLICY"]',
+                'Tier discounts applied',
+                'Complimentary sessions',
+                '24h cancellation policy',
               ].map((t, i, arr) => (
                 <React.Fragment key={t}>
-                  <span
-                    style={{
-                      fontFamily: DS.monoFont,
-                      fontSize: 11,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.1em',
-                      color: DS.mutedDim,
-                    }}
-                  >
-                    {t}
-                  </span>
-                  {i < arr.length - 1 && (
-                    <span style={{ color: DS.mutedDim }}>·</span>
-                  )}
+                  <span className="debrief-final-meta-item">{t}</span>
+                  {i < arr.length - 1 && <span className="dot">·</span>}
                 </React.Fragment>
               ))}
             </div>
@@ -1104,23 +822,20 @@ export function DebriefLandingPage() {
               href="/pricing"
               style={{
                 display: 'inline-block',
-                marginTop: 20,
-                fontFamily: DS.monoFont,
+                marginTop: 24,
+                fontFamily: 'var(--v3-font-mono)',
                 fontSize: 11,
                 textTransform: 'uppercase',
                 letterSpacing: '0.12em',
-                color: DS.mutedDim,
+                color: 'var(--v3-color-paper-muted)',
                 textDecoration: 'underline',
                 textUnderlineOffset: 4,
-                transition: DS.transition,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = DS.bg)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = DS.mutedDim)}
             >
               [Emily: Final CTA secondary link — placeholder. e.g. "See all pricing tiers →"]
             </a>
           </div>
-        </section>
+        </Section>
 
         <UnifiedFooter />
       </main>
