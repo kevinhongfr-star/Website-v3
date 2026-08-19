@@ -4,38 +4,44 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Phase 17 / T01 — Default SEO meta (overridden per-page by <SEO /> component).
-         NOTE: "platform" is a Level 1 hard banned word per Brand Master v1.2.
-         Positioning line = "Executive Intelligence" (per Batch 6 P0-4). -->
-    <title>LYC Intelligence — Executive Intelligence</title>
-    <meta name="description" content="Know where you stand. Know where to go. Leadership intelligence for every stage — from career positioning to executive matching. 500+ placements across 47 markets." />
+    <!-- Phase V5.2 / Cutover — Default SEO meta (overridden per-page by usePageMetadata hook).
+         Brand positioning line = "Executive Intelligence System" (v3.0 editorial updated).
+         TIER 1 hard ban: "platform" never appears in meta copy.
+         TIER 2 hard ban: "stages" → "phases" marketing-wide. -->
+    <title>LYC Intelligence — Executive Intelligence System</title>
+    <meta name="description" content="Know where you stand. Know where to go. Leadership intelligence for every phase — from career positioning to executive matching. 500+ placements across 47 markets." />
 
     <!-- Open Graph (default — landing page) -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.lyc-intelligence.app" />
-    <meta property="og:title" content="LYC Intelligence — Executive Intelligence" />
-    <meta property="og:description" content="Know where you stand. Know where to go. Leadership intelligence for every stage — from career positioning to executive matching. 500+ placements across 47 markets." />
-    <meta property="og:image" content="https://www.lyc-intelligence.app/api/og?title=LYC+Intelligence+%E2%80%94+Executive+Intelligence" />
+    <meta property="og:title" content="LYC Intelligence — Executive Intelligence System" />
+    <meta property="og:description" content="Know where you stand. Know where to go. Leadership intelligence for every phase — from career positioning to executive matching. 500+ placements across 47 markets." />
+    <meta property="og:image" content="https://www.lyc-intelligence.app/api/og?title=LYC+Intelligence+%E2%80%94+Executive+Intelligence+System" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="LYC Intelligence" />
 
     <!-- Twitter/X Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="LYC Intelligence — Executive Intelligence" />
-    <meta name="twitter:description" content="Know where you stand. Know where to go. Leadership intelligence for every stage." />
-    <meta name="twitter:image" content="https://www.lyc-intelligence.app/api/og?title=LYC+Intelligence+%E2%80%94+Executive+Intelligence" />
+    <meta name="twitter:title" content="LYC Intelligence — Executive Intelligence System" />
+    <meta name="twitter:description" content="Know where you stand. Know where to go. Leadership intelligence for every phase." />
+    <meta name="twitter:image" content="https://www.lyc-intelligence.app/api/og?title=LYC+Intelligence+%E2%80%94+Executive+Intelligence+System" />
 
     <!-- Canonical -->
     <link rel="canonical" href="https://www.lyc-intelligence.app" />
 
-    <!-- #1273: Brand font stack — zero CDN dependencies.
-         Headings use the system serif stack (DejaVu Serif / Georgia / Times New Roman / Times) —
-         no custom font loading. Body uses DM Sans, monospace uses IBM Plex Mono —
-         both self-hosted as woff2 Latin subsets in /public/fonts/ with local @font-face in index.css.
-         #1378: preload critical weights + preconnect third-party APIs. -->
-    <link rel="preload" href="/fonts/DMSans-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- #1273 / v3.0 Editorial font stack — all self-hosted, zero CDN deps.
+         v3 editorial requires THREE critical fonts for every marketing page:
+           1. Crimson Pro (display serif headings 300/400 italic+regular → hero displayLG/MD)
+           2. Inter (V3 body font: 400/500 → text body/buttons/labels)
+           3. IBM Plex Mono (400/500 → eyebrows/numerals/mono labels)
+         All three self-hosted woff2 Latin subsets in /public/fonts/ with font-display:swap
+         via @font-face in index.css.
+         Preconnect: only deepseek API used for NEXUS (kept from original). -->
+    <link rel="preload" href="/fonts/CrimsonPro-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/CrimsonPro-Italic.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preconnect" href="https://api.deepseek.com" />
     <link rel="dns-prefetch" href="https://api.deepseek.com" />
 

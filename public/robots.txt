@@ -1,13 +1,47 @@
+# V5.2 CUTOVER — robots.txt updated for LYC v3.0 editorial URL scheme.
+# Allowed routes = public MarketingLayout Outlet pages only.
+# Portal interiors (/app/*, /member/*, /consultant/*, /admin/*, etc.) +
+# authenticated actions (/login, /signup, /reset-password, /nexus/chat,
+# /share/*, assessment take/results flows) are disallowed (meta noindex
+# already applied via usePageMetadata + X-Robots-Tag in vercel.json headers
+# for an extra belt-and-braces signal).
 User-agent: *
+
+# ── Marketing root ──────────────────────────────────────────────────
 Allow: /$
-Allow: /assessments$
-Allow: /assessment/[a-z-]+$
-Allow: /pricing$
-Allow: /b2b$
+
+# ── 3 Pillars (V3.0) ────────────────────────────────────────────────
+Allow: /research$
+Allow: /advisory$
+Allow: /search$
+
+# ── Product landings (V4.0) ─────────────────────────────────────────
+Allow: /nexus$
 Allow: /dex$
+Allow: /match$
+Allow: /b2b$
+
+# ── Pricing ─────────────────────────────────────────────────────────
+Allow: /pricing$
+
+# ── Debrief (human coaching) ────────────────────────────────────────
+Allow: /debrief$
+Allow: /debrief/book$
+
+# ── Diagnostics catalog + landing pages ─────────────────────────────
+Allow: /assessments$
+Allow: /nexus/lenses/[a-z-]+$
+Allow: /assessment/[a-z-]+$
+
+# ── Pricing page legacy ─────────────────────────────────────────────
+Allow: /pricing$
+
+# ── Legal ───────────────────────────────────────────────────────────
 Allow: /terms$
 Allow: /privacy$
 Allow: /cookies$
+
+# ── Disallowed: portal interiors + auth flows + gated actions ───────
 Disallow: /api/
 Disallow: /app/
 Disallow: /member/
@@ -15,6 +49,7 @@ Disallow: /admin/
 Disallow: /consultant/
 Disallow: /candidate/
 Disallow: /client/
+Disallow: /leader/
 Disallow: /login$
 Disallow: /signup$
 Disallow: /reset-password$
@@ -24,4 +59,10 @@ Disallow: /assessment/*/take
 Disallow: /assessment/*/results
 Disallow: /*?*
 
+# ── Sitemap ─────────────────────────────────────────────────────────
+# Updated for v3.0 editorial URL scheme (39 public URLs):
+# homepage + 3 pillars + 3 flagship products + B2B + Pricing +
+# Debrief (land + book) + /assessments catalog + 11 diagnostics at
+# /assessment/:slug + 11 instrument landings at /nexus/lenses/:slug +
+# 3 legal pages.
 Sitemap: /sitemap.xml

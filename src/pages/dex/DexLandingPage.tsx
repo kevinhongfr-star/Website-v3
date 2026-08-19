@@ -168,13 +168,14 @@ const USE_CASES: readonly UseCase[] = [
   },
 ];
 
-const PRICING_TIERS: readonly PricingTier[] = [
+const PRICING_TIERS: ReadonlyArray<{ label: string; accent: 'teal' | 'ink' | 'fuchsia' }> = [
   { label: 'Executive Introduction', accent: 'teal' },
   { label: 'Miles Pack', accent: 'ink' },
   { label: 'Monthly Pro', accent: 'ink' },
 ];
 
-const PRICING_ROWS: readonly PricingRow[] = [
+type PricingRowType = { label: string; values: readonly string[]; highlight?: boolean };
+const PRICING_ROWS: readonly PricingRowType[] = [
   { label: 'Entry', values: ['Complimentary', 'Pay as you go', 'Subscription'], highlight: true },
   { label: 'Messages', values: ['5 to experience DEX AI', '1 mile per message — buy what you need', '100 mi/month + priority responses'] },
   { label: 'Coaching access', values: ['—', 'Bookable per session', 'Included'] },
@@ -417,7 +418,11 @@ export function DexLandingPage() {
           </SplitSection>
 
           <div style={{ marginTop: 'var(--v3-space-6)' }}>
-            <PricingTextTable tiers={PRICING_TIERS} rows={PRICING_ROWS} accent="teal" />
+            <PricingTextTable
+              tiers={PRICING_TIERS.map(t => t.label)}
+              rows={PRICING_ROWS}
+              accent="teal"
+            />
           </div>
 
           <div

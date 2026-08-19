@@ -1,23 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.lyc-intelligence.app/</loc><priority>1.0</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessments</loc><priority>0.95</priority></url>
+  <!-- ══════════════════════════════════════════════════════════════════
+       V5.2 CUTOVER — sitemap.xml regenerated for LYC v3.0 editorial.
+
+       All canonical URLs. Base = https://www.lyc-intelligence.app
+       Every marketing-route in App.tsx MarketingLayout Outlet is listed
+       here. Portal routes (/app/*, /member/*, /consultant/*, /admin/*,
+       /client/*, /candidate/*, /leader/*) are intentionally omitted
+       (authenticated surfaces = meta noindex via usePageMetadata).
+
+       Priority scheme:
+         1.00  Homepage (/)
+         0.95  Flagship product pillars + CPI diagnostic
+         0.92  Tier-A product pages + Pricing + B2B landing
+         0.90  Tier-B research product pages (DEX, Match), 3 pillars,
+               Instrument landings (PRISM/SPARK/LEAP/IMPACT), Debrief
+         0.80  /assessments catalog, /nexus/lenses/* deep landings
+         0.30  Legal pages (Terms/Privacy/Cookies)
+
+       Canonical 11 assessments: /assessment/:slug still listed because
+       /nexus/lenses/:slug landing AND /assessment/:slug deep both exist
+       (SEO split-landing pattern). All 6 CanonicalInstrumentLanding
+       routes are represented at /nexus/lenses/:slug below.
+
+       Redirects for legacy URLs are in vercel.json → "redirects" (301).
+       ══════════════════════════════════════════════════════════════════ -->
+
+  <!-- ── Marketing root ──────────────────────────────────────────── -->
+  <url><loc>https://www.lyc-intelligence.app/</loc><priority>1.00</priority></url>
+
+  <!-- ── 3 Pillars (V3) ──────────────────────────────────────────── -->
+  <url><loc>https://www.lyc-intelligence.app/research</loc><priority>0.90</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/advisory</loc><priority>0.90</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/search</loc><priority>0.90</priority></url>
+
+  <!-- ── Flagship products (V4) ──────────────────────────────────── -->
+  <url><loc>https://www.lyc-intelligence.app/nexus</loc><priority>0.95</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/dex</loc><priority>0.90</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/match</loc><priority>0.90</priority></url>
+
+  <!-- ── Audience-specific landings (V4) ─────────────────────────── -->
+  <url><loc>https://www.lyc-intelligence.app/b2b</loc><priority>0.92</priority></url>
+
+  <!-- ── Pricing ─────────────────────────────────────────────────── -->
   <url><loc>https://www.lyc-intelligence.app/pricing</loc><priority>0.92</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/b2b</loc><priority>0.85</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/dex</loc><priority>0.8</priority></url>
-  <!-- 11 assessments as canonical singular per-slug -->
-  <url><loc>https://www.lyc-intelligence.app/assessment/cpi</loc><priority>0.9</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessment/prism</loc><priority>0.82</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessment/spark</loc><priority>0.82</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessment/leap</loc><priority>0.82</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessment/impact</loc><priority>0.82</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessment/quest</loc><priority>0.78</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessment/bridge</loc><priority>0.78</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessment/drive</loc><priority>0.78</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessment/forge</loc><priority>0.78</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessment/coach</loc><priority>0.78</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/assessment/mosaic</loc><priority>0.78</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/terms</loc><priority>0.3</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/privacy</loc><priority>0.3</priority></url>
-  <url><loc>https://www.lyc-intelligence.app/cookies</loc><priority>0.3</priority></url>
+
+  <!-- ── Debrief sessions ────────────────────────────────────────── -->
+  <url><loc>https://www.lyc-intelligence.app/debrief</loc><priority>0.90</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/debrief/book</loc><priority>0.80</priority></url>
+
+  <!-- ── Diagnostics catalog ─────────────────────────────────────── -->
+  <url><loc>https://www.lyc-intelligence.app/assessments</loc><priority>0.80</priority></url>
+
+  <!-- ── CPI Flagship (Tier A) ───────────────────────────────────── -->
+  <url><loc>https://www.lyc-intelligence.app/assessment/cpi</loc><priority>0.95</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/cpi</loc><priority>0.95</priority></url>
+
+  <!-- ── 10 Remaining diagnostics — /assessment/:slug canonical ──── -->
+  <url><loc>https://www.lyc-intelligence.app/assessment/prism</loc><priority>0.90</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/assessment/spark</loc><priority>0.90</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/assessment/leap</loc><priority>0.90</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/assessment/impact</loc><priority>0.90</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/assessment/quest</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/assessment/bridge</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/assessment/drive</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/assessment/forge</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/assessment/coach</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/assessment/mosaic</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/assessment/shift</loc><priority>0.80</priority></url>
+
+  <!-- ── Instrument landings — /nexus/lenses/:slug marketing ─────── -->
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/prism</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/spark</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/leap</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/impact</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/quest</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/bridge</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/drive</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/forge</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/coach</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/mosaic</loc><priority>0.80</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/nexus/lenses/shift</loc><priority>0.80</priority></url>
+
+  <!-- ── Legal ───────────────────────────────────────────────────── -->
+  <url><loc>https://www.lyc-intelligence.app/terms</loc><priority>0.30</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/privacy</loc><priority>0.30</priority></url>
+  <url><loc>https://www.lyc-intelligence.app/cookies</loc><priority>0.30</priority></url>
 </urlset>

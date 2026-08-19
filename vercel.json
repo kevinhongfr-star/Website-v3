@@ -261,11 +261,6 @@
       "permanent": true
     },
     {
-      "source": "/app/referrals",
-      "destination": "/referral",
-      "permanent": true
-    },
-    {
       "source": "/portal/candidates",
       "destination": "/candidate",
       "permanent": true
@@ -398,6 +393,101 @@
     {
       "source": "/prism-assessment",
       "destination": "/assessment/prism",
+      "permanent": true
+    },
+    {
+      "source": "/leadership-accelerator",
+      "destination": "/advisory",
+      "permanent": true
+    },
+    {
+      "source": "/research-intelligence",
+      "destination": "/research",
+      "permanent": true
+    },
+    {
+      "source": "/exec-search",
+      "destination": "/search",
+      "permanent": true
+    },
+    {
+      "source": "/executive-search",
+      "destination": "/search",
+      "permanent": true
+    },
+    {
+      "source": "/research-and-intelligence",
+      "destination": "/research",
+      "permanent": true
+    },
+    {
+      "source": "/advisory-programmes",
+      "destination": "/advisory",
+      "permanent": true
+    },
+    {
+      "source": "/programmes",
+      "destination": "/advisory",
+      "permanent": true
+    },
+    {
+      "source": "/dex-ai",
+      "destination": "/dex",
+      "permanent": true
+    },
+    {
+      "source": "/dexai",
+      "destination": "/dex",
+      "permanent": true
+    },
+    {
+      "source": "/match-analysis",
+      "destination": "/match",
+      "permanent": true
+    },
+    {
+      "source": "/match-tool",
+      "destination": "/match",
+      "permanent": true
+    },
+    {
+      "source": "/debrief-booking",
+      "destination": "/debrief/book",
+      "permanent": true
+    },
+    {
+      "source": "/debrief-book",
+      "destination": "/debrief/book",
+      "permanent": true
+    },
+    {
+      "source": "/coaching",
+      "destination": "/debrief",
+      "permanent": true
+    },
+    {
+      "source": "/sessions",
+      "destination": "/debrief",
+      "permanent": true
+    },
+    {
+      "source": "/booksession",
+      "destination": "/debrief/book",
+      "permanent": true
+    },
+    {
+      "source": "/lenses/:code",
+      "destination": "/nexus/lenses/:code",
+      "permanent": true
+    },
+    {
+      "source": "/cpi",
+      "destination": "/nexus/lenses/cpi",
+      "permanent": true
+    },
+    {
+      "source": "/china-pipeline-index",
+      "destination": "/nexus/lenses/cpi",
       "permanent": true
     }
   ],
