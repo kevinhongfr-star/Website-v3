@@ -78,6 +78,17 @@ const SignupPage = lazy(() => import('@/pages/SignupPage').then(m => ({ default:
 // ── V3 Phase V1 preview route — tokens + primitives showcase, public only
 const V3PreviewPage = lazy(() => import('@/pages/V3PreviewPage').then(m => ({ default: m.default })));
 
+// ── V3 Phase V3 — Three pillar pages (long-form editorial)
+const ResearchAndIntelligencePage = lazy(() =>
+  import('@/pages/ResearchAndIntelligencePage').then(m => ({ default: m.ResearchAndIntelligencePage })),
+);
+const AdvisoryProgrammesPage = lazy(() =>
+  import('@/pages/AdvisoryProgrammesPage').then(m => ({ default: m.AdvisoryProgrammesPage })),
+);
+const ExecutiveSearchPage = lazy(() =>
+  import('@/pages/ExecutiveSearchPage').then(m => ({ default: m.ExecutiveSearchPage })),
+);
+
 // ── Public product landing pages (Canonical — consolidated IA) ──
 const AssessmentPage = lazy(() => import('@/pages/AssessmentPage').then(m => ({ default: m.AssessmentPage })));
 const B2BLanding = lazy(() => import('@/pages/B2BLanding').then(m => ({ default: m.B2BLanding })));
@@ -311,6 +322,11 @@ export default function App() {
 
             {/* Phase V1 internal preview: editorial design system showcase */}
             <Route path="v3-preview" element={<V3PreviewPage />} />
+
+            {/* Phase V3 — Three pillar pages (long-form editorial) */}
+            <Route path="research" element={<ResearchAndIntelligencePage />} />
+            <Route path="advisory" element={<AdvisoryProgrammesPage />} />
+            <Route path="search" element={<ExecutiveSearchPage />} />
 
             {/* Auth entry points (public, sit under marketing chrome) */}
             <Route path="login" element={<LoginPage />} />

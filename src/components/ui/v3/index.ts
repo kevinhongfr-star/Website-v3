@@ -21,3 +21,21 @@ export type { PageHeaderProps } from './PageHeader';
 
 export { FeatureRow } from './FeatureRow';
 export type { FeatureRowProps } from './FeatureRow';
+
+export { SplitSection } from './SplitSection';
+export type { SplitSectionProps } from './SplitSection';
+
+export { CapabilityRow } from './CapabilityRow';
+export type { CapabilityRowProps } from './CapabilityRow';
+
+export { MethodologyStep } from './MethodologyStep';
+export type { MethodologyStepProps } from './MethodologyStep';
+
+export { UseCaseColumns } from './UseCaseColumns';
+export type { UseCaseColumnsProps, UseCase } from './UseCaseColumns';
+
+export { PricingTextTable } from './PricingTextTable';
+export type { PricingTextTableProps } from './PricingTextTable';
+
+export { RelatedResources } from './RelatedResources';
+export type { RelatedResourcesProps, RelatedResource } from './RelatedResources';
