@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { initScrollReveal } from '@/lib/utils';
 import { ArrowRight, Users, Target, Gauge, Building2, ClipboardList, MessageSquarePlus } from 'lucide-react';
-import { UnifiedFooter } from '@/components/layout/UnifiedFooter';
 import { LeadCaptureForm } from '@/components/LeadCaptureForm';
 import { SEO } from '@/components/seo/SEO';
 import { EnterpriseContactForm } from '@/components/billing/EnterpriseContactForm';
@@ -457,7 +456,7 @@ export function B2BLanding() {
             >
               Onboard every desk. Tailor system prompts to your firm's practice, mandate typology,
               and research culture. SSO. Audit logs. Org-level usage analytics. Mandate sharing
-              across pods. Everything the retained search practice needs — none of the generic SaaS fluff.
+              across pods. Everything the retained search practice needs — none of the generic software bloat.
             </p>
             <div>
               <Divider variant="strong" />
@@ -630,8 +629,6 @@ export function B2BLanding() {
           </div>
         </div>
       </Section>
-
-      <UnifiedFooter />
 
       {/* Enterprise contact modal */}
       {enterpriseOpen && (

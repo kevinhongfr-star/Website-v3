@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Layers, Clock, HelpCircle, Sparkles } from 'lucide-react';
 import { initScrollReveal } from '@/lib/utils';
 import { ASSESSMENT_CATALOG, type AssessmentInfo } from '@/assessments/catalog';
-import { UnifiedFooter } from '@/components/layout/UnifiedFooter';
 import { SEO } from '@/components/seo/SEO';
 import { getAssessmentMeta } from '@/seo/pageMetadata';
 
@@ -661,8 +660,6 @@ export function CanonicalInstrumentLanding() {
           </a>
         </div>
       </section>
-
-      <UnifiedFooter />
     </div>
   );
 }

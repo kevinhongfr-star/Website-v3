@@ -31,7 +31,7 @@ const config: AssessmentFlowConfig = {
       '30 questions across Intrinsic Motivation, Extrinsic Motivation, Values Alignment, Confidence & Self-Efficacy, and Growth Orientation',
       '1–5 Likert scale — answer honestly; some items are reverse-worded on purpose',
       'Your progress auto-saves to this device; resume if interrupted',
-      'On completion: composite score, dimension scorecard, matched motivation archetype, and engagement-calibrated development priorities',
+      'On completion: composite score, dimension scorecard, matched motivation archetype, and engagement-tuned development priorities',
     ],
   },
   onSubmit: async (answers) => {

@@ -109,7 +109,7 @@ function buildTeaserFromCard(card: ShareCard): Teaser {
       return {
         eyebrow: 'Diagnostic',
         name: data.name || 'Executive',
-        headline: data.archetype || 'Strategic Architect',
+        headline: data.archetype || 'Strategic Leader',
         headlineSub: data.tagline,
         metric: hasReadiness
           ? {

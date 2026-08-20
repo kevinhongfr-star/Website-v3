@@ -20,27 +20,33 @@ import { Logo } from '@/components/ui/Logo';
 function MarketingFooter(): React.ReactElement {
   const year = new Date().getFullYear();
 
-  // 4 columns per brief. Content matches existing MarketingLayout footer
-  // links with Product/Company expanded to 4 columns: brand tagline,
-  // Product, Company, Legal. Items preserved EXACTLY; copy kept; any
-  // banned-word edits happen here: assessment → diagnostic (label only).
+  // 4 columns per v3.0 brief (P0 #3):
+  //   Col 1: LYC reverse logo + 1-line tagline ("Executive Intelligence.")
+  //   Col 2: Products — NEXUS, DEX AI, Board Brief, Match
+  //   Col 3: Company — About, Advisory, Executive Search, Research
+  //   Col 4: Legal — Terms, Privacy, Cookies
+  // Pillar links surface under Company (firm-first IA): the three pillars
+  // (Advisory / Executive Search / Research) sit alongside About.
   const columns: Array<{
     title: string;
     links: Array<{ label: string; href: string; external?: boolean; mailto?: boolean }>;
   }> = [
     {
-      title: 'Product',
+      title: 'Products',
       links: [
-        { label: 'NEXUS', href: '/nexus/chat' },
-        { label: 'Leadership Diagnostics', href: '/assessments' }, // Tier2 marketing replacement
-        { label: 'Pricing', href: '/pricing' },
+        { label: 'NEXUS', href: '/nexus' },
+        { label: 'DEX AI', href: '/dex' },
+        { label: 'Board Brief', href: '/b2b' },
+        { label: 'Match', href: '/match' },
       ],
     },
     {
       title: 'Company',
       links: [
         { label: 'About', href: '/#about' },
-        { label: 'Contact', href: 'mailto:hello@lycintelligence.com', mailto: true },
+        { label: 'Advisory', href: '/advisory' },
+        { label: 'Executive Search', href: '/search' },
+        { label: 'Research', href: '/research' },
       ],
     },
     {
@@ -133,7 +139,7 @@ function MarketingFooter(): React.ReactElement {
                 margin: 0,
               }}
             >
-              Executive intelligence for high-achieving leaders. Advisory, diagnostics, and talent search in one private service.
+              Executive Intelligence.
             </p>
           </div>
 
@@ -217,8 +223,7 @@ function MarketingFooter(): React.ReactElement {
           >
             {[
               { label: 'LinkedIn', href: 'https://www.linkedin.com/company/lyc-intelligence/' },
-              { label: 'Twitter', href: 'https://twitter.com/lycintelligence' },
-              { label: 'Made for leaders.', href: undefined },
+              { label: 'WeChat', href: undefined },
             ].map((s) =>
               s.href ? (
                 <a

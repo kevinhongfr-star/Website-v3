@@ -12,7 +12,6 @@
  *  - FAQ: 10 minimal accordion items
  *  - Tier-benefit callout strip (dark)
  *  - Final CTA section (dark)
- *  - UnifiedFooter
  *
  * Brand rules:
  *  - Zero radius, zero shadows, zero cards everywhere
@@ -30,7 +29,6 @@ import {
 } from '@/config/sessions';
 import { tierDisplayName } from '@/config/tiers';
 import { SEO } from '@/components/seo/SEO';
-import { UnifiedFooter } from '@/components/layout/UnifiedFooter';
 import { ChevronDown } from 'lucide-react';
 import {
   Section,
@@ -836,8 +834,6 @@ export function DebriefLandingPage() {
             </a>
           </div>
         </Section>
-
-        <UnifiedFooter />
       </main>
     </div>
   );

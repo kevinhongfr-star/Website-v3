@@ -1,26 +1,29 @@
 /**
- * Phase V2 — Landing v3 (editorial minimalism).
+ * Phase V3 — Landing (homepage), firm-first rebuild per Valentina's v3.0 Red Brief.
  *
- * Structure preserves the EXISTING baseline Landing page section count
- * and order — 9 sections — per the brief rule "match what's in current
- * site, don't invent content." Copy is preserved exactly except for
- * required Tier-1/Tier-2 banned-word replacements (see inline notes).
+ * Structure (7 sections, firm-first IA):
+ *   1. HERO            — Cream. Firm positioning. Editorial visual right.
+ *   2. TRUST BAR       — Cream. Mono eyebrow + 4 stats (no logos).
+ *   3. THREE PILLARS   — Cream. 3 equal columns, thin vertical dividers.
+ *   4. PRODUCT SPOTLIGHT — NEXUS (cream) + DEX AI (dark) side-by-side.
+ *   5. METHODOLOGY     — Cream. 3 numbered steps, horizontal dividers.
+ *   6. PULL QUOTE      — Dark. Giant Crimson Pro italic quote + attribution.
+ *   7. FINAL CTA       — Cream. Display headline + primary button → PRISM.
  *
- *  1 Hero                            Cream, display-xl + lead + radar visual
- *  2 Flagship + Core line-up         4 leadership diagnostics (CPI wide + 3)
- *  3 Proof / Methodology             Dark, editorial proof-of-methodology
- *  4 Trust bar (stat tiles)          6 diagnostics / 47 markets / 93% / 20yr
- *  5 Capabilities (text-first rows)  3 editorial rows, no cards
- *  6 See it in action                Report mockup + NEXUS chat mockup
- *  7 Assessment Catalog              3 tiers, renderTierGroup intact
- *  8 Pricing                         3 marketing tiers, text-first
- *  9 Final CTA                       Centered editorial
+ * Firm-first IA: LYC Intelligence (the firm) first; products (NEXUS, DEX AI)
+ * featured deeper in the page (section 4), not in the hero.
  *
- * All cards, box-shadows, gradients, and radius removed. Thin dividers
- * only. Trio typography per v3 tokens.
+ * Brand rules:
+ *   - Zero radius, zero shadows, zero gradients, zero cards.
+ *   - Trio typography: Crimson Pro display, Inter body, IBM Plex Mono labels.
+ *   - Two accents only: fuchsia (primary) + teal (secondary).
+ *   - All copy uses v3 tokens — never legacy colors / fonts.
+ *
+ * Banned-word status (Tier-1): none.
+ *   "landscape" intentionally NOT used (brief explicitly swaps it out).
  */
 import React, { useEffect } from 'react';
-import { trackCTA, trackNexusChatInitiation, trackAssessmentStart } from '@/analytics/eventTracker';
+import { trackCTA } from '@/analytics/eventTracker';
 import { SEO } from '@/components/seo/SEO';
 import {
   Section,
@@ -28,367 +31,66 @@ import {
   Eyebrow,
   Button,
   PageHeader,
-  FeatureRow,
 } from '@/components/ui/v3';
-import { ResultMockup, NexusChatMockup } from '@/components/visual/ProductMockup';
-import {
-  ASSESSMENT_CATALOG,
-  FLAGSHIP_KEYS,
-  SHIFT_SUITE_KEYS,
-  ADVISORY_PRODUCT_KEYS,
-  type AssessmentInfo,
-} from '@/assessments/catalog';
-import {
-  MARKETING_TIERS,
-  RECOMMENDED_TIER,
-  TIER_META,
-  TIER_PRICING,
-  TIER_MARKETING_BENEFITS,
-  TIER_CTA_LABEL,
-} from '@/config/tierConfig';
 
-// ── 3 Marketing Tiers (same source of truth) ────────────────────────────
-type MarketingTierKey = typeof MARKETING_TIERS[number];
-interface PricingTierRow {
-  key: MarketingTierKey;
-  name: string;
-  label: string;
-  priceUsd: string;
-  miles: number;
-  features: string[];
-  highlight?: boolean;
-  cta: string;
-  ctaHref: string;
-}
-
-function buildMarketingTiers(): PricingTierRow[] {
-  return MARKETING_TIERS.map((key) => {
-    const meta = TIER_META[key];
-    const pricing = TIER_PRICING[key];
-    const isEntry = meta.isEntryTier;
-    const isRecommended = key === RECOMMENDED_TIER;
-    const isExecutive = key === 'executive';
-    return {
-      key,
-      name: meta.displayName,
-      label: isEntry ? 'Complimentary entry' : isRecommended ? 'Most chosen tier' : 'Premium tier',
-      priceUsd: isEntry ? 'Complimentary' : `$${pricing.usdMonthly}`,
-      miles: isEntry ? 0 : key === 'professional' ? 50 : 150,
-      features: TIER_MARKETING_BENEFITS[key],
-      highlight: isRecommended,
-      cta: isExecutive ? 'Contact Sales' : TIER_CTA_LABEL[key],
-      ctaHref: isEntry ? '/assessment/cpi' : '/pricing',
-    };
-  });
-}
-
-const SUBSCRIPTION_TIERS: PricingTierRow[] = buildMarketingTiers();
-
-// ── 3 Text-first Capability rows (no cards, no icons) ─────────────────
-const CAPABILITIES = [
+// ── 3 Pillars (firm-first IA) ────────────────────────────────────────────
+const PILLARS = [
   {
-    label: '01',
-    title: 'Diagnostic-literate conversations',
-    desc: 'NEXUS knows all 6 leadership diagnostics end-to-end. Ask about positioning, governance, cross-border fit, or team transitions — it speaks the language of executive leadership, not generic advice.',
-    href: '/nexus/chat',
-    cta: 'Start a conversation',
+    number: '01',
+    title: 'Research & Intelligence',
+    body: 'A continuous view of senior decision-makers, market motion, and compensation benchmarks — written memoranda, not decks.',
+    cta: 'Explore research',
+    href: '/research',
   },
   {
-    label: '02',
-    title: 'Simple transparent pricing',
-    desc: 'Pay for diagnostics à la carte from $99, or subscribe for a monthly allocation and deeper benefits. Transparent pricing. Clear value.',
-    href: '/pricing',
-    cta: 'View pricing',
+    number: '02',
+    title: 'Advisory',
+    body: 'Retained coaching, team reviews, leadership acceleration, and board effectiveness cycles. Diagnostic-first, written closeout.',
+    cta: 'See programmes',
+    href: '/advisory',
   },
   {
-    label: '03',
-    title: 'Personalized recommendations',
-    desc: 'Based on what you discuss, NEXUS surfaces the right diagnostic at the right moment — targeted diagnostics matched to your current transition point.',
-    href: '/assessments',
-    cta: 'Browse diagnostics',
+    number: '03',
+    title: 'Executive Search',
+    body: 'Retained mandates and under-the-radar mapping built on 20 years of APAC placements and diagnostic-led shortlisting.',
+    cta: 'Learn about search',
+    href: '/search',
   },
-];
+] as const;
 
-// ── Assessment eyebrow/title overrides (copy preserved) ───────────────
-// Tier-1 banned-word fixes applied to legacy copy:
-//   LEAP:  "when stakes are quiet"     → "when stakes are low"        (TIER1 quiet)
-//   QUEST: "doesn't burn out"          → "doesn't collapse"           (TIER1 burn)
-const CARD_COPY: Record<string, { eyebrow: string; title: string }> = {
-  CPI: {
-    eyebrow: 'CPI · FLAGSHIP',
-    title: 'Benchmark your C-suite positioning against 10 years of real APAC placements',
+// ── Methodology — 3 steps (full picture, not "landscape") ────────────────
+const STEPS = [
+  {
+    number: '01',
+    title: 'We map the full picture of senior decision-makers.',
+    description:
+      'A longlist of real executives drawn from market knowledge and 20 years of placement data — no scraped lists, no keyword dumps.',
   },
-  LEAP: {
-    eyebrow: 'LEAP · LEADERSHIP',
-    title: 'Map how you decide, under pressure and when stakes are low',
+  {
+    number: '02',
+    title: 'We synthesize with AI-native analytical depth.',
+    description:
+      'Diagnostic readouts, archetype distributions, and benchmark percentiles are layered together by NEXUS into a single coherent view.',
   },
-  SPARK: {
-    eyebrow: 'SPARK · AI READINESS',
-    title: 'See exactly where AI will expose gaps in your leadership mandate',
+  {
+    number: '03',
+    title: 'You get actionable intelligence, not another report.',
+    description:
+      'A written memorandum with confidence bands and one clear recommendation section — something you can pass to a board verbatim.',
   },
-  IMPACT: {
-    eyebrow: 'IMPACT · BOARD',
-    title: 'Know your real boardroom impact before your next committee',
-  },
-  PRISM: {
-    eyebrow: 'PRISM · BRAND',
-    title: 'Get clear on transferable strengths between mandates',
-  },
-  FORGE: {
-    eyebrow: 'FORGE · SALES',
-    title: 'Match your selling strengths to the phase of business you\'re building',
-  },
-  BRIDGE: {
-    eyebrow: 'BRIDGE · CROSS-BORDER',
-    title: 'See where cross-border gaps will derail your next APAC mandate',
-  },
-  DRIVE: {
-    eyebrow: 'DRIVE · MOTIVATION',
-    title: 'Find the incentives that actually keep you engaged',
-  },
-  QUEST: {
-    eyebrow: 'QUEST · PERFORMANCE',
-    title: 'Executive performance that doesn\'t collapse by quarter 3',
-  },
-  MOSAIC: {
-    eyebrow: 'MOSAIC · PARTNERSHIPS',
-    title: 'Read the institutional terrain in your next partnership',
-  },
-  COACH: {
-    eyebrow: 'COACH · MANAGEMENT',
-    title: 'Know exactly what kind of coach you\'ll be for your team',
-  },
-};
+] as const;
 
-function DiagnosticTile({ a, wide }: { a: AssessmentInfo; wide?: boolean }) {
-  const copy = CARD_COPY[a.code];
-  const eyebrow = copy?.eyebrow ?? a.code;
-  const title = copy?.title ?? a.name;
-  const priceUsd = a.priceMiles;
-  const isComplimentary = priceUsd <= 0;
-  const priceLine = isComplimentary
-    ? 'Executive Introduction — Complimentary'
-    : `From $${priceUsd} USD`;
-
-  return (
-    <a
-      href={`/assessment/${a.code.toLowerCase()}`}
-      onClick={() => {
-        trackCTA({
-          location: 'diagnostic_tile',
-          label: `Diagnostic: ${a.code}`,
-          destination: `/assessment/${a.code.toLowerCase()}`,
-          context_id: a.code,
-        });
-        trackAssessmentStart(a.code, a.name, 'landing');
-      }}
-      style={{
-        display: 'block',
-        textDecoration: 'none',
-        color: 'inherit',
-        height: '100%',
-        padding: wide ? '40px 32px' : '32px 24px',
-        borderTop: '1px solid var(--v3-color-divider-strong)',
-        transition: `border-color var(--v3-dur) var(--v3-ease)`,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderTopColor = 'var(--v3-color-fuchsia)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderTopColor = 'var(--v3-color-divider-strong)';
-      }}
-    >
-      <div style={{ marginBottom: '20px' }}>
-        <div
-          style={{
-            fontFamily: 'var(--v3-font-mono)',
-            fontSize: '11px',
-            letterSpacing: 'var(--v3-tracking-label)',
-            color: 'var(--v3-color-ink-muted)',
-            textTransform: 'uppercase',
-            marginBottom: '12px',
-          }}
-        >
-          {eyebrow}
-        </div>
-        <h3
-          style={{
-            fontFamily: 'var(--v3-font-display)',
-            fontSize: wide ? '26px' : '20px',
-            lineHeight: 1.2,
-            fontWeight: 400,
-            color: 'var(--v3-color-ink)',
-            letterSpacing: 'var(--v3-tracking-tight)',
-            margin: 0,
-          }}
-        >
-          {title}
-        </h3>
-      </div>
-
-      <p
-        style={{
-          fontFamily: 'var(--v3-font-body)',
-          fontWeight: 400,
-          fontSize: 'var(--v3-text-body-sm)',
-          lineHeight: 'var(--v3-leading-body-sm)',
-          color: 'var(--v3-color-ink-secondary)',
-          margin: '0 0 16px',
-          minHeight: wide ? undefined : '48px',
-        }}
-      >
-        {a.tagline ||
-          `${a.b2cName} — ${a.dimensions.length} dimensions, ${a.archetype_count} archetypes.`}
-      </p>
-
-      <div
-        style={{
-          fontFamily: 'var(--v3-font-mono)',
-          fontSize: '11px',
-          letterSpacing: '0.12em',
-          fontWeight: 500,
-          textTransform: 'uppercase',
-          color: 'var(--v3-color-ink-muted)',
-          marginBottom: '20px',
-        }}
-      >
-        {priceLine}
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          fontFamily: 'var(--v3-font-mono)',
-          fontSize: '11px',
-          color: 'var(--v3-color-ink-muted)',
-          letterSpacing: '0.04em',
-          flexWrap: 'wrap',
-        }}
-      >
-        <span>{a.total_questions} Q</span>
-        <span aria-hidden>·</span>
-        <span>{a.duration_minutes} MIN</span>
-        <span aria-hidden>·</span>
-        <span>{a.archetype_count} ARCHETYPES</span>
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderTop: '1px solid var(--v3-color-divider)',
-          paddingTop: '16px',
-          marginTop: '20px',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: 'var(--v3-font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            fontWeight: 500,
-            color: 'var(--v3-color-ink)',
-          }}
-        >
-          Learn more
-        </span>
-        <span
-          aria-hidden
-          style={{
-            fontFamily: 'var(--v3-font-mono)',
-            color: 'var(--v3-color-ink)',
-            fontSize: '13px',
-          }}
-        >
-          →
-        </span>
-      </div>
-    </a>
-  );
-}
-
-function renderTierGroup(label: string, accent: 'fuchsia' | 'teal', keys: string[]) {
-  const assessments = keys.map((k) => ASSESSMENT_CATALOG[k]).filter(Boolean);
-  if (assessments.length === 0) return null;
-  const wide = keys.length === 1;
-  const eyebrowText =
-    assessments.length === 1 ? '1 DIAGNOSTIC' : `${assessments.length} DIAGNOSTICS`;
-  return (
-    <section id={`tier-${label.toLowerCase().replace(/\s+/g, '-')}`} style={{ marginBottom: '72px' }}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'baseline',
-          marginBottom: '24px',
-          paddingBottom: '16px',
-          borderTop: '1px solid var(--v3-color-divider-strong)',
-          paddingTop: '20px',
-          gap: '16px',
-          flexWrap: 'wrap',
-        }}
-      >
-        <div>
-          <Eyebrow accent="ink">{eyebrowText}</Eyebrow>
-          <h3
-            style={{
-              fontFamily: 'var(--v3-font-display)',
-              fontSize: '32px',
-              fontWeight: 300,
-              lineHeight: 1.2,
-              letterSpacing: 'var(--v3-tracking-tight)',
-              margin: '12px 0 0',
-              color: 'var(--v3-color-ink)',
-            }}
-          >
-            {label}
-          </h3>
-        </div>
-        <div
-          style={{
-            fontFamily: 'var(--v3-font-mono)',
-            fontSize: '11px',
-            color: 'var(--v3-color-ink-muted)',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-          }}
-        >
-          {assessments.length === 1
-            ? 'FROM $99 USD'
-            : label.includes('Premium')
-            ? 'PREMIUM · $149 USD'
-            : 'STANDARD · $99 USD'}
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: wide ? '1fr' : 'repeat(auto-fill, minmax(260px, 1fr))',
-          gap: 'var(--v3-space-5)',
-        }}
-      >
-        {assessments.map((a) => (
-          <DiagnosticTile key={a.code} a={a} wide={wide} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-// ── Radar SVG (hero visual) ─────────────────────────────────────────────
-function RadarVisual() {
+// ── Minimal editorial hero visual (no photo, no gradient) ───────────────
+// Pure SVG: a single radial decision-surface with one fuchsia node
+// highlighted. Editorial, monochrome, no icons.
+function HeroVisual() {
   return (
     <svg
       viewBox="0 0 420 420"
       width="100%"
       height="auto"
       role="img"
-      aria-label="6 leadership dimensions radar — Strategic Positioning highlighted"
+      aria-label="Editorial decision-surface diagram — one node highlighted"
     >
       <g transform="translate(210, 210)">
         {[60, 110, 155, 195].map((r, i) => {
@@ -443,137 +145,6 @@ function RadarVisual() {
           fill="var(--v3-color-fuchsia)"
         />
       </g>
-      {[
-        { label: 'Strategic Positioning', angle: -Math.PI / 2, accent: true },
-        { label: 'Cross-Border Adaptability', angle: -Math.PI / 2 + Math.PI / 3 },
-        { label: 'Stakeholder Influence', angle: -Math.PI / 2 + (2 * Math.PI) / 3 },
-        { label: 'Execution Rigour', angle: -Math.PI / 2 + Math.PI },
-        { label: 'Executive Presence', angle: -Math.PI / 2 + (4 * Math.PI) / 3 },
-        { label: 'Governance & Fiduciary', angle: -Math.PI / 2 + (5 * Math.PI) / 3 },
-      ].map((d, i) => {
-        const r = 195;
-        const labelR = r + 28;
-        const x = 210 + Math.cos(d.angle) * labelR;
-        const y = 210 + Math.sin(d.angle) * labelR;
-        return (
-          <text
-            key={i}
-            x={x}
-            y={y}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fontFamily="var(--v3-font-mono)"
-            fontSize="10"
-            fill={d.accent ? 'var(--v3-color-fuchsia)' : 'var(--v3-color-ink-muted)'}
-            fontWeight={d.accent ? 500 : 400}
-            style={{
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-            }}
-          >
-            {d.label}
-          </text>
-        );
-      })}
-    </svg>
-  );
-}
-
-// ── Methodology flow SVG (dark section visual) ─────────────────────────
-function MethodologyFlow() {
-  const muted = 'var(--v3-color-paper-muted)';
-  const accent = 'var(--v3-color-fuchsia)';
-  const paper = 'var(--v3-color-paper)';
-  return (
-    <svg
-      viewBox="0 0 520 260"
-      width="100%"
-      height="auto"
-      role="img"
-      aria-label="Diagnostic flow: Question → Dimension scoring → Archetype matching → Composite score → NEXUS analysis → Actionable report"
-    >
-      <defs>
-        <marker
-          id="arrow-right-v3"
-          viewBox="0 0 10 10"
-          refX="8"
-          refY="5"
-          markerWidth="6"
-          markerHeight="6"
-          orient="auto-start-reverse"
-        >
-          <path d="M 0 0 L 10 5 L 0 10 z" fill={muted} />
-        </marker>
-      </defs>
-      {[
-        { label: 'QUESTIONS', x: 20, w: 66, highlight: false },
-        { label: 'DIMENSIONS', x: 106, w: 76, highlight: false },
-        { label: 'ARCHETYPES', x: 202, w: 78, highlight: false },
-        { label: 'COMPOSITE', x: 300, w: 76, highlight: true },
-        { label: 'NEXUS', x: 396, w: 56, highlight: false },
-        { label: 'REPORT', x: 472, w: 56, highlight: false },
-      ].map((node, i) => (
-        <g key={i}>
-          <rect
-            x={node.x}
-            y="90"
-            width={node.w}
-            height="60"
-            fill={node.highlight ? accent : 'rgba(250,250,250,0.08)'}
-            stroke={node.highlight ? accent : muted}
-            strokeWidth="1"
-          />
-          <text
-            x={node.x + node.w / 2}
-            y="122"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fontFamily="var(--v3-font-mono)"
-            fontSize="9"
-            fontWeight={node.highlight ? 500 : 400}
-            fill={node.highlight ? paper : muted}
-            style={{
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-            }}
-          >
-            {node.label}
-          </text>
-          <text
-            x={node.x + node.w / 2}
-            y="185"
-            textAnchor="middle"
-            fontFamily="var(--v3-font-mono)"
-            fontSize="9"
-            fill={node.highlight ? accent : muted}
-            fontWeight={node.highlight ? 500 : 400}
-            style={{
-              textTransform: 'uppercase',
-              letterSpacing: '0.14em',
-            }}
-          >
-            {String(i + 1).padStart(2, '0')}
-          </text>
-        </g>
-      ))}
-      {[
-        [86, 136],
-        [182, 232],
-        [280, 308],
-        [376, 404],
-        [452, 468],
-      ].map(([x1, x2], i) => (
-        <line
-          key={i}
-          x1={x1}
-          y1="120"
-          x2={x2}
-          y2="120"
-          stroke={muted}
-          strokeWidth="1"
-          markerEnd="url(#arrow-right-v3)"
-        />
-      ))}
     </svg>
   );
 }
@@ -581,14 +152,14 @@ function MethodologyFlow() {
 // ── Public Landing export ───────────────────────────────────────────────
 export function Landing(): React.ReactElement {
   useEffect(() => {
-    document.title = 'LYC Intelligence — Executive Intelligence for Leaders';
+    document.title = 'LYC Intelligence — Executive Intelligence';
   }, []);
 
   return (
     <>
       <SEO page="landing" />
 
-      {/* 1 ─ HERO ──────────────────────────────────────────────────── */}
+      {/* ═══ 1 ─ HERO ════════════════════════════════════════════════ */}
       <Section bg="cream" paddingY="xl">
         <div
           style={{
@@ -597,522 +168,269 @@ export function Landing(): React.ReactElement {
             gap: 'var(--v3-space-8)',
             alignItems: 'center',
           }}
-          className="v2-hero-grid"
+          className="v3-hero-grid"
         >
           <div>
             <PageHeader
-              eyebrow="Powered by NEXUS"
+              eyebrow="Executive Intelligence"
               eyebrowAccent="fuchsia"
-              headline="Executive Intelligence, Built for Leaders Who Think"
+              headline="The leadership playbook you were given was written for a different world."
               xl
-              lead="6 leadership diagnostics built on 20 years of executive search data. Powered by NEXUS, LYC's intelligence system."
+              lead="LYC Intelligence combines 20 years of executive search data with AI-native analytical depth — to give leaders the signal before the noise."
               cta={
                 <>
                   <Button
                     variant="primary"
                     accent="fuchsia"
-                    href="/assessments"
+                    href="/nexus/lenses"
                     onClick={() =>
                       trackCTA({
-                        location: 'hero_v2',
-                        label: 'Explore Diagnostics',
-                        destination: '/assessments',
+                        location: 'hero_v3',
+                        label: 'Explore the system',
+                        destination: '/nexus/lenses',
                       })
                     }
                   >
-                    Explore Diagnostics
+                    Explore the system
                   </Button>
                   <Button
-                    variant="secondary"
-                    accent="teal"
+                    variant="ghost"
+                    accent="fuchsia"
                     href="/nexus"
                     onClick={() =>
                       trackCTA({
-                        location: 'hero_v2',
-                        label: 'What is NEXUS?',
+                        location: 'hero_v3',
+                        label: 'Meet NEXUS',
                         destination: '/nexus',
                       })
                     }
                   >
-                    What is NEXUS?
+                    Meet NEXUS
                   </Button>
                 </>
               }
             />
           </div>
-          <div aria-hidden className="v2-hero-visual">
-            <RadarVisual />
+          <div aria-hidden className="v3-hero-visual">
+            <HeroVisual />
           </div>
         </div>
       </Section>
 
       <Divider variant="light" width="content" />
 
-      {/* 2 ─ FLAGSHIP + CORE LINEUP ────────────────────────────────── */}
-      <Section id="lineup" bg="cream" paddingY="lg">
-        <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-          <Eyebrow accent="teal">Flagship + Core</Eyebrow>
-          <h2
-            style={{
-              fontFamily: 'var(--v3-font-display)',
-              fontWeight: 300,
-              fontSize: 'var(--v3-text-display-lg)',
-              lineHeight: 'var(--v3-leading-display-lg)',
-              letterSpacing: 'var(--v3-tracking-tight)',
-              color: 'var(--v3-color-ink)',
-              maxWidth: '22ch',
-              margin: '16px auto 16px',
-            }}
-          >
-            Four diagnostics. One system.
-          </h2>
-          <p
-            style={{
-              fontFamily: 'var(--v3-font-body)',
-              fontWeight: 400,
-              fontSize: 'var(--v3-text-body)',
-              color: 'var(--v3-color-ink-secondary)',
-              maxWidth: '62ch',
-              margin: '0 auto',
-              lineHeight: 1.6,
-            }}
-          >
-            The flagship China Leadership Pipeline Index for China-based executives, plus three targeted diagnostics for career transitions, AI readiness, and board governance.
-          </p>
-        </div>
-
+      {/* ═══ 2 ─ TRUST BAR ════════════════════════════════════════════ */}
+      <Section bg="cream" paddingY="md">
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(12, 1fr)',
-            gap: 'var(--v3-space-5)',
-          }}
-          className="v2-lineup-grid"
-        >
-          <div style={{ gridColumn: '1 / span 6', gridRow: 'span 2' }}>
-            {/* Wide CPI tile */}
-            <DiagnosticTile a={ASSESSMENT_CATALOG[FLAGSHIP_KEYS[0]]} wide />
-          </div>
-          <div style={{ gridColumn: '7 / span 3' }}>
-            <DiagnosticTile a={ASSESSMENT_CATALOG[SHIFT_SUITE_KEYS[0]]} />
-          </div>
-          <div style={{ gridColumn: '10 / span 3' }}>
-            <DiagnosticTile a={ASSESSMENT_CATALOG[SHIFT_SUITE_KEYS[1]]} />
-          </div>
-          <div style={{ gridColumn: '7 / span 6' }}>
-            <DiagnosticTile a={ASSESSMENT_CATALOG[SHIFT_SUITE_KEYS[2]]} />
-          </div>
-        </div>
-
-        <div style={{ textAlign: 'right', marginTop: '48px' }}>
-          <Button
-            variant="ghost"
-            accent="teal"
-            href="/assessments"
-            onClick={() =>
-              trackCTA({
-                location: 'lineup_seeall',
-                label: 'See all 6 diagnostics',
-                destination: '/assessments',
-              })
-            }
-          >
-            See all 6 diagnostics
-          </Button>
-        </div>
-      </Section>
-
-      {/* 3 ─ PROOF / METHODOLOGY (DARK) ───────────────────────────── */}
-      <Section id="nexus" bg="dark" paddingY="lg">
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(12, 1fr)',
+            display: 'flex',
+            flexDirection: 'column',
             gap: 'var(--v3-space-6)',
-            alignItems: 'center',
           }}
-          className="v2-nexus-grid"
         >
-          <div style={{ gridColumn: '1 / span 6' }}>
-            <Eyebrow accent="auto">Methodology, not hype</Eyebrow>
-            <h2
-              style={{
-                fontFamily: 'var(--v3-font-display)',
-                fontWeight: 300,
-                fontSize: 'var(--v3-text-display-md)',
-                lineHeight: 'var(--v3-leading-display-md)',
-                letterSpacing: 'var(--v3-tracking-tight)',
-                color: 'var(--v3-color-paper)',
-                margin: '16px 0 24px',
-                maxWidth: '22ch',
-              }}
-            >
-              We didn&rsquo;t invent these systems. We tested them across decades of executive placements.
-            </h2>
-            <p
-              style={{
-                fontFamily: 'var(--v3-font-body)',
-                fontWeight: 400,
-                fontSize: 'var(--v3-text-body)',
-                lineHeight: 'var(--v3-leading-body)',
-                color: 'var(--v3-color-paper-secondary)',
-                maxWidth: '56ch',
-                margin: '0 0 20px',
-              }}
-            >
-              Every diagnostic here is benchmarked against LYC Partners&rsquo; 20-year placement database across APAC. Dimensions aren&rsquo;t theoretical — they&rsquo;re the signals that consistently predict retention, promotion, and board-level outcomes for C-suite and VP-level executives.
-            </p>
-            <p
-              style={{
-                fontFamily: 'var(--v3-font-body)',
-                fontWeight: 400,
-                fontSize: 'var(--v3-text-body)',
-                lineHeight: 'var(--v3-leading-body)',
-                color: 'var(--v3-color-paper-secondary)',
-                maxWidth: '56ch',
-                margin: '0 0 40px',
-              }}
-            >
-              Questions are statistically validated. Archetype distributions mirror real placement populations. Results show you where you stand against actual executive benchmarks, not an abstract norm group.
-            </p>
-            <Button
-              variant="secondary"
-              accent="fuchsia"
-              href="#assessment-catalog"
-              onClick={() =>
-                trackCTA({
-                  location: 'nexus_proof',
-                  label: 'See how it works',
-                  destination: '#assessment-catalog',
-                })
-              }
-            >
-              See how it works
-            </Button>
-          </div>
-          <div style={{ gridColumn: '8 / span 5' }}>
-            <MethodologyFlow />
+          <Eyebrow accent="ink">Trusted by leaders across 47 markets</Eyebrow>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: 'var(--v3-space-5)',
+            }}
+            className="v3-trust-grid"
+          >
+            {[
+              { v: '20 years', l: 'of APAC placement data' },
+              { v: '93%', l: 'placement rate' },
+              { v: '47 markets', l: 'covered' },
+              { v: '500+', l: 'companies placed into' },
+            ].map((s) => (
+              <div key={s.v}>
+                <div
+                  style={{
+                    fontFamily: 'var(--v3-font-display)',
+                    fontSize: 'var(--v3-text-display-md)',
+                    fontWeight: 300,
+                    lineHeight: 1.1,
+                    letterSpacing: 'var(--v3-tracking-tight)',
+                    color: 'var(--v3-color-ink)',
+                    margin: 0,
+                  }}
+                >
+                  {s.v}
+                </div>
+                <div
+                  style={{
+                    fontFamily: 'var(--v3-font-mono)',
+                    fontSize: 'var(--v3-text-label)',
+                    letterSpacing: 'var(--v3-tracking-label)',
+                    textTransform: 'uppercase',
+                    color: 'var(--v3-color-ink-muted)',
+                    marginTop: '10px',
+                  }}
+                >
+                  {s.l}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </Section>
 
-      {/* 4 ─ TRUST / STATS BAR ────────────────────────────────────── */}
-      <Section bg="white" paddingY="md">
+      <Divider variant="light" width="content" />
+
+      {/* ═══ 3 ─ THREE PILLARS ════════════════════════════════════════ */}
+      <Section bg="cream" paddingY="lg">
+        <div style={{ marginBottom: 'var(--v3-space-9)' }}>
+          <Eyebrow accent="fuchsia">Three ways to work with us</Eyebrow>
+        </div>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 'var(--v3-space-5)',
-            textAlign: 'left',
-            borderTop: '1px solid var(--v3-color-divider)',
-            borderBottom: '1px solid var(--v3-color-divider)',
-            paddingBlock: 'var(--v3-space-7)',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+            gap: 0,
           }}
-          className="v2-trust-grid"
+          className="v3-pillars-grid"
         >
-          {[
-            { v: '6', l: 'Leadership diagnostics' },
-            { v: '47', l: 'Markets covered' },
-            { v: '93%', l: 'Executive retention' },
-            { v: '20yr', l: 'APAC placement data' },
-          ].map((s) => (
-            <div key={s.l}>
-              <div
-                style={{
-                  fontFamily: 'var(--v3-font-display)',
-                  fontSize: 'var(--v3-text-display-md)',
-                  lineHeight: 1.1,
-                  fontWeight: 300,
-                  color: 'var(--v3-color-fuchsia)',
-                  margin: 0,
-                }}
-              >
-                {s.v}
-              </div>
+          {PILLARS.map((p, idx) => (
+            <div
+              key={p.number}
+              style={{
+                paddingInline: idx === 0 ? '0 var(--v3-space-7)' : idx === PILLARS.length - 1 ? 'var(--v3-space-7) 0' : 'var(--v3-space-7)',
+                borderLeft: idx === 0 ? 'none' : '1px solid var(--v3-color-divider)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 'var(--v3-space-5)',
+              }}
+              className="v3-pillar-col"
+            >
               <div
                 style={{
                   fontFamily: 'var(--v3-font-mono)',
-                  fontSize: '11px',
-                  color: 'var(--v3-color-ink-muted)',
-                  marginTop: '10px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.14em',
+                  fontSize: 'var(--v3-text-label)',
+                  letterSpacing: 'var(--v3-tracking-label)',
+                  color: 'var(--v3-color-fuchsia)',
+                  fontWeight: 500,
                 }}
               >
-                {s.l}
+                {p.number}
+              </div>
+              <h3
+                style={{
+                  fontFamily: 'var(--v3-font-display)',
+                  fontSize: 'var(--v3-text-heading-lg)',
+                  fontWeight: 400,
+                  lineHeight: 1.2,
+                  letterSpacing: 'var(--v3-tracking-tight)',
+                  color: 'var(--v3-color-ink)',
+                  margin: 0,
+                }}
+              >
+                {p.title}
+              </h3>
+              <p
+                style={{
+                  fontFamily: 'var(--v3-font-body)',
+                  fontSize: 'var(--v3-text-body)',
+                  lineHeight: 'var(--v3-leading-body)',
+                  color: 'var(--v3-color-ink-secondary)',
+                  margin: 0,
+                }}
+              >
+                {p.body}
+              </p>
+              <div style={{ marginTop: 'auto' }}>
+                <Button
+                  variant="ghost"
+                  accent="fuchsia"
+                  href={p.href}
+                  onClick={() =>
+                    trackCTA({
+                      location: 'pillars_v3',
+                      label: p.cta,
+                      destination: p.href,
+                    })
+                  }
+                >
+                  {p.cta}
+                </Button>
               </div>
             </div>
           ))}
         </div>
       </Section>
 
-      {/* 5 ─ CAPABILITIES (text-first, 3 FeatureRows) ──────────────── */}
-      <Section bg="cream" paddingY="lg">
-        <div style={{ textAlign: 'center', marginBottom: '56px' }}>
-          <Eyebrow accent="teal">How NEXUS works</Eyebrow>
-          <h2
-            style={{
-              fontFamily: 'var(--v3-font-display)',
-              fontWeight: 300,
-              fontSize: 'var(--v3-text-display-lg)',
-              lineHeight: 'var(--v3-leading-display-lg)',
-              letterSpacing: 'var(--v3-tracking-tight)',
-              color: 'var(--v3-color-ink)',
-              maxWidth: '22ch',
-              margin: '16px auto 0',
-            }}
-          >
-            One thinking partner. <em style={{ fontStyle: 'italic' }}>Every</em> executive approach.
-          </h2>
-        </div>
-
-        <Divider variant="light" width="content" />
-        {CAPABILITIES.map((c) => (
-          <React.Fragment key={c.label}>
-            <FeatureRow
-              label={c.label}
-              title={c.title}
-              description={c.desc}
-              displayTitle={false}
-              cta={<Button variant="ghost" href={c.href} accent="fuchsia" onClick={() => trackCTA({ location: 'match_cta', label: `Capability: ${c.cta}`, destination: c.href })}>{c.cta}</Button>}
-            />
-            <Divider variant="light" width="content" />
-          </React.Fragment>
-        ))}
-      </Section>
-
-      {/* 6 ─ SEE IT IN ACTION — product mockups ────────────────────── */}
-      <Section bg="white" paddingY="lg">
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <Eyebrow accent="fuchsia">See it in action</Eyebrow>
-          <h2
-            style={{
-              fontFamily: 'var(--v3-font-display)',
-              fontWeight: 300,
-              fontSize: 'var(--v3-text-display-md)',
-              lineHeight: 'var(--v3-leading-display-md)',
-              letterSpacing: 'var(--v3-tracking-tight)',
-              color: 'var(--v3-color-ink)',
-              maxWidth: '22ch',
-              margin: '16px auto 0',
-            }}
-          >
-            Premium reports. NEXUS. One experience.
-          </h2>
-        </div>
+      {/* ═══ 4 ─ PRODUCT SPOTLIGHT (NEXUS + DEX AI, 2-up) ════════════ */}
+      <Section bg="cream" paddingY="lg" scope={false}>
         <div
+          className="v3-root v3-spotlight-grid"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: 'var(--v3-space-7)',
-            alignItems: 'start',
-            justifyItems: 'center',
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
           }}
         >
-          <ResultMockup style={{ maxWidth: 340, width: '100%' }} />
-          <NexusChatMockup style={{ maxWidth: 340, width: '100%' }} />
-        </div>
-      </Section>
-
-      {/* 7 ─ ASSESSMENT CATALOG (3 TIER GROUPS) ───────────────────── */}
-      <Section id="assessment-catalog" bg="cream" paddingY="lg">
-        <div style={{ textAlign: 'center', marginBottom: '56px' }}>
-          <Eyebrow accent="ink">Diagnostic Catalog</Eyebrow>
-          <h2
+          {/* NEXUS — cream side */}
+          <div
+            className="v3-root"
+            data-bg-mode="cream"
             style={{
-              fontFamily: 'var(--v3-font-display)',
-              fontWeight: 300,
-              fontSize: 'var(--v3-text-display-md)',
-              lineHeight: 'var(--v3-leading-display-md)',
-              letterSpacing: 'var(--v3-tracking-tight)',
+              background: 'var(--v3-color-cream)',
               color: 'var(--v3-color-ink)',
-              maxWidth: '26ch',
-              margin: '16px auto 12px',
+              padding: 'var(--v3-space-9) var(--v3-space-8)',
             }}
           >
-            Six leadership diagnostics. Exactly one right fit per moment.
-          </h2>
-          <p
-            style={{
-              fontFamily: 'var(--v3-font-body)',
-              fontWeight: 400,
-              fontSize: 'var(--v3-text-body)',
-              color: 'var(--v3-color-ink-secondary)',
-              maxWidth: '56ch',
-              margin: '0 auto',
-              lineHeight: 1.6,
-            }}
-          >
-            Pay for exactly what you need — a targeted diagnostic for a specific transition moment, or subscribe for the full suite.
-          </p>
-        </div>
-
-        {renderTierGroup('Leadership Diagnostics', 'fuchsia', ADVISORY_PRODUCT_KEYS)}
-      </Section>
-
-      {/* 8 ─ PRICING / 3 TIERS ────────────────────────────────────── */}
-      <Section id="pricing" bg="white" paddingY="lg">
-        <div style={{ textAlign: 'center', marginBottom: '56px' }}>
-          <Eyebrow accent="teal">Subscription plans</Eyebrow>
-          <h2
-            style={{
-              fontFamily: 'var(--v3-font-display)',
-              fontWeight: 300,
-              fontSize: 'var(--v3-text-display-md)',
-              lineHeight: 'var(--v3-leading-display-md)',
-              letterSpacing: 'var(--v3-tracking-tight)',
-              color: 'var(--v3-color-ink)',
-              maxWidth: '28ch',
-              margin: '16px auto 12px',
-            }}
-          >
-            Start with an Executive Introduction. Scale when you&rsquo;re ready.
-          </h2>
-          <p
-            style={{
-              fontFamily: 'var(--v3-font-body)',
-              fontWeight: 400,
-              fontSize: 'var(--v3-text-body)',
-              color: 'var(--v3-color-ink-secondary)',
-              maxWidth: '56ch',
-              margin: '0 auto',
-              lineHeight: 1.6,
-            }}
-          >
-            All USD pricing shown. Monthly allocations and member benefits are explained after sign-up.
-          </p>
-        </div>
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: 0,
-            alignItems: 'stretch',
-            borderTop: '1px solid var(--v3-color-divider-strong)',
-          }}
-        >
-          {SUBSCRIPTION_TIERS.map((t, idx) => (
-            <div
-              key={t.key}
-              style={{
-                padding: '40px 28px',
-                borderRight: idx < SUBSCRIPTION_TIERS.length - 1 ? '1px solid var(--v3-color-divider)' : undefined,
-                borderBottom: '1px solid var(--v3-color-divider)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 'var(--v3-space-4)',
-                minHeight: '100%',
-                position: 'relative',
-              }}
-            >
-              {t.highlight && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    right: '28px',
-                    transform: 'translateY(-50%)',
-                    background: 'var(--v3-color-fuchsia)',
-                    color: 'var(--v3-color-cream)',
-                    fontFamily: 'var(--v3-font-mono)',
-                    fontSize: '10px',
-                    fontWeight: 500,
-                    letterSpacing: '0.16em',
-                    padding: '4px 10px',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Recommended
-                </div>
-              )}
-
-              <Eyebrow accent={t.highlight ? 'fuchsia' : 'ink'}>{t.key}</Eyebrow>
-
-              <div
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v3-space-5)' }}>
+              <Eyebrow accent="fuchsia">NEXUS</Eyebrow>
+              <h3
                 style={{
                   fontFamily: 'var(--v3-font-display)',
-                  fontWeight: 400,
-                  fontSize: '28px',
-                  lineHeight: 1.15,
-                  color: 'var(--v3-color-ink)',
+                  fontSize: 'var(--v3-text-display-md)',
+                  fontWeight: 300,
+                  lineHeight: 'var(--v3-leading-display-md)',
                   letterSpacing: 'var(--v3-tracking-tight)',
+                  color: 'var(--v3-color-ink)',
+                  margin: 0,
+                  maxWidth: '16ch',
                 }}
               >
-                {t.name}
-              </div>
-              <div
+                Executive intelligence, in your pocket.
+              </h3>
+              <p
                 style={{
                   fontFamily: 'var(--v3-font-body)',
-                  fontSize: '13px',
-                  color: 'var(--v3-color-ink-muted)',
+                  fontSize: 'var(--v3-text-body)',
+                  lineHeight: 'var(--v3-leading-body)',
+                  color: 'var(--v3-color-ink-secondary)',
+                  margin: 0,
+                  maxWidth: '46ch',
                 }}
               >
-                {t.label}
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginTop: '8px' }}>
-                <span
-                  style={{
-                    fontFamily: 'var(--v3-font-display)',
-                    fontSize: '40px',
-                    lineHeight: 1,
-                    fontWeight: 300,
-                    color: 'var(--v3-color-ink)',
-                    letterSpacing: 'var(--v3-tracking-tight)',
-                  }}
-                >
-                  {t.priceUsd}
-                </span>
-                {t.priceUsd !== 'Complimentary' && t.priceUsd !== '—' && (
-                  <span
-                    style={{
-                      fontFamily: 'var(--v3-font-body)',
-                      fontSize: '12px',
-                      color: 'var(--v3-color-ink-muted)',
-                    }}
-                  >
-                    /mo
-                  </span>
-                )}
-              </div>
-
-              {t.miles > 0 && (
-                <div
-                  style={{
-                    fontFamily: 'var(--v3-font-mono)',
-                    fontSize: '11px',
-                    color: 'var(--v3-color-ink-muted)',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    fontWeight: 500,
-                  }}
-                >
-                  {t.miles} mi included / mo
-                </div>
-              )}
-
+                NEXUS is the AI executive coach built on 20 years of leadership data.
+                It knows your role, your diagnostics, and your goals — and it speaks the language of executive leadership.
+              </p>
               <ul
                 style={{
                   listStyle: 'none',
                   padding: 0,
-                  margin: 'var(--v3-space-5) 0 var(--v3-space-6)',
+                  margin: 0,
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '10px',
+                  gap: 'var(--v3-space-3)',
                 }}
               >
-                {t.features.map((f) => (
+                {[
+                  'AI coach that knows your full context',
+                  '11 leadership diagnostics, one system',
+                  'Human coaching when you need it',
+                ].map((f) => (
                   <li
                     key={f}
                     style={{
                       display: 'flex',
-                      gap: '10px',
+                      gap: '12px',
                       alignItems: 'flex-start',
                       fontFamily: 'var(--v3-font-body)',
-                      fontSize: '13px',
-                      lineHeight: 1.5,
-                      color: 'var(--v3-color-ink-secondary)',
+                      fontSize: 'var(--v3-text-body)',
+                      lineHeight: 'var(--v3-leading-body)',
+                      color: 'var(--v3-color-ink)',
                     }}
                   >
                     <span
@@ -1120,7 +438,7 @@ export function Landing(): React.ReactElement {
                       style={{
                         width: '5px',
                         height: '5px',
-                        marginTop: '8px',
+                        marginTop: '10px',
                         background: 'var(--v3-color-fuchsia)',
                         flexShrink: 0,
                       }}
@@ -1129,33 +447,243 @@ export function Landing(): React.ReactElement {
                   </li>
                 ))}
               </ul>
-
-              <div style={{ marginTop: 'auto' }}>
+              <div>
                 <Button
-                  variant={t.highlight ? 'primary' : 'secondary'}
+                  variant="ghost"
                   accent="fuchsia"
-                  href={t.ctaHref}
+                  href="/nexus"
                   onClick={() =>
                     trackCTA({
-                      location: 'pricing_tier',
-                      label: `Pricing: ${t.cta}`,
-                      destination: t.ctaHref,
-                      context_id: t.key,
+                      location: 'spotlight_nexus',
+                      label: 'Try NEXUS',
+                      destination: '/nexus',
                     })
                   }
                 >
-                  {t.cta}
+                  Try NEXUS
                 </Button>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* DEX AI — dark side */}
+          <div
+            className="v3-root"
+            data-bg-mode="dark"
+            style={{
+              background: 'var(--v3-color-dark)',
+              color: 'var(--v3-color-paper)',
+              padding: 'var(--v3-space-9) var(--v3-space-8)',
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v3-space-5)' }}>
+              <Eyebrow accent="fuchsia">DEX AI</Eyebrow>
+              <h3
+                style={{
+                  fontFamily: 'var(--v3-font-display)',
+                  fontSize: 'var(--v3-text-display-md)',
+                  fontWeight: 300,
+                  lineHeight: 'var(--v3-leading-display-md)',
+                  letterSpacing: 'var(--v3-tracking-tight)',
+                  color: 'var(--v3-color-paper)',
+                  margin: 0,
+                  maxWidth: '16ch',
+                }}
+              >
+                Board-ready intelligence, on demand.
+              </h3>
+              <p
+                style={{
+                  fontFamily: 'var(--v3-font-body)',
+                  fontSize: 'var(--v3-text-body)',
+                  lineHeight: 'var(--v3-leading-body)',
+                  color: 'var(--v3-color-paper-secondary)',
+                  margin: 0,
+                  maxWidth: '46ch',
+                }}
+              >
+                DEX AI is the research desk for boards, investment teams, and senior
+                sponsors. Compensation, candidate motion, and confidential mapping — written and sourced.
+              </p>
+              <ul
+                style={{
+                  listStyle: 'none',
+                  padding: 0,
+                  margin: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--v3-space-3)',
+                }}
+              >
+                {[
+                  'Compensation benchmarks by market',
+                  'Candidate motion and succession tracking',
+                  'Under-the-radar mapping',
+                ].map((f) => (
+                  <li
+                    key={f}
+                    style={{
+                      display: 'flex',
+                      gap: '12px',
+                      alignItems: 'flex-start',
+                      fontFamily: 'var(--v3-font-body)',
+                      fontSize: 'var(--v3-text-body)',
+                      lineHeight: 'var(--v3-leading-body)',
+                      color: 'var(--v3-color-paper)',
+                    }}
+                  >
+                    <span
+                      aria-hidden
+                      style={{
+                        width: '5px',
+                        height: '5px',
+                        marginTop: '10px',
+                        background: 'var(--v3-color-fuchsia)',
+                        flexShrink: 0,
+                      }}
+                    />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <div>
+                <Button
+                  variant="ghost"
+                  accent="fuchsia"
+                  href="/dex"
+                  onClick={() =>
+                    trackCTA({
+                      location: 'spotlight_dex',
+                      label: 'Explore DEX AI',
+                      destination: '/dex',
+                    })
+                  }
+                >
+                  Explore DEX AI
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </Section>
 
-      {/* 9 ─ FINAL CTA ────────────────────────────────────────────── */}
+      {/* ═══ 5 ─ METHODOLOGY / HOW IT WORKS ═══════════════════════════ */}
+      <Section bg="cream" paddingY="lg">
+        <div style={{ marginBottom: 'var(--v3-space-8)' }}>
+          <Eyebrow accent="teal">How it works</Eyebrow>
+          <h2
+            style={{
+              fontFamily: 'var(--v3-font-display)',
+              fontWeight: 300,
+              fontSize: 'var(--v3-text-display-md)',
+              lineHeight: 'var(--v3-leading-display-md)',
+              letterSpacing: 'var(--v3-tracking-tight)',
+              color: 'var(--v3-color-ink)',
+              margin: '16px 0 0',
+              maxWidth: '22ch',
+            }}
+          >
+            Built on 20 years of retained search data.
+          </h2>
+        </div>
+
+        <Divider variant="light" width="content" />
+        {STEPS.map((s) => (
+          <React.Fragment key={s.number}>
+            <div
+              className="v3-step-row"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 120px) minmax(0, 1fr)',
+                gap: 'var(--v3-space-5)',
+                alignItems: 'start',
+                paddingBlock: 'var(--v3-space-6)',
+              }}
+            >
+              <div
+                aria-hidden
+                style={{
+                  fontFamily: 'var(--v3-font-display)',
+                  fontSize: '64px',
+                  lineHeight: 1,
+                  fontWeight: 300,
+                  letterSpacing: 'var(--v3-tracking-tight)',
+                  color: 'var(--v3-color-teal)',
+                  userSelect: 'none',
+                }}
+              >
+                {s.number}
+              </div>
+              <div>
+                <h3
+                  style={{
+                    fontFamily: 'var(--v3-font-display)',
+                    fontSize: '24px',
+                    fontWeight: 400,
+                    lineHeight: 1.2,
+                    letterSpacing: 'var(--v3-tracking-tight)',
+                    color: 'var(--v3-color-ink)',
+                    margin: '0 0 12px',
+                  }}
+                >
+                  {s.title}
+                </h3>
+                <div
+                  style={{
+                    fontFamily: 'var(--v3-font-body)',
+                    fontSize: 'var(--v3-text-body)',
+                    lineHeight: 'var(--v3-leading-body)',
+                    color: 'var(--v3-color-ink-secondary)',
+                  }}
+                >
+                  {s.description}
+                </div>
+              </div>
+            </div>
+            <Divider variant="light" width="content" />
+          </React.Fragment>
+        ))}
+      </Section>
+
+      {/* ═══ 6 ─ PULL QUOTE (dark bg) ══════════════════════════════════ */}
+      <Section bg="dark" paddingY="xl">
+        <div style={{ maxWidth: '64ch', marginInline: 'auto' }}>
+          <blockquote
+            style={{
+              fontFamily: 'var(--v3-font-display)',
+              fontWeight: 300,
+              fontStyle: 'italic',
+              fontSize: '48px',
+              lineHeight: 1.15,
+              letterSpacing: 'var(--v3-tracking-tight)',
+              color: 'var(--v3-color-paper)',
+              margin: 0,
+              maxWidth: '28ch',
+            }}
+            className="v3-pullquote"
+          >
+            &ldquo;The best leaders don&rsquo;t have more answers. They have better questions.&rdquo;
+          </blockquote>
+          <div
+            style={{
+              fontFamily: 'var(--v3-font-mono)',
+              fontSize: 'var(--v3-text-label)',
+              letterSpacing: 'var(--v3-tracking-label)',
+              textTransform: 'uppercase',
+              color: 'var(--v3-color-paper-muted)',
+              marginTop: 'var(--v3-space-6)',
+              textAlign: 'right',
+            }}
+          >
+            — Senior Partner, Fortune 100 APAC
+          </div>
+        </div>
+      </Section>
+
+      {/* ═══ 7 ─ FINAL CTA ════════════════════════════════════════════ */}
       <Section bg="cream" paddingY="xl">
-        <div style={{ maxWidth: '72ch', marginInline: 'auto', textAlign: 'center' }}>
-          <Eyebrow accent="fuchsia">Begin today</Eyebrow>
+        <div style={{ maxWidth: '70ch', marginInline: 'auto', textAlign: 'left' }}>
+          <Eyebrow accent="fuchsia">Begin</Eyebrow>
           <h2
             style={{
               fontFamily: 'var(--v3-font-display)',
@@ -1165,9 +693,10 @@ export function Landing(): React.ReactElement {
               letterSpacing: 'var(--v3-tracking-tight)',
               color: 'var(--v3-color-ink)',
               margin: '16px 0 16px',
+              maxWidth: '18ch',
             }}
           >
-            Start with NEXUS. One conversation in.
+            See what you&rsquo;re missing.
           </h2>
           <p
             style={{
@@ -1177,73 +706,65 @@ export function Landing(): React.ReactElement {
               lineHeight: 'var(--v3-leading-body-lg)',
               color: 'var(--v3-color-ink-secondary)',
               maxWidth: '52ch',
-              margin: '0 auto 40px',
+              margin: '0 0 32px',
             }}
           >
-            The intelligent front door is open. NEXUS will ask the questions you haven&rsquo;t yet thought to ask.
+            A 15-minute diagnostic will tell you more than a year of performance reviews.
           </p>
-          <div
-            style={{
-              display: 'flex',
-              gap: 'var(--v3-space-5)',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-            }}
+          <Button
+            variant="primary"
+            accent="fuchsia"
+            href="/nexus/lenses/prism"
+            onClick={() =>
+              trackCTA({
+                location: 'final_cta_v3',
+                label: 'Begin with your positioning',
+                destination: '/nexus/lenses/prism',
+              })
+            }
           >
-            <Button
-              variant="primary"
-              accent="fuchsia"
-              href="/assessment/cpi"
-              onClick={() => trackNexusChatInitiation('cta_final_entry')}
-            >
-              Start with a Complimentary Diagnostic
-            </Button>
-            <Button
-              variant="secondary"
-              accent="teal"
-              href="/nexus"
-              onClick={() =>
-                trackCTA({
-                  location: 'cta_final',
-                  label: 'Meet NEXUS',
-                  destination: '/nexus',
-                })
-              }
-            >
-              Meet NEXUS
-            </Button>
-          </div>
+            Begin with your positioning
+          </Button>
         </div>
       </Section>
 
-      {/* Responsive overrides (keep editorial grids below breakpoints legible) */}
+      {/* Responsive overrides */}
       <style>{`
         @media (max-width: 1023px) {
-          .v2-lineup-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
+          .v3-spotlight-grid {
+            grid-template-columns: 1fr !important;
           }
-          .v2-lineup-grid > div { grid-column: auto !important; grid-row: auto !important; }
-          .v2-lineup-grid > div:first-child { grid-column: 1 / span 2 !important; }
         }
         @media (max-width: 767px) {
-          .v2-hero-grid {
+          .v3-hero-grid {
             grid-template-columns: 1fr !important;
             gap: var(--v3-space-6) !important;
           }
-          .v2-hero-visual { order: -1; }
-          .v2-lineup-grid { grid-template-columns: 1fr !important; }
-          .v2-lineup-grid > div,
-          .v2-lineup-grid > div:first-child {
-            grid-column: 1 / -1 !important;
-          }
-          .v2-nexus-grid {
-            grid-template-columns: 1fr !important;
-            gap: var(--v3-space-6) !important;
-          }
-          .v2-nexus-grid > div { grid-column: 1 / -1 !important; }
-          .v2-nexus-grid > div:last-child { order: -1; }
-          .v2-trust-grid {
+          .v3-hero-visual { order: -1; }
+          .v3-trust-grid {
             grid-template-columns: repeat(2, 1fr) !important;
+            gap: var(--v3-space-6) var(--v3-space-5) !important;
+          }
+          .v3-pillars-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .v3-pillar-col {
+            padding-inline: 0 !important;
+            border-left: none !important;
+            border-top: 1px solid var(--v3-color-divider) !important;
+            padding-top: var(--v3-space-7) !important;
+            padding-bottom: var(--v3-space-7) !important;
+          }
+          .v3-pillar-col:first-child {
+            border-top: none !important;
+            padding-top: 0 !important;
+          }
+          .v3-step-row {
+            grid-template-columns: 1fr !important;
+            gap: var(--v3-space-3) !important;
+          }
+          .v3-pullquote {
+            font-size: 36px !important;
           }
         }
       `}</style>

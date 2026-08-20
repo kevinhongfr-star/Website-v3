@@ -2,10 +2,10 @@
  * Phase V2 — MarketingNav v3 (editorial minimalism).
  *
  * Preserves EXACTLY the existing IA and functionality:
- *   - 3 top-level nav links (Chat / Diagnostics / Pricing — labels Tier-2
- *     refactored for marketing surface; hrefs preserved exactly).
+ *   - 4 firm-first top-level nav links (Research & Intelligence / Advisory /
+ *     Executive Search / Pricing) per v3.0 firm-first IA.
  *   - Tier-aware auth block: authenticated users → My Portal + tier badge
- *     + Sign out; guests → Sign in link + primary Try NEXUS CTA.
+ *     + Sign out; guests → Sign in link + primary Begin CTA.
  *   - Mobile: full-screen overlay, cream/dark bg, large serif menu items,
  *     thin dividers between links, CTA at bottom. Toggle is text + line
  *     symbol (text-label button instead of hamburger glyph).
@@ -27,8 +27,9 @@ import { useTier } from '@/components/tier/TierProvider';
 import { Button } from '@/components/ui/v3';
 
 const NAV_ITEMS = [
-  { href: '/nexus/chat', label: 'Chat' },
-  { href: '/assessments', label: 'Diagnostics' }, // Tier 2 marketing-site replacement
+  { href: '/research', label: 'Research & Intelligence' },
+  { href: '/advisory', label: 'Advisory' },
+  { href: '/search', label: 'Executive Search' },
   { href: '/pricing', label: 'Pricing' },
 ];
 
@@ -231,11 +232,11 @@ export function MarketingNav(): React.ReactElement {
                   variant="primary"
                   accent="fuchsia"
                   onClick={() => {
-                    trackCTA({ location: 'nav_marketing', label: 'Try NEXUS', destination: '/nexus/chat' });
-                    navigate('/nexus/chat');
+                    trackCTA({ location: 'nav_marketing', label: 'Begin', destination: '/nexus/lenses/prism' });
+                    navigate('/nexus/lenses/prism');
                   }}
                 >
-                  Try NEXUS
+                  Begin →
                 </Button>
               </>
             )}
@@ -433,13 +434,13 @@ export function MarketingNav(): React.ReactElement {
                     setMobileOpen(false);
                     trackCTA({
                       location: 'nav_marketing',
-                      label: 'Try NEXUS (mobile)',
-                      destination: '/nexus/chat',
+                      label: 'Begin (mobile)',
+                      destination: '/nexus/lenses/prism',
                     });
-                    navigate('/nexus/chat');
+                    navigate('/nexus/lenses/prism');
                   }}
                 >
-                  Try NEXUS
+                  Begin →
                 </Button>
               </>
             )}

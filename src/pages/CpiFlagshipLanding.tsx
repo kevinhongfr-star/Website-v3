@@ -189,7 +189,7 @@ export function CpiFlagshipLanding() {
       {/* ── FOUR PILLARS ──────────────────────────────────────────── */}
       <Section style={{ padding: '80px 24px' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-          <Eyebrow accent="fuchsia" style={{ marginBottom: 16 }}>01 · CAPABILITY FRAMEWORK</Eyebrow>
+          <Eyebrow accent="fuchsia" style={{ marginBottom: 16 }}>01 · CAPABILITY MODEL</Eyebrow>
           <h2 style={{
             fontFamily: 'var(--v3-font-display)',
             fontSize: 40,

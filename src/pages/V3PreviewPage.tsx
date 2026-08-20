@@ -199,7 +199,7 @@ export const V3PreviewPage: React.FC = () => {
                   color: 'var(--v3-color-ink)',
                 }}
               >
-                Quiet leadership deserves a louder signal.
+                Senior leadership deserves a sharper signal.
               </p>
             </div>
           ))}

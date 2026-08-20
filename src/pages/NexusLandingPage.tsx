@@ -143,7 +143,7 @@ const PRICING_ROWS: Array<{ label: string; values: Array<React.ReactNode>; highl
 
 const FAQ: Array<{ q: string; a: string }> = [
   {
-    q: 'Is NEXUS just another AI chatbot?',
+    q: 'Is NEXUS just another AI assistant?',
     a: 'No. NEXUS is a multi-agent executive intelligence system built on LYC\u2019s executive search methodology. It combines validated leadership diagnostics, pattern analysis, and diagnostic-literate advisory — not just open-ended conversation.',
   },
   {
@@ -522,7 +522,7 @@ export function NexusLandingPage() {
           <div style={{ marginBottom: 'var(--v3-space-8)' }}>
             <Eyebrow accent="fuchsia">How it\u2019s different</Eyebrow>
             <h2 style={{ ...H2, marginTop: '16px' as any }}>
-              Not a wrapper around a chatbot.
+              Not a wrapper around an AI assistant.
             </h2>
           </div>
 
